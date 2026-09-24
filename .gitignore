@@ -1,0 +1,31 @@
+node_modules/
+dist/
+build/
+.cache/
+.env*
+.vite/
+vite.config.*.timestamp-*
+*.tsbuildinfo
+*-debug.log*
+logs/
+*.log
+.claude-replay.*
+.tmp-*
+
+# Platform-managed agentplat state, not project source. In the
+# client-initiated single-repo workspace layout (make's `Path: "."` spec) the
+# repo root IS the workspace root, so these land inside this repo rather than
+# beside it.
+/.plugins/
+/.opencode-skills/
+
+# Vercel CLI local state (project link, env pulls)
+.vercel/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+
+# Do NOT ignore .figma/ — vite.config.ts imports .figma/make/site.json at
+# build time, so it must be committed for Vercel builds to succeed.
