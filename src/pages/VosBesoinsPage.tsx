@@ -4,17 +4,17 @@ import { GAMMES } from '@/data'
 const BESOINS = [
   {
     besoin: 'Peau terne, teint inégal',
-    solution: 'Gamme ÉCLAT',
+    solution: 'Gamme ÉCLAT NATUREL',
     gammeId: 'eclat',
     description: "Votre peau manque de luminosité ? Le curcuma et la carotte vont unifier et illuminer votre teint naturellement.",
-    recommande: ['Savon ÉCLAT', 'Lotion ÉCLAT — TEINT UNIFIÉ', 'Crème de Visage ÉCLAT'],
+    recommande: ['Lotion ÉCLAT NATUREL — TEINT UNIFIÉ', 'Crème de Visage ÉCLAT NATUREL', 'Lait Corps ÉCLAT NATUREL'],
   },
   {
     besoin: 'Peau abîmée, fatiguée ou stressée',
     solution: 'Gamme RÉPARATION',
     gammeId: 'reparation',
     description: "Votre peau a subi des agressions ou des produits décapants ? L'huile de Marula et le Collagène Marin vont la régénérer.",
-    recommande: ['Savon RÉPARATION', 'Crème de Visage RÉPARATION', 'Lait Corps RÉPARATION'],
+    recommande: ['Lotion RÉPARATION', 'Crème de Visage RÉPARATION', 'Lait Corps RÉPARATION'],
   },
   {
     besoin: 'Peau déshydratée, manque de fraîcheur',
@@ -28,7 +28,7 @@ const BESOINS = [
     solution: 'Gamme NUTRITION',
     gammeId: 'nutrition',
     description: "Votre peau est sèche et a besoin d'une nutrition intense ? Le beurre de mangue et l'avocat vont la nourrir en profondeur.",
-    recommande: ['Savon NUTRITION', 'Crème de Visage NUTRITION — PEAU NOURRIE', 'Lait Corps NUTRITION'],
+    recommande: ['Lotion NUTRITION', 'Crème de Visage NUTRITION — PEAU NOURRIE', 'Lait Corps NUTRITION'],
   },
 ]
 

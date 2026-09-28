@@ -160,12 +160,12 @@ export default function AccueilPage() {
               <div className="absolute -top-4 -left-4 w-24 h-24 border border-[#C97B1A]/25 pointer-events-none" />
               <img
                 src="https://images.unsplash.com/photo-1632765866070-3fadf25d3d5b?w=700&h=850&fit=crop&auto=format"
-                alt="Minette KAMDEM, fondatrice de Teint d'Afrique Cosmétiques"
+                alt="Minette Jambong-Kamdem, fondatrice de Teint d'Afrique Cosmétiques"
                 className="w-full h-[420px] object-cover object-top"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#2A1006]/65 to-transparent px-5 py-6">
                 <p className="text-white text-xl" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
-                  Minette KAMDEM
+                  Minette Jambong-Kamdem
                 </p>
                 <p className="text-[#C97B1A] text-[9px] tracking-[0.3em] uppercase mt-1">
                   Fondatrice & Créatrice
@@ -188,7 +188,7 @@ export default function AccueilPage() {
               </h2>
               <p className="text-[#2A1006]/75 leading-relaxed text-[15px] mb-5">
                 Créatrice de la marque <strong className="text-[#3B1705]">#TeintdAfriqueCosmetiques</strong>,
-                épouse et mère, <strong className="text-[#3B1705]">Minette KAMDEM</strong> est une Femme
+                épouse et mère, <strong className="text-[#3B1705]">Minette Jambong-Kamdem</strong> est une Femme
                 Camerounaise qui rêve de restaurer l'identité et l'image de la femme africaine en
                 s'impliquant activement sur les sujets tels que l'Acceptation de soi, la Dignité africaine
                 et la Diversité Culturelle.
@@ -272,7 +272,7 @@ export default function AccueilPage() {
                     className="absolute bottom-4 right-4 px-3 py-1 text-white text-[9px] tracking-[0.2em] uppercase"
                     style={{ background: g.color }}
                   >
-                    4 produits
+                    3 produits
                   </div>
                 </div>
                 <div className="p-6" style={{ background: g.colorLight }}>
@@ -283,7 +283,7 @@ export default function AccueilPage() {
                     {g.description.slice(0, 180)}…
                   </p>
                   <div className="flex flex-wrap gap-2 mb-5">
-                    {['Savon · 180g', 'Lotion · 100ml', 'Crème · 100ml', 'Lait · 500ml'].map(p => (
+                    {['Lotion · 100ml', 'Crème · 100ml', 'Lait · 500ml'].map(p => (
                       <span key={p} className="text-[10px] tracking-[0.1em] px-3 py-1 border" style={{ color: g.colorDark, borderColor: g.color + '50' }}>
                         {p}
                       </span>

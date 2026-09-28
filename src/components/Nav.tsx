@@ -32,7 +32,7 @@ const NAV: NavGroup[] = [
     label: 'Nos produits',
     items: [
       { label: 'Les Gammes', to: '/nos-produits/les-gammes', sub: 'Vue d\'ensemble' },
-      { label: 'Types de Produits', to: '/nos-produits/types', sub: 'Savon · Lotion · Crème · Lait' },
+      { label: 'Types de Produits', to: '/nos-produits/types', sub: 'Lotion · Crème · Lait' },
       { label: 'Vos Besoins', to: '/nos-produits/vos-besoins', sub: 'Trouver votre soin' },
     ],
   },

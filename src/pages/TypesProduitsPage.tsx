@@ -1,22 +1,17 @@
 import { Link } from 'react-router'
 import { GAMMES } from '@/data'
+import lotionUnifiee from '@/assets/products/lotion-unifiee.webp'
+import cremeUnifiee from '@/assets/products/creme-unifiee.webp'
+import laitUnifie from '@/assets/products/lait-unifie.webp'
 
 const TYPES = [
-  {
-    type: 'Savon',
-    poids: '180 g',
-    symbol: '◼',
-    description: "Premier geste de soin, le savon nettoie en douceur tout en déposant les actifs botaniques de chaque gamme sur la peau. Formulé sans agents agressifs, il respecte le film hydrolipidique naturel et prépare la peau à absorber les soins suivants.",
-    benefices: ['Nettoyage doux et profond', 'Dépôt des actifs naturels', 'Respect du pH de la peau', 'Adapté à toutes les carnations'],
-    img: 'https://images.unsplash.com/photo-1615485500834-bc10199bc727?w=600&h=400&fit=crop&auto=format',
-  },
   {
     type: 'Lotion',
     poids: '100 ml',
     symbol: '◻',
-    description: "Légère et pénétrante, la lotion complète l'action du savon. Elle prépare et tonifie la peau, renforce l'hydratation et maximise l'efficacité des soins suivants. À utiliser matin et soir pour une synergie optimale avec les autres produits de la gamme.",
+    description: "Légère et pénétrante, la lotion prépare et tonifie la peau, renforce l'hydratation et maximise l'efficacité des soins suivants. À utiliser matin et soir pour une synergie optimale avec les autres produits de la gamme.",
     benefices: ["Tonification et préparation de la peau", "Hydratation légère de 12h", 'Synergie avec la gamme', 'Texture non grasse'],
-    img: 'https://images.unsplash.com/photo-1684912950118-28ca40b6ef9d?w=600&h=400&fit=crop&auto=format',
+    img: lotionUnifiee,
   },
   {
     type: 'Crème de Visage',
@@ -24,15 +19,15 @@ const TYPES = [
     symbol: '◇',
     description: "Formule concentrée dédiée au visage, la crème cible les besoins spécifiques de chaque gamme. Texture fondante et non grasse, elle s'adapte à la finesse de la peau du visage pour délivrer les actifs en profondeur et révéler l'éclat naturel.",
     benefices: ['Formule concentrée en actifs', 'Action ciblée sur le visage', 'Texture fondante et fine', 'Résultats visibles en 4 semaines'],
-    img: 'https://images.unsplash.com/photo-1677254374578-32d933797c2a?w=600&h=400&fit=crop&auto=format',
+    img: cremeUnifiee,
   },
   {
     type: 'Lait Corps',
     poids: '500 ml',
     symbol: '○',
-    description: "Généreux et onctueux, le lait corps est le soin quotidien incontournable. Sa texture légère s'absorbe rapidement pour envelopper la peau d'une couche nourrisante et protectrice, du matin au soir. Le geste beauté qui transforme la peau en douceur.",
+    description: "Généreux et onctueux, le lait corps est le soin quotidien incontournable. Sa texture légère s'absorbe rapidement pour envelopper la peau d'une couche nourrissante et protectrice, du matin au soir. Le geste beauté qui transforme la peau en douceur.",
     benefices: ['Texture légère et non grasse', 'Absorption rapide', 'Nutrition longue durée', 'Parfum délicat et naturel'],
-    img: 'https://images.unsplash.com/photo-1559305486-2a6564f26a85?w=600&h=400&fit=crop&auto=format',
+    img: laitUnifie,
   },
 ]
 
@@ -49,7 +44,7 @@ export default function TypesProduitsPage() {
             Types de Produits
           </h1>
           <p className="text-[#FAF6EF]/60 max-w-lg">
-            4 types de produits, déclinés dans chacune de nos 4 gammes — soit 16 références
+            3 types de produits, déclinés dans chacune de nos 4 gammes — soit 12 références
             formulées pour les peaux noires, métissées et albinos.
           </p>
         </div>
@@ -90,7 +85,9 @@ export default function TypesProduitsPage() {
                 </div>
               </div>
               <div className={i % 2 === 1 ? 'md:order-1' : ''}>
-                <img src={t.img} alt={t.type} className="w-full h-64 object-cover" />
+                <div className="bg-[#FAF6EF] p-8">
+                  <img src={t.img} alt={t.type} className="w-full h-72 object-contain" />
+                </div>
               </div>
             </div>
           ))}

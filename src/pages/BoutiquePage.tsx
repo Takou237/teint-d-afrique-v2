@@ -22,7 +22,7 @@ export default function BoutiquePage() {
           </h1>
           <p className="text-[#FAF6EF]/60 max-w-lg leading-relaxed">
             Chaque gamme possède son univers, ses actifs botaniques et ses formules exclusives.
-            4 produits par gamme, pensés pour les peaux noires et métissées.
+            3 produits par gamme, pensés pour les peaux noires et métissées.
           </p>
         </div>
       </div>
@@ -66,7 +66,7 @@ export default function BoutiquePage() {
                     className="absolute bottom-4 right-4 px-3 py-1 text-white text-[9px] tracking-[0.2em] uppercase"
                     style={{ background: g.color }}
                   >
-                    4 produits
+                    3 produits
                   </div>
                 </div>
 
@@ -89,7 +89,7 @@ export default function BoutiquePage() {
                   </p>
                   {/* Products list */}
                   <div className="flex flex-wrap gap-2 mb-5">
-                    {['Savon', 'Lotion', 'Crème', 'Lait'].map(p => (
+                    {['Lotion', 'Crème', 'Lait'].map(p => (
                       <span
                         key={p}
                         className="text-[10px] tracking-[0.1em] uppercase px-3 py-1 border"
@@ -132,14 +132,13 @@ export default function BoutiquePage() {
               <p className="text-[#FAF6EF]/65 leading-relaxed text-sm max-w-lg">
                 Pour chaque produit, nous relevons le défi de créer des formules uniques et
                 innovantes en utilisant exclusivement des options naturelles. Chaque gamme comprend
-                un savon (180 g), une lotion (100 ml), une crème de visage (100 ml) et un lait
-                corps (500 ml).
+                une lotion (100 ml), une crème de visage (100 ml) et un lait corps (500 ml).
               </p>
             </div>
             <div className="flex flex-col justify-center gap-4">
               {[
-                { label: '4 Gammes', desc: 'Éclat · Réparation · Hydratation · Nutrition' },
-                { label: '16 Produits', desc: '4 produits par gamme, formulés exclusivement' },
+                { label: '4 Gammes', desc: 'Éclat Naturel · Réparation · Hydratation · Nutrition' },
+                { label: '12 Produits', desc: '3 produits par gamme, formulés exclusivement' },
                 { label: '100% Naturel', desc: "Ingrédients botaniques de la plus haute qualité" },
               ].map(stat => (
                 <div key={stat.label} className="border-l-2 border-[#C97B1A] pl-4">
