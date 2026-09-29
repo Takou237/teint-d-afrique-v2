@@ -82,7 +82,7 @@ export default function AccueilPage() {
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
 
       {/* ── HERO ── */}
-      <section className="relative min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-4.5rem)] flex items-center overflow-hidden bg-white">
+      <section className="relative min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-4.5rem)] flex items-center overflow-hidden bg-[#FAF6EF]">
         <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-5 gap-12 items-center w-full">
           <div className="md:col-span-3">
             <p className="text-[#C97B1A] tracking-[0.35em] text-[10px] uppercase mb-6 flex items-center gap-3">
@@ -126,7 +126,7 @@ export default function AccueilPage() {
               <Link
                 key={g.id}
                 to={`/nos-produits/${g.id}`}
-                className="flex items-center gap-4 px-5 py-3 bg-[#FAF6EF] border border-[#3B1705]/10 hover:border-[#C97B1A]/40 hover:shadow-sm transition-all group"
+                className="flex items-center gap-4 px-5 py-3 bg-white border border-[#3B1705]/10 hover:border-[#C97B1A]/40 hover:shadow-sm transition-all group"
               >
                 <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: g.color }} />
                 <div>

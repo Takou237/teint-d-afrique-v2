@@ -1,18 +1,47 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { getGammes } from '@/data'
 import { useLang, useT } from '@/context/LanguageContext'
 import lotionUnifiee from '@/assets/products/lotion-unifiee.webp'
+import lotionReparee from '@/assets/products/lotion-reparee.webp'
+import lotionHydratee from '@/assets/products/lotion-hydratee.webp'
+import lotionNourrie from '@/assets/products/lotion-nourrie.webp'
 import cremeUnifiee from '@/assets/products/creme-unifiee.webp'
+import cremeReparee from '@/assets/products/creme-reparee.webp'
+import cremeHydratee from '@/assets/products/creme-hydratee.webp'
+import cremeNourrie from '@/assets/products/creme-nourrie.webp'
 import laitUnifie from '@/assets/products/lait-unifie.webp'
+import laitRepare from '@/assets/products/lait-repare.webp'
+import laitHydrate from '@/assets/products/lait-hydrate.webp'
+import laitNourri from '@/assets/products/lait-nourri.webp'
 
-const TYPES = [
+interface Slide {
+  img: string
+  label: string
+}
+
+interface TypeItem {
+  type: string
+  poids: string
+  symbol: string
+  description: string
+  benefices: string[]
+  slides: Slide[]
+}
+
+const TYPES: TypeItem[] = [
   {
     type: 'Lotion',
     poids: '100 ml',
     symbol: '◻',
     description: "Légère et pénétrante, la lotion prépare et tonifie la peau, renforce l'hydratation et maximise l'efficacité des soins suivants. À utiliser matin et soir pour une synergie optimale avec les autres produits de la gamme.",
     benefices: ["Tonification et préparation de la peau", "Hydratation légère de 12h", 'Synergie avec la gamme', 'Texture non grasse'],
-    img: lotionUnifiee,
+    slides: [
+      { img: lotionUnifiee, label: 'Peau Unifiée' },
+      { img: lotionReparee, label: 'Peau Réparée' },
+      { img: lotionHydratee, label: 'Peau Hydratée' },
+      { img: lotionNourrie, label: 'Peau Nourrie' },
+    ],
   },
   {
     type: 'Crème de Visage',
@@ -20,7 +49,12 @@ const TYPES = [
     symbol: '◇',
     description: "Formule concentrée dédiée au visage, la crème cible les besoins spécifiques de chaque gamme. Texture fondante et non grasse, elle s'adapte à la finesse de la peau du visage pour délivrer les actifs en profondeur et révéler l'éclat naturel.",
     benefices: ['Formule concentrée en actifs', 'Action ciblée sur le visage', 'Texture fondante et fine', 'Résultats visibles en 4 semaines'],
-    img: cremeUnifiee,
+    slides: [
+      { img: cremeUnifiee, label: 'Peau Unifiée' },
+      { img: cremeReparee, label: 'Peau Réparée' },
+      { img: cremeHydratee, label: 'Peau Hydratée' },
+      { img: cremeNourrie, label: 'Peau Nourrie' },
+    ],
   },
   {
     type: 'Lait Corps',
@@ -28,7 +62,12 @@ const TYPES = [
     symbol: '○',
     description: "Généreux et onctueux, le lait corps est le soin quotidien incontournable. Sa texture légère s'absorbe rapidement pour envelopper la peau d'une couche nourrissante et protectrice, du matin au soir. Le geste beauté qui transforme la peau en douceur.",
     benefices: ['Texture légère et non grasse', 'Absorption rapide', 'Nutrition longue durée', 'Parfum délicat et naturel'],
-    img: laitUnifie,
+    slides: [
+      { img: laitUnifie, label: 'Peau Unifiée' },
+      { img: laitRepare, label: 'Peau Réparée' },
+      { img: laitHydrate, label: 'Peau Hydratée' },
+      { img: laitNourri, label: 'Peau Nourrie' },
+    ],
   },
 ]
 
@@ -59,12 +98,101 @@ const EN: Record<string, string> = {
   'Absorption rapide': 'Fast absorption',
   'Nutrition longue durée': 'Long-lasting nutrition',
   'Parfum délicat et naturel': 'Delicate, natural fragrance',
+  'Peau Unifiée': 'Unified Skin',
+  'Peau Réparée': 'Repaired Skin',
+  'Peau Hydratée': 'Hydrated Skin',
+  'Peau Nourrie': 'Nourished Skin',
 }
 
-export default function TypesProduitsPage() {
+function TypeRow({ item, reverse }: { item: TypeItem; reverse: boolean }) {
   const { lang } = useLang()
   const t = useT(EN)
   const GAMMES = getGammes(lang)
+  const [slide, setSlide] = useState(0)
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setSlide(s => (s + 1) % item.slides.length)
+    }, 3000)
+    return () => clearInterval(id)
+  }, [item.slides.length])
+
+  const current = item.slides[slide]
+
+  return (
+    <div className={`grid md:grid-cols-2 gap-12 items-center ${reverse ? 'md:grid-flow-col-dense' : ''}`}>
+      <div className={reverse ? 'md:order-2' : ''}>
+        <div className="flex items-center gap-4 mb-5">
+          <span className="text-3xl text-[#C97B1A]">{item.symbol}</span>
+          <div>
+            <h2 className="text-3xl text-[#3B1705]" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
+              {t(item.type)}{' '}
+              <span className="text-[#C97B1A]">| {t(current.label)}</span>
+            </h2>
+            <span className="text-[9px] tracking-[0.25em] uppercase text-[#C97B1A]">{item.poids} {t('par flacon')}</span>
+          </div>
+        </div>
+        <p className="text-[#2A1006]/75 leading-relaxed text-[15px] mb-6">{t(item.description)}</p>
+        <div className="grid grid-cols-2 gap-2">
+          {item.benefices.map(b => (
+            <div key={b} className="flex items-start gap-2 text-[12px] text-[#2A1006]/65">
+              <span className="text-[#C97B1A] mt-0.5 flex-shrink-0">✓</span>
+              {t(b)}
+            </div>
+          ))}
+        </div>
+        <div className="mt-8 flex flex-wrap gap-2">
+          {GAMMES.map(g => (
+            <Link
+              key={g.id}
+              to={`/nos-produits/${g.id}`}
+              className="text-[10px] tracking-[0.1em] uppercase px-3 py-1.5 border hover:border-current transition-colors"
+              style={{ color: g.colorDark, borderColor: g.color + '40' }}
+            >
+              {t(item.type)} {g.nom}
+            </Link>
+          ))}
+        </div>
+      </div>
+      <div className={reverse ? 'md:order-1' : ''}>
+        <div className="bg-[#FAF6EF] p-8">
+          <div className="relative h-72 overflow-hidden">
+            <div
+              className="flex h-full transition-transform duration-700 ease-in-out"
+              style={{ transform: `translateX(-${slide * 100}%)` }}
+            >
+              {item.slides.map(s => (
+                <div key={s.img} className="w-full h-full flex-shrink-0 flex items-center justify-center">
+                  <img
+                    src={s.img}
+                    alt={`${t(item.type)} — ${t(s.label)}`}
+                    className="max-h-full max-w-full object-contain"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-center gap-2 mt-5">
+            {item.slides.map((s, i) => (
+              <button
+                key={s.img}
+                type="button"
+                onClick={() => setSlide(i)}
+                aria-label={t(s.label)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === slide ? 'w-7 bg-[#C97B1A]' : 'w-1.5 bg-[#3B1705]/20 hover:bg-[#3B1705]/40'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function TypesProduitsPage() {
+  const t = useT(EN)
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
       <div className="bg-[#3B1705] py-16 md:py-20">
@@ -85,43 +213,7 @@ export default function TypesProduitsPage() {
       <section className="py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-6 space-y-16">
           {TYPES.map((tp, i) => (
-            <div key={tp.type} className={`grid md:grid-cols-2 gap-12 items-center ${i % 2 === 1 ? 'md:grid-flow-col-dense' : ''}`}>
-              <div className={i % 2 === 1 ? 'md:order-2' : ''}>
-                <div className="flex items-center gap-4 mb-5">
-                  <span className="text-3xl text-[#C97B1A]">{tp.symbol}</span>
-                  <div>
-                    <h2 className="text-3xl text-[#3B1705]" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>{t(tp.type)}</h2>
-                    <span className="text-[9px] tracking-[0.25em] uppercase text-[#C97B1A]">{tp.poids} {t('par flacon')}</span>
-                  </div>
-                </div>
-                <p className="text-[#2A1006]/75 leading-relaxed text-[15px] mb-6">{t(tp.description)}</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {tp.benefices.map(b => (
-                    <div key={b} className="flex items-start gap-2 text-[12px] text-[#2A1006]/65">
-                      <span className="text-[#C97B1A] mt-0.5 flex-shrink-0">✓</span>
-                      {t(b)}
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-8 flex flex-wrap gap-2">
-                  {GAMMES.map(g => (
-                    <Link
-                      key={g.id}
-                      to={`/nos-produits/${g.id}`}
-                      className="text-[10px] tracking-[0.1em] uppercase px-3 py-1.5 border hover:border-current transition-colors"
-                      style={{ color: g.colorDark, borderColor: g.color + '40' }}
-                    >
-                      {t(tp.type)} {g.nom}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-              <div className={i % 2 === 1 ? 'md:order-1' : ''}>
-                <div className="bg-[#FAF6EF] p-8">
-                  <img src={tp.img} alt={t(tp.type)} className="w-full h-72 object-contain" />
-                </div>
-              </div>
-            </div>
+            <TypeRow key={tp.type} item={tp} reverse={i % 2 === 1} />
           ))}
         </div>
       </section>
