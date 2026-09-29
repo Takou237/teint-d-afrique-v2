@@ -1,7 +1,21 @@
 import { Link } from 'react-router'
 import paBadge from '@/imports/PA_StatementEXE_CMJN.jpg'
+import { useT } from '@/context/LanguageContext'
+
+const EN = {
+  BEAUTÉ: 'BEAUTY',
+  'Notre engagement': 'Our commitment',
+  "Nous croyons que chaque teint est une beauté à part entière. Teint d'Afrique Cosmétiques s'engage à formuler des soins qui révèlent, nourrissent et célèbrent la peau noire — sans jamais chercher à l'altérer. Parce que ":
+    "We believe every complexion is beauty in its own right. Teint d'Afrique Cosmétiques is committed to formulating care that reveals, nourishes and celebrates black skin — without ever seeking to alter it. Because ",
+  'Voir nos soins →': 'See our care →',
+  'Notre histoire': 'Our story',
+  'Gammes exclusives': 'Exclusive ranges',
+  'Produits naturels': 'Natural products',
+  'Ingrédients naturels': 'Natural ingredients',
+}
 
 export default function BlackSkinsBanner() {
+  const t = useT(EN)
   return (
     <div
       className="relative overflow-hidden"
@@ -19,7 +33,7 @@ export default function BlackSkinsBanner() {
             fontSize: 'clamp(6rem, 18vw, 18rem)',
           }}
         >
-          BEAUTÉ
+          {t('BEAUTÉ')}
         </span>
       </div>
 
@@ -43,7 +57,7 @@ export default function BlackSkinsBanner() {
               className="text-white/70 text-[10px] tracking-[0.4em] uppercase mb-4"
               style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}
             >
-              Notre engagement
+              {t('Notre engagement')}
             </p>
             <h2
               className="text-white leading-tight mb-5 whitespace-nowrap"
@@ -58,9 +72,7 @@ export default function BlackSkinsBanner() {
               className="text-white/80 leading-relaxed max-w-2xl mb-8"
               style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '15px' }}
             >
-              Nous croyons que chaque teint est une beauté à part entière. Teint d'Afrique
-              Cosmétiques s'engage à formuler des soins qui révèlent, nourrissent et célèbrent la
-              peau noire — sans jamais chercher à l'altérer. Parce que{' '}
+              {t("Nous croyons que chaque teint est une beauté à part entière. Teint d'Afrique Cosmétiques s'engage à formuler des soins qui révèlent, nourrissent et célèbrent la peau noire — sans jamais chercher à l'altérer. Parce que ")}
               <strong className="text-white">#VOTRE_PEAU_VAUT_DE_LOR</strong>.
             </p>
             <div className="flex flex-wrap gap-4 justify-center md:justify-start">
@@ -69,14 +81,14 @@ export default function BlackSkinsBanner() {
                 className="bg-[#3B1705] text-[#FAF6EF] px-7 py-3.5 text-[11px] tracking-[0.2em] uppercase hover:bg-[#2A1006] transition-colors"
                 style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}
               >
-                Voir nos soins →
+                {t('Voir nos soins →')}
               </Link>
               <Link
                 to="/histoire"
                 className="border border-white/50 text-white px-7 py-3.5 text-[11px] tracking-[0.2em] uppercase hover:bg-white/15 transition-colors"
                 style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}
               >
-                Notre histoire
+                {t('Notre histoire')}
               </Link>
             </div>
           </div>
@@ -85,7 +97,7 @@ export default function BlackSkinsBanner() {
           <div className="hidden lg:flex flex-col gap-5 flex-shrink-0 ml-auto">
             {[
               { n: '4', label: 'Gammes exclusives' },
-              { n: '16', label: 'Produits naturels' },
+              { n: '12', label: 'Produits naturels' },
               { n: '100%', label: 'Ingrédients naturels' },
             ].map(s => (
               <div key={s.label} className="text-center bg-white/15 px-6 py-4">
@@ -99,7 +111,7 @@ export default function BlackSkinsBanner() {
                   className="text-white/70 text-[10px] tracking-[0.15em] uppercase mt-1"
                   style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}
                 >
-                  {s.label}
+                  {t(s.label)}
                 </div>
               </div>
             ))}

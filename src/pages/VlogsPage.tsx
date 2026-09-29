@@ -1,4 +1,15 @@
+import { useT } from '@/context/LanguageContext'
+
+const EN: Record<string, string> = {
+  Vlogs: 'Vlogs',
+  'Nos Vlogs arrivent bientôt': 'Our Vlogs are coming soon',
+  'Conseils beauté, routines de soin, tutoriels et coulisses de la marque — nos vlogs seront bientôt disponibles. Restez connectées et suivez-nous sur les réseaux sociaux pour ne rien manquer.':
+    "Beauty tips, skincare routines, tutorials and behind the scenes of the brand — our vlogs will soon be available. Stay connected and follow us on social media so you don't miss a thing.",
+}
+
 export default function VlogsPage() {
+  const t = useT(EN)
+
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
       <div className="bg-[#3B1705] py-16 md:py-20">
@@ -8,7 +19,7 @@ export default function VlogsPage() {
             Teint d'Afrique Cosmétiques
           </p>
           <h1 className="text-[#FAF6EF] leading-tight" style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}>
-            Vlogs
+            {t('Vlogs')}
           </h1>
         </div>
       </div>
@@ -19,12 +30,10 @@ export default function VlogsPage() {
             <span className="text-[#C97B1A] text-4xl" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>▶</span>
           </div>
           <h2 className="text-[#3B1705] text-3xl md:text-4xl mb-5" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
-            Nos Vlogs arrivent bientôt
+            {t('Nos Vlogs arrivent bientôt')}
           </h2>
           <p className="text-[#2A1006]/55 max-w-lg mx-auto leading-relaxed">
-            Conseils beauté, routines de soin, tutoriels et coulisses de la marque — nos vlogs
-            seront bientôt disponibles. Restez connectées et suivez-nous sur les réseaux sociaux
-            pour ne rien manquer.
+            {t('Conseils beauté, routines de soin, tutoriels et coulisses de la marque — nos vlogs seront bientôt disponibles. Restez connectées et suivez-nous sur les réseaux sociaux pour ne rien manquer.')}
           </p>
           <div className="flex justify-center gap-4 mt-10">
             {[

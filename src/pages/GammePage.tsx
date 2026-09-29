@@ -1,9 +1,28 @@
 import { Link, useParams } from 'react-router'
-import { GAMMES } from '@/data'
+import { getGammes, type Gamme, type Product } from '@/data'
+import { useLang, useT } from '@/context/LanguageContext'
 
-function WhatsAppOrderButton({ product, gamme }: { product: (typeof GAMMES)[0]['products'][0]; gamme: (typeof GAMMES)[0] }) {
+const EN: Record<string, string> = {
+  Commander: 'Order',
+  "Boutique · Teint d'Afrique Cosmétiques": "Shop · Teint d'Afrique Cosmétiques",
+  '← Toutes les gammes': '← All ranges',
+  'Actifs Clés': 'Key Actives',
+  'Actifs botaniques': 'Botanical actives',
+  Gamme: 'Range',
+  'Les 3 Produits': 'The 3 Products',
+  "Explorer d'autres gammes": 'Explore other ranges',
+  'Gamme introuvable': 'Range not found',
+  '← Retour à la boutique': '← Back to the shop',
+  "← Retour à l'accueil": '← Back to home',
+}
+
+function WhatsAppOrderButton({ product, gamme }: { product: Product; gamme: Gamme }) {
+  const { lang } = useLang()
+  const t = useT(EN)
   const message = encodeURIComponent(
-    `Bonjour Teint d'Afrique Cosmétiques, je souhaite commander le ${product.type} (${product.poids}) de la gamme ${gamme.nom} — ${gamme.ingredients}. Pouvez-vous m'indiquer la disponibilité et les modalités de commande ? Merci.`
+    lang === 'en'
+      ? `Hello Teint d'Afrique Cosmétiques, I would like to order the ${product.type} (${product.poids}) from the ${gamme.nom} range — ${gamme.ingredients}. Could you tell me about availability and how to order? Thank you.`
+      : `Bonjour Teint d'Afrique Cosmétiques, je souhaite commander le ${product.type} (${product.poids}) de la gamme ${gamme.nom} — ${gamme.ingredients}. Pouvez-vous m'indiquer la disponibilité et les modalités de commande ? Merci.`
   )
   return (
     <a
@@ -16,7 +35,7 @@ function WhatsAppOrderButton({ product, gamme }: { product: (typeof GAMMES)[0]['
       <svg width="15" height="15" viewBox="0 0 24 24" fill="white">
         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
       </svg>
-      Commander
+      {t('Commander')}
     </a>
   )
 }
@@ -25,8 +44,8 @@ function ProductCard({
   product,
   gamme,
 }: {
-  product: (typeof GAMMES)[0]['products'][0]
-  gamme: (typeof GAMMES)[0]
+  product: Product
+  gamme: Gamme
 }) {
   return (
     <div
@@ -80,6 +99,9 @@ function ProductCard({
 
 export default function GammePage() {
   const { gammeId } = useParams<{ gammeId: string }>()
+  const { lang } = useLang()
+  const t = useT(EN)
+  const GAMMES = getGammes(lang)
   const gamme = GAMMES.find(g => g.id === gammeId)
 
   if (!gamme) {
@@ -88,10 +110,10 @@ export default function GammePage() {
         <div className="text-center">
           <p className="text-[#3B1705] text-2xl mb-4"
             style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
-            Gamme introuvable
+            {t('Gamme introuvable')}
           </p>
           <Link to="/boutique" className="text-[#C97B1A] text-sm underline">
-            ← Retour à la boutique
+            {t('← Retour à la boutique')}
           </Link>
         </div>
       </div>
@@ -110,7 +132,7 @@ export default function GammePage() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div>
             <p className="text-white/60 text-[9px] tracking-[0.35em] uppercase mb-3">
-              Boutique · Teint d'Afrique Cosmétiques
+              {t("Boutique · Teint d'Afrique Cosmétiques")}
             </p>
             <h1
               className="text-white leading-none mb-3"
@@ -133,7 +155,7 @@ export default function GammePage() {
             to="/boutique"
             className="self-start md:self-auto flex items-center gap-2 text-white/70 hover:text-white text-[11px] tracking-[0.2em] uppercase transition-colors border border-white/25 px-5 py-2.5 hover:bg-white/10 flex-shrink-0"
           >
-            ← Toutes les gammes
+            {t('← Toutes les gammes')}
           </Link>
         </div>
       </div>
@@ -154,7 +176,7 @@ export default function GammePage() {
                   className="text-[9px] tracking-[0.3em] uppercase mb-3"
                   style={{ color: gamme.colorDark }}
                 >
-                  Actifs Clés
+                  {t('Actifs Clés')}
                 </p>
                 <p className="text-sm leading-relaxed" style={{ color: gamme.colorDark }}>
                   {gamme.ingredientsDetail}
@@ -164,7 +186,7 @@ export default function GammePage() {
             <div className="relative">
               <img
                 src={gamme.image}
-                alt={`Actifs botaniques — ${gamme.nom}`}
+                alt={`${t('Actifs botaniques')} — ${gamme.nom}`}
                 className="w-full h-72 md:h-80 object-cover"
               />
               <div
@@ -187,7 +209,7 @@ export default function GammePage() {
                 className="text-[9px] tracking-[0.3em] uppercase mb-2"
                 style={{ color: gamme.color }}
               >
-                Gamme {gamme.nom}
+                {t('Gamme')} {gamme.nom}
               </p>
               <h2
                 className="text-3xl md:text-4xl"
@@ -196,7 +218,7 @@ export default function GammePage() {
                   color: gamme.colorDark,
                 }}
               >
-                Les 3 Produits
+                {t('Les 3 Produits')}
               </h2>
             </div>
             <div className="flex gap-2 flex-wrap justify-end">
@@ -231,7 +253,7 @@ export default function GammePage() {
             className="text-[9px] tracking-[0.3em] uppercase mb-8"
             style={{ color: gamme.colorDark }}
           >
-            Explorer d'autres gammes
+            {t("Explorer d'autres gammes")}
           </p>
           <div className="grid sm:grid-cols-3 gap-5">
             {otherGammes.map(g => (
@@ -243,7 +265,7 @@ export default function GammePage() {
                 <div className="relative h-16 w-16 overflow-hidden flex-shrink-0">
                   <img
                     src={g.image}
-                    alt={`Gamme ${g.nom}`}
+                    alt={`${t('Gamme')} ${g.nom}`}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div

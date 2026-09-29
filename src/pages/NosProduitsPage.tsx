@@ -1,7 +1,35 @@
 import { Link } from 'react-router'
-import { GAMMES } from '@/data'
+import { getGammes } from '@/data'
+import { useLang, useT } from '@/context/LanguageContext'
+
+const EN: Record<string, string> = {
+  Boutique: 'Shop',
+  "Chaque gamme possède son univers, ses actifs botaniques et ses formules exclusives. 3 produits par gamme, pensés pour les peaux noires et métissées.":
+    'Each range has its own universe, botanical actives and exclusive formulas. 3 products per range, designed for black and mixed-race skin.',
+  '3 produits': '3 products',
+  'Ingrédients gamme': 'Range ingredients',
+  Lotion: 'Lotion',
+  Crème: 'Cream',
+  Lait: 'Milk',
+  'Découvrir la gamme →': 'Discover the range →',
+  'Notre engagement produit': 'Our product commitment',
+  '100% naturel, formules uniques,': '100% natural, unique formulas,',
+  'adaptées à votre peau.': 'adapted to your skin.',
+  'Pour chaque produit, nous relevons le défi de créer des formules uniques et innovantes en utilisant exclusivement des options naturelles. Chaque gamme comprend une lotion (100 ml), une crème de visage (100 ml) et un lait corps (500 ml).':
+    'For each product, we take on the challenge of creating unique and innovative formulas using exclusively natural options. Each range includes a lotion (100 ml), a face cream (100 ml) and a body milk (500 ml).',
+  '4 Gammes': '4 Ranges',
+  'Éclat Naturel · Réparation · Hydratation · Nutrition':
+    'Natural Radiance · Repair · Hydration · Nutrition',
+  '12 Produits': '12 Products',
+  '3 produits par gamme, formulés exclusivement': '3 products per range, exclusively formulated',
+  '100% Naturel': '100% Natural',
+  'Ingrédients botaniques de la plus haute qualité': 'Botanical ingredients of the highest quality',
+}
 
 export default function BoutiquePage() {
+  const { lang } = useLang()
+  const t = useT(EN)
+  const GAMMES = getGammes(lang)
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
       {/* ── PAGE BANNER ── */}
@@ -18,11 +46,10 @@ export default function BoutiquePage() {
               fontSize: 'clamp(2.5rem, 6vw, 5rem)',
             }}
           >
-            Boutique
+            {t('Boutique')}
           </h1>
           <p className="text-[#FAF6EF]/60 max-w-lg leading-relaxed">
-            Chaque gamme possède son univers, ses actifs botaniques et ses formules exclusives.
-            3 produits par gamme, pensés pour les peaux noires et métissées.
+            {t("Chaque gamme possède son univers, ses actifs botaniques et ses formules exclusives. 3 produits par gamme, pensés pour les peaux noires et métissées.")}
           </p>
         </div>
       </div>
@@ -42,7 +69,7 @@ export default function BoutiquePage() {
                 <div className="relative h-64 overflow-hidden">
                   <img
                     src={g.image}
-                    alt={`Ingrédients gamme ${g.nom}`}
+                    alt={`${t('Ingrédients gamme')} ${g.nom}`}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                   <div
@@ -66,7 +93,7 @@ export default function BoutiquePage() {
                     className="absolute bottom-4 right-4 px-3 py-1 text-white text-[9px] tracking-[0.2em] uppercase"
                     style={{ background: g.color }}
                   >
-                    3 produits
+                    {t('3 produits')}
                   </div>
                 </div>
 
@@ -95,7 +122,7 @@ export default function BoutiquePage() {
                         className="text-[10px] tracking-[0.1em] uppercase px-3 py-1 border"
                         style={{ color: g.colorDark, borderColor: g.color + '50' }}
                       >
-                        {p}
+                        {t(p)}
                       </span>
                     ))}
                   </div>
@@ -103,7 +130,7 @@ export default function BoutiquePage() {
                     className="flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase font-medium group-hover:gap-3 transition-all"
                     style={{ color: g.color }}
                   >
-                    Découvrir la gamme →
+                    {t('Découvrir la gamme →')}
                   </div>
                 </div>
               </Link>
@@ -118,7 +145,7 @@ export default function BoutiquePage() {
           <div className="bg-[#3B1705] p-10 md:p-16 grid md:grid-cols-3 gap-8">
             <div className="md:col-span-2">
               <p className="text-[#C97B1A] text-[9px] tracking-[0.3em] uppercase mb-4">
-                Notre engagement produit
+                {t('Notre engagement produit')}
               </p>
               <h2
                 className="text-[#FAF6EF] leading-tight mb-5"
@@ -127,12 +154,10 @@ export default function BoutiquePage() {
                   fontSize: 'clamp(1.8rem, 3vw, 2.5rem)',
                 }}
               >
-                100% naturel, formules uniques,<br />adaptées à votre peau.
+                {t('100% naturel, formules uniques,')}<br />{t('adaptées à votre peau.')}
               </h2>
               <p className="text-[#FAF6EF]/65 leading-relaxed text-sm max-w-lg">
-                Pour chaque produit, nous relevons le défi de créer des formules uniques et
-                innovantes en utilisant exclusivement des options naturelles. Chaque gamme comprend
-                une lotion (100 ml), une crème de visage (100 ml) et un lait corps (500 ml).
+                {t('Pour chaque produit, nous relevons le défi de créer des formules uniques et innovantes en utilisant exclusivement des options naturelles. Chaque gamme comprend une lotion (100 ml), une crème de visage (100 ml) et un lait corps (500 ml).')}
               </p>
             </div>
             <div className="flex flex-col justify-center gap-4">
@@ -146,9 +171,9 @@ export default function BoutiquePage() {
                     className="text-[#FAF6EF] text-lg"
                     style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
                   >
-                    {stat.label}
+                    {t(stat.label)}
                   </div>
-                  <div className="text-[#FAF6EF]/45 text-[11px] mt-0.5">{stat.desc}</div>
+                  <div className="text-[#FAF6EF]/45 text-[11px] mt-0.5">{t(stat.desc)}</div>
                 </div>
               ))}
             </div>

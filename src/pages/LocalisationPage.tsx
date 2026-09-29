@@ -1,4 +1,22 @@
+import { useT } from '@/context/LanguageContext'
+
+const EN: Record<string, string> = {
+  Localisation: 'Location',
+  'Où nous trouver': 'Where to find us',
+  'est à Douala.': 'is in Douala.',
+  Ville: 'City',
+  Pays: 'Country',
+  Continent: 'Continent',
+  Cameroun: 'Cameroon',
+  'Afrique Centrale': 'Central Africa',
+  'Nous contacter': 'Contact us',
+  "Pour toute demande d'information ou de commande, contactez-nous directement par email ou via WhatsApp.":
+    'For any information or order request, contact us directly by email or via WhatsApp.',
+}
+
 export default function LocalisationPage() {
+  const t = useT(EN)
+
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
       <div className="bg-[#3B1705] py-16 md:py-20">
@@ -8,7 +26,7 @@ export default function LocalisationPage() {
             Contact · Teint d'Afrique Cosmétiques
           </p>
           <h1 className="text-[#FAF6EF] leading-tight" style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}>
-            Localisation
+            {t('Localisation')}
           </h1>
         </div>
       </div>
@@ -19,10 +37,10 @@ export default function LocalisationPage() {
             <div>
               <p className="text-[#C97B1A] tracking-[0.3em] text-[10px] uppercase mb-6 flex items-center gap-3">
                 <span className="w-6 h-px bg-[#C97B1A]" />
-                Où nous trouver
+                {t('Où nous trouver')}
               </p>
               <h2 className="text-[#3B1705] text-3xl md:text-4xl mb-8" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
-                Teint d'Afrique Cosmétiques<br />est à Douala.
+                Teint d'Afrique Cosmétiques<br />{t('est à Douala.')}
               </h2>
               <div className="space-y-6 text-[15px]">
                 {[
@@ -32,20 +50,19 @@ export default function LocalisationPage() {
                   { label: 'Email', value: 'contact@teintdafrique.com', href: 'mailto:contact@teintdafrique.com' },
                 ].map(item => (
                   <div key={item.label} className="flex gap-4 items-start">
-                    <div className="w-24 flex-shrink-0 text-[9px] tracking-[0.25em] uppercase text-[#C97B1A] pt-0.5">{item.label}</div>
+                    <div className="w-24 flex-shrink-0 text-[9px] tracking-[0.25em] uppercase text-[#C97B1A] pt-0.5">{t(item.label)}</div>
                     {item.href ? (
-                      <a href={item.href} className="text-[#3B1705] font-medium hover:text-[#C97B1A] transition-colors">{item.value}</a>
+                      <a href={item.href} className="text-[#3B1705] font-medium hover:text-[#C97B1A] transition-colors">{t(item.value)}</a>
                     ) : (
-                      <p className="text-[#3B1705] font-medium">{item.value}</p>
+                      <p className="text-[#3B1705] font-medium">{t(item.value)}</p>
                     )}
                   </div>
                 ))}
               </div>
               <div className="mt-10 p-6 bg-[#3B1705]">
-                <p className="text-[#C97B1A] text-[9px] tracking-[0.3em] uppercase mb-3">Nous contacter</p>
+                <p className="text-[#C97B1A] text-[9px] tracking-[0.3em] uppercase mb-3">{t('Nous contacter')}</p>
                 <p className="text-[#FAF6EF]/70 text-sm leading-relaxed mb-4">
-                  Pour toute demande d'information ou de commande, contactez-nous directement par
-                  email ou via WhatsApp.
+                  {t("Pour toute demande d'information ou de commande, contactez-nous directement par email ou via WhatsApp.")}
                 </p>
                 <a
                   href="https://wa.me/237000000000"
@@ -67,7 +84,7 @@ export default function LocalisationPage() {
                 <div className="text-center">
                   <div className="text-[#C97B1A] text-5xl mb-4" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>◈</div>
                   <p className="text-[#3B1705] text-2xl" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>Douala</p>
-                  <p className="text-[#2A1006]/50 text-sm mt-1">Cameroun</p>
+                  <p className="text-[#2A1006]/50 text-sm mt-1">{t('Cameroun')}</p>
                 </div>
               </div>
               <img

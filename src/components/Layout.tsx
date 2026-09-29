@@ -2,14 +2,27 @@ import { Outlet } from 'react-router'
 import Nav from './Nav'
 import Footer from './Footer'
 import BlackSkinsBanner from './BlackSkinsBanner'
+import { useLang, useT } from '@/context/LanguageContext'
+
+const EN = {
+  'Nous contacter sur WhatsApp': 'Contact us on WhatsApp',
+  Commander: 'Order',
+}
 
 function WhatsAppFAB() {
+  const { lang } = useLang()
+  const t = useT(EN)
+  const message = encodeURIComponent(
+    lang === 'en'
+      ? "Hello Teint d'Afrique Cosmétiques, I would like information about your products."
+      : "Bonjour Teint d'Afrique Cosmétiques, je souhaite avoir des informations sur vos produits."
+  )
   return (
     <a
-      href="https://wa.me/237000000000?text=Bonjour%20Teint%20d'Afrique%20Cosmétiques%2C%20je%20souhaite%20avoir%20des%20informations%20sur%20vos%20produits."
+      href={`https://wa.me/237000000000?text=${message}`}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Nous contacter sur WhatsApp"
+      aria-label={t('Nous contacter sur WhatsApp')}
       className="fixed bottom-6 right-6 z-50 flex items-center gap-3 pl-4 pr-5 py-3 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 group"
       style={{ background: '#25D366' }}
     >
@@ -21,7 +34,7 @@ function WhatsAppFAB() {
         className="text-white text-[11px] tracking-[0.15em] uppercase font-medium whitespace-nowrap"
         style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}
       >
-        Commander
+        {t('Commander')}
       </span>
     </a>
   )

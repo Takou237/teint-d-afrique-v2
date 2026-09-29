@@ -15,16 +15,23 @@ import VlogsPage from '@/pages/VlogsPage'
 import ContactPage from '@/pages/ContactPage'
 import LocalisationPage from '@/pages/LocalisationPage'
 import DistributeursPage from '@/pages/DistributeursPage'
+import { useT } from '@/context/LanguageContext'
+
+const EN = {
+  'Page introuvable': 'Page not found',
+  "Retour à l'accueil": 'Back to home',
+}
 
 function NotFound() {
+  const t = useT(EN)
   return (
     <div className="min-h-[50vh] flex flex-col items-center justify-center gap-4 px-6">
       <p className="text-[#3B1705] text-5xl" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
         404
       </p>
-      <p className="text-[#2A1006]/60">Page introuvable</p>
+      <p className="text-[#2A1006]/60">{t('Page introuvable')}</p>
       <a href="/" className="text-[#C97B1A] text-[11px] tracking-[0.2em] uppercase underline">
-        Retour à l'accueil
+        {t("Retour à l'accueil")}
       </a>
     </div>
   )

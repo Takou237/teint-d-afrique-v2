@@ -1,8 +1,29 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router'
 import logo from '@/imports/TDA_LogoExe_CMJN.png'
-import { GAMMES } from '@/data'
-import { useLang } from '@/context/LanguageContext'
+import { getGammes } from '@/data'
+import { useLang, useT } from '@/context/LanguageContext'
+
+const EN = {
+  Accueil: 'Home',
+  'La marque': 'The Brand',
+  'Notre Histoire': 'Our Story',
+  'Notre Fondatrice': 'Our Founder',
+  'Notre Vision de la Beauté Africaine': 'Our Vision of African Beauty',
+  'Nos Engagements': 'Our Commitments',
+  'Nos Valeurs et Ambitions': 'Our Values & Ambitions',
+  'Nos produits': 'Our Products',
+  'Les Gammes': 'The Ranges',
+  "Vue d'ensemble": 'Overview',
+  'Types de Produits': 'Product Types',
+  'Lotion · Crème · Lait': 'Lotion · Cream · Milk',
+  'Vos Besoins': 'Your Needs',
+  'Trouver votre soin': 'Find your care',
+  'Notre Expertise': 'Our Expertise',
+  Vlogs: 'Vlogs',
+  Contact: 'Contact',
+  Langue: 'Language',
+}
 
 interface DropdownItem {
   label: string
@@ -42,6 +63,9 @@ const NAV: NavGroup[] = [
 ]
 
 function Dropdown({ items, onClose }: { items: DropdownItem[]; onClose: () => void }) {
+  const { lang } = useLang()
+  const t = useT(EN)
+  const GAMMES = getGammes(lang)
   return (
     <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white shadow-xl border border-[#3B1705]/8 py-2 min-w-[240px] z-50">
       {items.map((item, i) => {
@@ -65,10 +89,10 @@ function Dropdown({ items, onClose }: { items: DropdownItem[]; onClose: () => vo
                 className="text-[11px] tracking-[0.1em] uppercase font-medium"
                 style={{ color: gamme ? gamme.colorDark : '#3B1705' }}
               >
-                {item.label}
+                {t(item.label)}
               </p>
               {item.sub && (
-                <p className="text-[10px] text-[#2A1006]/40 mt-0.5">{item.sub}</p>
+                <p className="text-[10px] text-[#2A1006]/40 mt-0.5">{t(item.sub)}</p>
               )}
             </div>
           </Link>
@@ -86,6 +110,8 @@ export default function Nav() {
   const location = useLocation()
   const navRef = useRef<HTMLDivElement>(null)
   const { lang, setLang } = useLang()
+  const t = useT(EN)
+  const GAMMES = getGammes(lang)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
@@ -147,7 +173,7 @@ export default function Nav() {
                     isActive(group) ? 'text-[#C97B1A]' : 'text-[#3B1705] hover:text-[#C97B1A]'
                   }`}
                 >
-                  {group.label}
+                  {t(group.label)}
                 </Link>
               ) : (
                 <button
@@ -156,7 +182,7 @@ export default function Nav() {
                     isActive(group) ? 'text-[#C97B1A]' : 'text-[#3B1705] hover:text-[#C97B1A]'
                   }`}
                 >
-                  {group.label}
+                  {t(group.label)}
                   <svg
                     width="9"
                     height="5"
@@ -229,7 +255,7 @@ export default function Nav() {
                     to={group.to}
                     className="flex items-center py-3.5 text-[11px] tracking-[0.2em] uppercase font-medium text-[#3B1705]"
                   >
-                    {group.label}
+                    {t(group.label)}
                   </Link>
                 ) : (
                   <>
@@ -237,7 +263,7 @@ export default function Nav() {
                       onClick={() => setMobileExpanded(mobileExpanded === group.label ? null : group.label)}
                       className="w-full flex items-center justify-between py-3.5 text-[11px] tracking-[0.2em] uppercase font-medium text-[#3B1705]"
                     >
-                      {group.label}
+                      {t(group.label)}
                       <svg
                         width="10"
                         height="6"
@@ -262,7 +288,7 @@ export default function Nav() {
                                 ? <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: gamme.color }} />
                                 : <span className="w-1.5 h-1.5 rounded-full bg-[#C97B1A]/40 flex-shrink-0" />
                               }
-                              {item.label}
+                              {t(item.label)}
                             </Link>
                           )
                         })}
@@ -274,7 +300,7 @@ export default function Nav() {
             ))}
             {/* Mobile language switcher */}
             <div className="pt-4 pb-2 flex items-center gap-2">
-              <span className="text-[9px] tracking-[0.25em] uppercase text-[#3B1705]/40 mr-1">Langue</span>
+              <span className="text-[9px] tracking-[0.25em] uppercase text-[#3B1705]/40 mr-1">{t('Langue')}</span>
               {(['fr', 'en'] as const).map(l => (
                 <button
                   key={l}
