@@ -217,9 +217,9 @@ export default function GammePage() {
             </div>
             <div className="relative">
               <img
-                src={gamme.image}
-                alt={`${t('Actifs botaniques')} — ${gamme.nom}`}
-                className="w-full h-72 md:h-80 object-cover"
+                src={gamme.mainImage}
+                alt={`${gamme.nom} — ${gamme.ingredients}`}
+                className="w-full h-72 md:h-80 object-contain p-8"
               />
               <div
                 className="absolute bottom-4 right-4 px-4 py-2 text-white text-[9px] tracking-[0.2em] uppercase"
@@ -303,24 +303,20 @@ export default function GammePage() {
                 to={`/boutique/${g.id}`}
                 className="group flex items-center gap-4 p-5 bg-white border border-[#3B1705]/8 hover:shadow-md transition-all"
               >
-                <div className="relative h-16 w-16 overflow-hidden flex-shrink-0">
+                <div
+                  className="relative h-16 w-16 overflow-hidden flex-shrink-0"
+                  style={{ background: g.colorLight }}
+                >
                   <img
-                    src={g.image}
-                    alt={`${t('Gamme')} ${g.nom}`}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    src={g.mainImage}
+                    alt={g.nom}
+                    className="w-full h-full object-contain p-1.5 group-hover:scale-110 transition-transform duration-500"
                   />
-                  <div
-                    className="absolute inset-0 opacity-60"
-                    style={{ background: g.color }}
-                  />
-                  <p
-                    className="absolute inset-0 flex items-center justify-center text-white text-[10px] tracking-wider font-bold"
-                    style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: '11px' }}
-                  >
-                    {g.nom}
-                  </p>
                 </div>
                 <div className="min-w-0">
+                  <p className="text-[9px] tracking-[0.2em] uppercase font-medium" style={{ color: g.colorDark }}>
+                    {g.nom}
+                  </p>
                   <p className="font-medium text-sm text-[#3B1705] truncate">{g.tagline}</p>
                   <p className="text-[11px] mt-0.5" style={{ color: g.color }}>{g.ingredients}</p>
                 </div>
