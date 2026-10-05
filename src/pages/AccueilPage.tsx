@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 import { getGammes } from '@/data'
 import { useLang, useT } from '@/context/LanguageContext'
+import fondatriceImg from '@/assets/fondatrice.webp'
 
 const EN = {
   'Pourquoi Teint d\'Afrique': 'Why Teint d\'Afrique',
@@ -205,9 +206,9 @@ export default function AccueilPage() {
             <div className="relative">
               <div className="absolute -top-4 -left-4 w-24 h-24 border border-[#C97B1A]/25 pointer-events-none" />
               <img
-                src="https://images.unsplash.com/photo-1632765866070-3fadf25d3d5b?w=700&h=850&fit=crop&auto=format"
+                src={fondatriceImg}
                 alt={t("Minette Kamdem-Jambong, fondatrice de Teint d'Afrique Cosmétiques")}
-                className="w-full h-[420px] object-cover object-top"
+                className="w-full h-[420px] object-cover"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#2A1006]/65 to-transparent px-5 py-6">
                 <p className="text-white text-xl" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>

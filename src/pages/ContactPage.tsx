@@ -71,7 +71,7 @@ export default function ContactPage() {
       </div>
 
       {/* ── SECTION 1 : NOUS CONTACTER ── */}
-      <section className="py-20 md:py-28" id="nous-contacter">
+      <section className="py-10 md:py-10" id="nous-contacter">
         <div className="max-w-7xl mx-auto px-6">
           <p className="text-[#C97B1A] tracking-[0.35em] text-[10px] uppercase mb-3 flex items-center gap-3">
             <span className="w-8 h-px bg-[#C97B1A]" />
@@ -165,7 +165,7 @@ export default function ContactPage() {
       </div>
 
       {/* ── SECTION 2 : LOCALISATION ── */}
-      <section className="py-20 md:py-28" id="localisation">
+      <section className="py-10 md:py-10" id="localisation">
         <div className="max-w-7xl mx-auto px-6">
           <p className="text-[#C97B1A] tracking-[0.35em] text-[10px] uppercase mb-3 flex items-center gap-3">
             <span className="w-8 h-px bg-[#C97B1A]" />
@@ -219,7 +219,7 @@ export default function ContactPage() {
       </div>
 
       {/* ── SECTION 3 : NOS DISTRIBUTEURS ── */}
-      <section className="py-20 md:py-28" id="distributeurs">
+      <section className="py-10 md:py-10" id="distributeurs">
         <div className="max-w-7xl mx-auto px-6">
           <p className="text-[#C97B1A] tracking-[0.35em] text-[10px] uppercase mb-3 flex items-center gap-3">
             <span className="w-8 h-px bg-[#C97B1A]" />
