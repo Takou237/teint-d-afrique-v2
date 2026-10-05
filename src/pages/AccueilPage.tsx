@@ -30,8 +30,8 @@ const EN = {
   'La marque': 'The brand',
   'Une femme, une conviction,': 'A woman, a conviction,',
   'une marque.': 'a brand.',
-  'Minette Jambong-Kamdem, fondatrice de Teint d\'Afrique Cosmétiques':
-    'Minette Jambong-Kamdem, founder of Teint d\'Afrique Cosmétiques',
+  'Minette Kamdem-Jambong, fondatrice de Teint d\'Afrique Cosmétiques':
+    'Minette Kamdem-Jambong, founder of Teint d\'Afrique Cosmétiques',
   'Fondatrice & Créatrice': 'Founder & Creator',
   'Créatrice de la marque ': 'Creator of the brand ',
   ', épouse et mère, ': ', wife and mother, ',
@@ -44,7 +44,8 @@ const EN = {
   'Nos Produits': 'Our Products',
   'Nos Gammes de Soins': 'Our Skincare Ranges',
   'Voir toutes les gammes →': 'See all ranges →',
-  '3 produits': '3 products',
+  '4 produits': '4 products',
+  'Savon · 180g': 'Soap · 180g',
   'Crème · 100ml': 'Cream · 100ml',
   'Lait · 500ml': 'Milk · 500ml',
   'Découvrir la gamme →': 'Discover the range →',
@@ -205,12 +206,12 @@ export default function AccueilPage() {
               <div className="absolute -top-4 -left-4 w-24 h-24 border border-[#C97B1A]/25 pointer-events-none" />
               <img
                 src="https://images.unsplash.com/photo-1632765866070-3fadf25d3d5b?w=700&h=850&fit=crop&auto=format"
-                alt={t("Minette Jambong-Kamdem, fondatrice de Teint d'Afrique Cosmétiques")}
+                alt={t("Minette Kamdem-Jambong, fondatrice de Teint d'Afrique Cosmétiques")}
                 className="w-full h-[420px] object-cover object-top"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#2A1006]/65 to-transparent px-5 py-6">
                 <p className="text-white text-xl" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
-                  Minette Jambong-Kamdem
+                  Minette Kamdem-Jambong
                 </p>
                 <p className="text-[#C97B1A] text-[9px] tracking-[0.3em] uppercase mt-1">
                   {t('Fondatrice & Créatrice')}
@@ -233,7 +234,7 @@ export default function AccueilPage() {
               </h2>
               <p className="text-[#2A1006]/75 leading-relaxed text-[15px] mb-5">
                 {t('Créatrice de la marque ')}<strong className="text-[#3B1705]">#TeintdAfriqueCosmetiques</strong>
-                {t(', épouse et mère, ')}<strong className="text-[#3B1705]">Minette Jambong-Kamdem</strong>
+                {t(', épouse et mère, ')}<strong className="text-[#3B1705]">Minette Kamdem-Jambong</strong>
                 {t(" est une Femme Camerounaise qui rêve de restaurer l'identité et l'image de la femme africaine en s'impliquant activement sur les sujets tels que l'Acceptation de soi, la Dignité africaine et la Diversité Culturelle.")}
               </p>
               <p className="text-[#2A1006]/75 leading-relaxed text-[15px] mb-8">
@@ -293,11 +294,11 @@ export default function AccueilPage() {
                 to={`/nos-produits/${g.id}`}
                 className="group block overflow-hidden border border-[#3B1705]/8 bg-white hover:shadow-lg transition-shadow"
               >
-                <div className="relative h-56 overflow-hidden">
+                <div className="relative h-56 overflow-hidden" style={{ background: g.colorLight }}>
                   <img
-                    src={g.image}
+                    src={g.mainImage}
                     alt={`${g.nom} — ${g.ingredients}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-contain p-8 group-hover:scale-105 transition-transform duration-700"
                   />
                   <div
                     className="absolute inset-0"
@@ -313,7 +314,7 @@ export default function AccueilPage() {
                     className="absolute bottom-4 right-4 px-3 py-1 text-white text-[9px] tracking-[0.2em] uppercase"
                     style={{ background: g.color }}
                   >
-                    {t('3 produits')}
+                    {t('4 produits')}
                   </div>
                 </div>
                 <div className="p-6" style={{ background: g.colorLight }}>
@@ -324,7 +325,7 @@ export default function AccueilPage() {
                     {g.description.slice(0, 180)}…
                   </p>
                   <div className="flex flex-wrap gap-2 mb-5">
-                    {['Lotion · 100ml', 'Crème · 100ml', 'Lait · 500ml'].map(p => (
+                    {['Savon · 180g', 'Lotion · 100ml', 'Crème · 100ml', 'Lait · 500ml'].map(p => (
                       <span key={p} className="text-[10px] tracking-[0.1em] px-3 py-1 border" style={{ color: g.colorDark, borderColor: g.color + '50' }}>
                         {t(p)}
                       </span>

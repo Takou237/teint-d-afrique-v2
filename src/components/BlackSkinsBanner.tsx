@@ -97,7 +97,7 @@ export default function BlackSkinsBanner() {
           <div className="hidden lg:flex flex-col gap-5 flex-shrink-0 ml-auto">
             {[
               { n: '4', label: 'Gammes exclusives' },
-              { n: '12', label: 'Produits naturels' },
+              { n: '16', label: 'Produits naturels' },
               { n: '100%', label: 'Ingrédients naturels' },
             ].map(s => (
               <div key={s.label} className="text-center bg-white/15 px-6 py-4">

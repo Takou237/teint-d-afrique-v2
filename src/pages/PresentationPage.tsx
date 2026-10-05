@@ -30,7 +30,7 @@ export default function PresentationPage() {
               <div className="absolute -top-5 -left-5 w-28 h-28 border border-[#C97B1A]/25 pointer-events-none z-10" />
               <img
                 src="https://images.unsplash.com/photo-1632765866070-3fadf25d3d5b?w=700&h=900&fit=crop&auto=format"
-                alt="Minette Jambong-Kamdem, fondatrice de Teint d'Afrique Cosmétiques"
+                alt="Minette Kamdem-Jambong, fondatrice de Teint d'Afrique Cosmétiques"
                 className="w-full h-[500px] md:h-[640px] object-cover object-top"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#2A1006]/70 to-transparent px-6 py-8">
@@ -38,7 +38,7 @@ export default function PresentationPage() {
                   className="text-white text-2xl"
                   style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
                 >
-                  Minette Jambong-Kamdem
+                  Minette Kamdem-Jambong
                 </p>
                 <p className="text-[#C97B1A] text-[9px] tracking-[0.3em] uppercase mt-1">
                   Fondatrice & Créatrice — #TeintdAfriqueCosmetiques
@@ -51,7 +51,7 @@ export default function PresentationPage() {
               <p>
                 Créatrice de la marque{' '}
                 <strong className="text-[#3B1705]">#TeintdAfriqueCosmetiques</strong>, épouse et
-                mère, <strong className="text-[#3B1705]">Minette Jambong-Kamdem</strong> est une Femme
+                mère, <strong className="text-[#3B1705]">Minette Kamdem-Jambong</strong> est une Femme
                 Camerounaise qui rêve de restaurer l'identité et l'image de la femme africaine en
                 s'impliquant activement sur les sujets tels que l'Acceptation de soi, la Dignité
                 africaine et la Diversité Culturelle.

@@ -16,7 +16,7 @@ const EN = {
   'Les Gammes': 'The Ranges',
   "Vue d'ensemble": 'Overview',
   'Types de Produits': 'Product Types',
-  'Lotion · Crème · Lait': 'Lotion · Cream · Milk',
+  'Savon · Lotion · Crème · Lait': 'Soap · Lotion · Cream · Milk',
   'Vos Besoins': 'Your Needs',
   'Trouver votre soin': 'Find your care',
   'Notre Expertise': 'Our Expertise',
@@ -53,7 +53,7 @@ const NAV: NavGroup[] = [
     label: 'Nos produits',
     items: [
       { label: 'Les Gammes', to: '/nos-produits/les-gammes', sub: 'Vue d\'ensemble' },
-      { label: 'Types de Produits', to: '/nos-produits/types', sub: 'Lotion · Crème · Lait' },
+      { label: 'Types de Produits', to: '/nos-produits/types', sub: 'Savon · Lotion · Crème · Lait' },
       { label: 'Vos Besoins', to: '/nos-produits/vos-besoins', sub: 'Trouver votre soin' },
     ],
   },

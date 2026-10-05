@@ -14,6 +14,10 @@ import laitUnifie from '@/assets/products/lait-unifie.webp'
 import laitRepare from '@/assets/products/lait-repare.webp'
 import laitHydrate from '@/assets/products/lait-hydrate.webp'
 import laitNourri from '@/assets/products/lait-nourri.webp'
+import savonUnifie from '@/assets/products/savon-unifie.webp'
+import savonRepare from '@/assets/products/savon-repare.webp'
+import savonHydrate from '@/assets/products/savon-hydrate.webp'
+import savonNourri from '@/assets/products/savon-nourri.webp'
 
 interface Slide {
   img: string
@@ -30,6 +34,19 @@ interface TypeItem {
 }
 
 const TYPES: TypeItem[] = [
+  {
+    type: 'Savon',
+    poids: '180 g',
+    symbol: '◼',
+    description: "Premier geste de soin, le savon nettoie en douceur tout en déposant les actifs botaniques de chaque gamme sur la peau. Formulé sans agents agressifs, il respecte le film hydrolipidique naturel et prépare la peau à absorber les soins suivants.",
+    benefices: ['Nettoyage doux et profond', 'Dépôt des actifs naturels', 'Respect du pH de la peau', 'Adapté à toutes les carnations'],
+    slides: [
+      { img: savonUnifie, label: 'Peau Unifiée' },
+      { img: savonRepare, label: 'Peau Réparée' },
+      { img: savonHydrate, label: 'Peau Hydratée' },
+      { img: savonNourri, label: 'Peau Nourrie' },
+    ],
+  },
   {
     type: 'Lotion',
     poids: '100 ml',
@@ -74,8 +91,15 @@ const TYPES: TypeItem[] = [
 const EN: Record<string, string> = {
   "Nos Produits · Teint d'Afrique Cosmétiques": "Our Products · Teint d'Afrique Cosmétiques",
   'Types de Produits': 'Product Types',
-  '3 types de produits, déclinés dans chacune de nos 4 gammes — soit 12 références formulées pour les peaux noires, métissées et albinos.':
-    '3 product types, available in each of our 4 ranges — 12 references formulated for black, mixed-race and albino skin.',
+  '4 types de produits, déclinés dans chacune de nos 4 gammes — soit 16 références formulées pour les peaux noires, métissées et albinos.':
+    '4 product types, available in each of our 4 ranges — 16 references formulated for black, mixed-race and albino skin.',
+  Savon: 'Soap',
+  "Premier geste de soin, le savon nettoie en douceur tout en déposant les actifs botaniques de chaque gamme sur la peau. Formulé sans agents agressifs, il respecte le film hydrolipidique naturel et prépare la peau à absorber les soins suivants.":
+    'The first step of your routine, the soap gently cleanses while depositing the botanical actives of each range onto the skin. Formulated without harsh agents, it respects the natural hydrolipidic film and prepares the skin to absorb the following care.',
+  'Nettoyage doux et profond': 'Gentle, deep cleansing',
+  'Dépôt des actifs naturels': 'Deposits natural actives',
+  'Respect du pH de la peau': "Respects the skin's pH",
+  'Adapté à toutes les carnations': 'Suitable for all complexions',
   Lotion: 'Lotion',
   'Crème de Visage': 'Face Cream',
   'Lait Corps': 'Body Milk',
@@ -205,7 +229,7 @@ export default function TypesProduitsPage() {
             {t('Types de Produits')}
           </h1>
           <p className="text-[#FAF6EF]/60 max-w-lg">
-            {t('3 types de produits, déclinés dans chacune de nos 4 gammes — soit 12 références formulées pour les peaux noires, métissées et albinos.')}
+            {t('4 types de produits, déclinés dans chacune de nos 4 gammes — soit 16 références formulées pour les peaux noires, métissées et albinos.')}
           </p>
         </div>
       </div>

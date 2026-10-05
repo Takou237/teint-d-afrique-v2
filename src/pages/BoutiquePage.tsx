@@ -4,10 +4,10 @@ import { useLang, useT } from '@/context/LanguageContext'
 
 const EN: Record<string, string> = {
   Boutique: 'Shop',
-  "Chaque gamme possède son univers, ses actifs botaniques et ses formules exclusives. 3 produits par gamme, pensés pour les peaux noires et métissées.":
-    'Each range has its own universe, botanical actives and exclusive formulas. 3 products per range, designed for black and mixed-race skin.',
-  '3 produits': '3 products',
-  'Ingrédients gamme': 'Range ingredients',
+  "Chaque gamme possède son univers, ses actifs botaniques et ses formules exclusives. 4 produits par gamme, pensés pour les peaux noires et métissées.":
+    'Each range has its own universe, botanical actives and exclusive formulas. 4 products per range, designed for black and mixed-race skin.',
+  '4 produits': '4 products',
+  Savon: 'Soap',
   Lotion: 'Lotion',
   Crème: 'Cream',
   Lait: 'Milk',
@@ -15,13 +15,13 @@ const EN: Record<string, string> = {
   'Notre engagement produit': 'Our product commitment',
   '100% naturel, formules uniques,': '100% natural, unique formulas,',
   'adaptées à votre peau.': 'adapted to your skin.',
-  'Pour chaque produit, nous relevons le défi de créer des formules uniques et innovantes en utilisant exclusivement des options naturelles. Chaque gamme comprend une lotion (100 ml), une crème de visage (100 ml) et un lait corps (500 ml).':
-    'For each product, we take on the challenge of creating unique and innovative formulas using exclusively natural options. Each range includes a lotion (100 ml), a face cream (100 ml) and a body milk (500 ml).',
+  'Pour chaque produit, nous relevons le défi de créer des formules uniques et innovantes en utilisant exclusivement des options naturelles. Chaque gamme comprend un savon (180 g), une lotion (100 ml), une crème de visage (100 ml) et un lait corps (500 ml).':
+    'For each product, we take on the challenge of creating unique and innovative formulas using exclusively natural options. Each range includes a soap (180 g), a lotion (100 ml), a face cream (100 ml) and a body milk (500 ml).',
   '4 Gammes': '4 Ranges',
   'Éclat Naturel · Réparation · Hydratation · Nutrition':
     'Natural Radiance · Repair · Hydration · Nutrition',
-  '12 Produits': '12 Products',
-  '3 produits par gamme, formulés exclusivement': '3 products per range, exclusively formulated',
+  '16 Produits': '16 Products',
+  '4 produits par gamme, formulés exclusivement': '4 products per range, exclusively formulated',
   '100% Naturel': '100% Natural',
   'Ingrédients botaniques de la plus haute qualité': 'Botanical ingredients of the highest quality',
 }
@@ -49,7 +49,7 @@ export default function BoutiquePage() {
             {t('Boutique')}
           </h1>
           <p className="text-[#FAF6EF]/60 max-w-lg leading-relaxed">
-            {t("Chaque gamme possède son univers, ses actifs botaniques et ses formules exclusives. 3 produits par gamme, pensés pour les peaux noires et métissées.")}
+            {t("Chaque gamme possède son univers, ses actifs botaniques et ses formules exclusives. 4 produits par gamme, pensés pour les peaux noires et métissées.")}
           </p>
         </div>
       </div>
@@ -66,11 +66,11 @@ export default function BoutiquePage() {
                 style={{ '--tw-border-opacity': '1' } as React.CSSProperties}
               >
                 {/* Image */}
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative h-64 overflow-hidden" style={{ background: g.colorLight }}>
                   <img
-                    src={g.image}
-                    alt={`${t('Ingrédients gamme')} ${g.nom}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    src={g.mainImage}
+                    alt={g.nom}
+                    className="w-full h-full object-contain p-8 group-hover:scale-105 transition-transform duration-700"
                   />
                   <div
                     className="absolute inset-0"
@@ -93,7 +93,7 @@ export default function BoutiquePage() {
                     className="absolute bottom-4 right-4 px-3 py-1 text-white text-[9px] tracking-[0.2em] uppercase"
                     style={{ background: g.color }}
                   >
-                    {t('3 produits')}
+                    {t('4 produits')}
                   </div>
                 </div>
 
@@ -116,7 +116,7 @@ export default function BoutiquePage() {
                   </p>
                   {/* Products list */}
                   <div className="flex flex-wrap gap-2 mb-5">
-                    {['Lotion', 'Crème', 'Lait'].map(p => (
+                    {['Savon', 'Lotion', 'Crème', 'Lait'].map(p => (
                       <span
                         key={p}
                         className="text-[10px] tracking-[0.1em] uppercase px-3 py-1 border"
@@ -157,13 +157,13 @@ export default function BoutiquePage() {
                 {t('100% naturel, formules uniques,')}<br />{t('adaptées à votre peau.')}
               </h2>
               <p className="text-[#FAF6EF]/65 leading-relaxed text-sm max-w-lg">
-                {t('Pour chaque produit, nous relevons le défi de créer des formules uniques et innovantes en utilisant exclusivement des options naturelles. Chaque gamme comprend une lotion (100 ml), une crème de visage (100 ml) et un lait corps (500 ml).')}
+                {t('Pour chaque produit, nous relevons le défi de créer des formules uniques et innovantes en utilisant exclusivement des options naturelles. Chaque gamme comprend un savon (180 g), une lotion (100 ml), une crème de visage (100 ml) et un lait corps (500 ml).')}
               </p>
             </div>
             <div className="flex flex-col justify-center gap-4">
               {[
                 { label: '4 Gammes', desc: 'Éclat Naturel · Réparation · Hydratation · Nutrition' },
-                { label: '12 Produits', desc: '3 produits par gamme, formulés exclusivement' },
+                { label: '16 Produits', desc: '4 produits par gamme, formulés exclusivement' },
                 { label: '100% Naturel', desc: "Ingrédients botaniques de la plus haute qualité" },
               ].map(stat => (
                 <div key={stat.label} className="border-l-2 border-[#C97B1A] pl-4">
