@@ -1,4 +1,5 @@
 import { useT } from '@/context/LanguageContext'
+import fondatriceImg from '@/assets/fondatrice.webp'
 
 const EN: Record<string, string> = {
   'Notre Fondatrice': 'Our Founder',
@@ -77,7 +78,7 @@ export default function PresentationPage() {
             <div className="relative order-2 md:order-1 md:sticky md:top-28">
               <div className="absolute -top-5 -left-5 w-28 h-28 border border-[#C97B1A]/25 pointer-events-none z-10" />
               <img
-                src="https://images.unsplash.com/photo-1632765866070-3fadf25d3d5b?w=700&h=900&fit=crop&auto=format"
+                src={fondatriceImg}
                 alt={t("Minette Kamdem-Jambong, fondatrice de Teint d'Afrique Cosmétiques")}
                 className="w-full h-[500px] md:h-[640px] object-cover object-top"
               />
