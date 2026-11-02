@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router'
 import logo from '@/imports/TDA_LogoExe_CMJN.png'
 import { getGammes } from '@/data'
+import { generalUrl } from '@/lib/whatsapp'
 import { useLang, useT } from '@/context/LanguageContext'
 
 const EN = {
@@ -23,6 +24,19 @@ const EN = {
   Vlogs: 'Vlogs',
   Contact: 'Contact',
   Langue: 'Language',
+  'Cosmétiques naturels · Douala, Cameroun': 'Natural cosmetics · Douala, Cameroon',
+  "Formulé en Afrique, pour l'Afrique": 'Formulated in Africa, for Africa',
+  'Commander sur WhatsApp': 'Order on WhatsApp',
+  'Ouvrir le menu': 'Open menu',
+  'Fermer le menu': 'Close menu',
+  'Éclat Naturel': 'Natural Radiance',
+  Réparation: 'Repair',
+  Hydratation: 'Hydration',
+  Nutrition: 'Nutrition',
+  'Curcuma & Carotte': 'Turmeric & Carrot',
+  'Huile de Marula & Collagène Marin': 'Marula Oil & Marine Collagen',
+  'Aloe Vera & Concombre': 'Aloe Vera & Cucumber',
+  "Beurre de Mangue & Huile d'Avocat": 'Mango Butter & Avocado Oil',
 }
 
 interface DropdownItem {
@@ -53,6 +67,10 @@ const NAV: NavGroup[] = [
     label: 'Nos produits',
     items: [
       { label: 'Les Gammes', to: '/nos-produits/les-gammes', sub: 'Vue d\'ensemble' },
+      { label: 'Éclat Naturel', to: '/nos-produits/eclat', sub: 'Curcuma & Carotte' },
+      { label: 'Réparation', to: '/nos-produits/reparation', sub: 'Huile de Marula & Collagène Marin' },
+      { label: 'Hydratation', to: '/nos-produits/hydratation', sub: 'Aloe Vera & Concombre' },
+      { label: 'Nutrition', to: '/nos-produits/nutrition', sub: 'Beurre de Mangue & Huile d\'Avocat' },
       { label: 'Types de Produits', to: '/nos-produits/types', sub: 'Savon · Lotion · Crème · Lait' },
       { label: 'Vos Besoins', to: '/nos-produits/vos-besoins', sub: 'Trouver votre soin' },
     ],
@@ -67,7 +85,7 @@ function Dropdown({ items, onClose }: { items: DropdownItem[]; onClose: () => vo
   const t = useT(EN)
   const GAMMES = getGammes(lang)
   return (
-    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white shadow-xl border border-[#3B1705]/8 py-2 min-w-[240px] z-50">
+    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 max-h-[calc(100svh-9rem)] overflow-y-auto bg-white shadow-xl border border-[#3B1705]/8 py-2 min-w-[240px] z-50">
       {items.map((item, i) => {
         const isGamme = GAMMES.some(g => item.to.includes(g.id))
         const gamme = isGamme ? GAMMES.find(g => item.to.includes(g.id)) : null
@@ -78,11 +96,15 @@ function Dropdown({ items, onClose }: { items: DropdownItem[]; onClose: () => vo
             onClick={onClose}
             className="flex items-start gap-3 px-5 py-3 hover:bg-[#FAF6EF] transition-colors group"
           >
-            {gamme && (
-              <span className="w-2 h-2 rounded-full mt-1 flex-shrink-0" style={{ background: gamme.color }} />
-            )}
-            {!gamme && (
-              <span className="w-2 h-2 rounded-full mt-1 flex-shrink-0 bg-[#3B1705]/20 group-hover:bg-[#C97B1A] transition-colors" />
+            {gamme ? (
+              <img
+                src={gamme.heroImage}
+                alt=""
+                loading="lazy"
+                className="h-9 w-9 flex-shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <span className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-[#3B1705]/20 transition-colors group-hover:bg-[#C9971A]" />
             )}
             <div>
               <p
@@ -137,6 +159,28 @@ export default function Nav() {
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
+  // Close overlays on Escape
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpenDropdown(null)
+        setMenuOpen(false)
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [])
+
+  // Lock the page behind the full-height mobile menu
+  useEffect(() => {
+    if (!menuOpen) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [menuOpen])
+
   const isActive = (group: NavGroup) => {
     if (group.to) return location.pathname === group.to
     return group.items?.some(item => location.pathname.startsWith(item.to.split('/').slice(0, 2).join('/')))
@@ -146,22 +190,50 @@ export default function Nav() {
     <nav
       ref={navRef}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-[#FAF6EF]/96 backdrop-blur-sm shadow-sm' : 'bg-[#FAF6EF]'
+        scrolled ? 'bg-[#FAF6EF]/96 shadow-[0_10px_30px_-24px_rgba(42,16,6,0.5)] backdrop-blur-md' : 'bg-[#FAF6EF]'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 lg:px-6 flex items-center justify-between h-16 md:h-18">
+      {/* Announcement bar — retracts on scroll */}
+      <div
+        className={`overflow-hidden bg-[#2A1006] text-[#FAF6EF] transition-all duration-300 ${
+          scrolled ? 'max-h-0 opacity-0' : 'max-h-9 opacity-100'
+        }`}
+      >
+        <div className="mx-auto flex h-8 max-w-[1440px] items-center justify-between gap-3 overflow-hidden px-4 md:px-6 lg:px-10">
+          <p className="flex items-center gap-2 whitespace-nowrap text-[8px] uppercase tracking-[0.16em] text-[#FAF6EF]/60 md:text-[9px] md:tracking-[0.2em]">
+            <span className="h-1 w-1 rounded-full bg-[#C9971A]" />
+            <span className="hidden sm:inline">{t('Cosmétiques naturels · Douala, Cameroun')}</span>
+            <span className="sm:hidden">Douala, Cameroun</span>
+          </p>
+          <p className="hidden whitespace-nowrap text-[8px] uppercase tracking-[0.22em] text-[#FAF6EF]/35 sm:block md:text-[9px]">
+            {t("Formulé en Afrique, pour l'Afrique")}
+          </p>
+          <a
+            href={generalUrl(lang)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-1.5 whitespace-nowrap text-[8px] uppercase tracking-[0.14em] text-[#E7C783] transition-colors hover:text-[#FAF6EF] md:text-[9px] md:tracking-[0.18em]"
+          >
+            <span className="hidden sm:inline">{t('Commander sur WhatsApp')}</span>
+            <span className="sm:hidden">WhatsApp</span>
+            <span className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-4 md:h-18 md:px-6 lg:px-10">
         {/* Logo */}
         <Link to="/" className="flex-shrink-0">
           <img
             src={logo}
             alt="Teint d'Afrique Cosmétiques"
-            className="h-7 md:h-9 object-contain mix-blend-multiply"
+            className="h-7 object-contain mix-blend-multiply md:h-9"
           />
         </Link>
 
         {/* Desktop nav */}
         <div
-          className="hidden lg:flex items-center gap-1"
+          className="hidden items-center gap-0.5 lg:flex"
           style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}
         >
           {NAV.map(group => (
@@ -169,8 +241,10 @@ export default function Nav() {
               {group.to && !group.items ? (
                 <Link
                   to={group.to}
-                  className={`px-3 py-2 text-[10px] tracking-[0.15em] uppercase font-medium transition-colors ${
-                    isActive(group) ? 'text-[#C97B1A]' : 'text-[#3B1705] hover:text-[#C97B1A]'
+                  className={`relative px-3 py-2 text-[10px] uppercase tracking-[0.15em] font-medium transition-colors after:absolute after:bottom-1 after:left-3 after:right-3 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 hover:after:scale-x-100 ${
+                    isActive(group)
+                      ? 'text-[#A85E0F] after:scale-x-100'
+                      : 'text-[#3B1705] hover:text-[#A85E0F]'
                   }`}
                 >
                   {t(group.label)}
@@ -178,8 +252,12 @@ export default function Nav() {
               ) : (
                 <button
                   onClick={() => setOpenDropdown(openDropdown === group.label ? null : group.label)}
-                  className={`flex items-center gap-1 px-3 py-2 text-[10px] tracking-[0.15em] uppercase font-medium transition-colors ${
-                    isActive(group) ? 'text-[#C97B1A]' : 'text-[#3B1705] hover:text-[#C97B1A]'
+                  aria-expanded={openDropdown === group.label}
+                  aria-haspopup="true"
+                  className={`relative flex items-center gap-1 px-3 py-2 text-[10px] uppercase tracking-[0.15em] font-medium transition-colors after:absolute after:bottom-1 after:left-3 after:right-3 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 hover:after:scale-x-100 ${
+                    isActive(group)
+                      ? 'text-[#A85E0F] after:scale-x-100'
+                      : 'text-[#3B1705] hover:text-[#A85E0F]'
                   }`}
                 >
                   {t(group.label)}
@@ -232,7 +310,8 @@ export default function Nav() {
           <button
             onClick={() => setMenuOpen(v => !v)}
             className="lg:hidden w-10 h-10 flex flex-col justify-center gap-[5px] items-center"
-            aria-label="Menu"
+            aria-label={menuOpen ? t('Fermer le menu') : t('Ouvrir le menu')}
+            aria-expanded={menuOpen}
           >
             <span className={`block w-6 h-0.5 bg-[#3B1705] origin-center transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-[7px]' : ''}`} />
             <span className={`block w-6 h-0.5 bg-[#3B1705] transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
@@ -244,7 +323,7 @@ export default function Nav() {
       {/* Mobile menu */}
       {menuOpen && (
         <div
-          className="lg:hidden bg-[#FAF6EF] border-t border-[#3B1705]/10 max-h-[80vh] overflow-y-auto"
+          className={`${scrolled ? 'h-[calc(100svh-4rem)]' : 'h-[calc(100svh-6rem)]'} overflow-y-auto overscroll-contain border-t border-[#3B1705]/10 bg-[#FAF6EF] shadow-[0_30px_60px_-20px_rgba(42,16,6,0.45)] lg:hidden`}
           style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}
         >
           <div className="px-5 py-4 flex flex-col divide-y divide-[#3B1705]/8">
@@ -282,12 +361,18 @@ export default function Nav() {
                             <Link
                               key={item.to}
                               to={item.to}
-                              className="flex items-center gap-2.5 py-2 text-[11px] text-[#3B1705]/70 hover:text-[#C97B1A] transition-colors"
+                              className="flex items-center gap-3 py-2 text-[11px] text-[#3B1705]/70 hover:text-[#A85E0F] transition-colors"
                             >
-                              {gamme
-                                ? <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: gamme.color }} />
-                                : <span className="w-1.5 h-1.5 rounded-full bg-[#C97B1A]/40 flex-shrink-0" />
-                              }
+                              {gamme ? (
+                                <img
+                                  src={gamme.heroImage}
+                                  alt=""
+                                  loading="lazy"
+                                  className="h-7 w-7 flex-shrink-0 rounded-full object-cover"
+                                />
+                              ) : (
+                                <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#A85E0F]/40" />
+                              )}
                               {t(item.label)}
                             </Link>
                           )
@@ -315,6 +400,15 @@ export default function Nav() {
                 </button>
               ))}
             </div>
+            <a
+              href={generalUrl(lang)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 flex items-center justify-between bg-[#25D366] px-4 py-3.5 text-[10px] uppercase tracking-[0.18em] text-white"
+            >
+              {t('Commander sur WhatsApp')}
+              <span aria-hidden="true">↗</span>
+            </a>
           </div>
         </div>
       )}

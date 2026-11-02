@@ -1,4 +1,5 @@
-import { useT } from '@/context/LanguageContext'
+import { useLang, useT } from '@/context/LanguageContext'
+import { generalUrl } from '@/lib/whatsapp'
 
 const EN: Record<string, string> = {
   Vlogs: 'Vlogs',
@@ -9,6 +10,7 @@ const EN: Record<string, string> = {
 
 export default function VlogsPage() {
   const t = useT(EN)
+  const { lang } = useLang()
 
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
@@ -50,7 +52,7 @@ export default function VlogsPage() {
               </a>
             ))}
             <a
-              href="https://wa.me/237000000000"
+              href={generalUrl(lang)}
               className="w-12 h-12 flex items-center justify-center text-white text-[11px] tracking-widest uppercase"
               style={{ background: '#25D366' }}
             >

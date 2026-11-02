@@ -1,4 +1,5 @@
-import { useT } from '@/context/LanguageContext'
+import { useLang, useT } from '@/context/LanguageContext'
+import { generalUrl } from '@/lib/whatsapp'
 
 const EN: Record<string, string> = {
   Localisation: 'Location',
@@ -16,6 +17,7 @@ const EN: Record<string, string> = {
 
 export default function LocalisationPage() {
   const t = useT(EN)
+  const { lang } = useLang()
 
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
@@ -65,7 +67,7 @@ export default function LocalisationPage() {
                   {t("Pour toute demande d'information ou de commande, contactez-nous directement par email ou via WhatsApp.")}
                 </p>
                 <a
-                  href="https://wa.me/237000000000"
+                  href={generalUrl(lang)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-3 text-white text-[11px] tracking-[0.15em] uppercase hover:opacity-85 transition-opacity"

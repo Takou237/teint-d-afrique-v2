@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
+import ingredientsImg from '@/assets/hero/ingredients.webp'
+import ingredientsSm from '@/assets/hero/ingredients-sm.webp'
 import { getGammes } from '@/data'
 import { useLang, useT } from '@/context/LanguageContext'
 import lotionUnifiee from '@/assets/products/lotion-unifiee.webp'
@@ -25,6 +27,7 @@ interface Slide {
 }
 
 interface TypeItem {
+  id: string
   type: string
   poids: string
   symbol: string
@@ -35,6 +38,7 @@ interface TypeItem {
 
 const TYPES: TypeItem[] = [
   {
+    id: 'savon',
     type: 'Savon',
     poids: '180 g',
     symbol: '◼',
@@ -48,6 +52,7 @@ const TYPES: TypeItem[] = [
     ],
   },
   {
+    id: 'lotion',
     type: 'Lotion',
     poids: '100 ml',
     symbol: '◻',
@@ -61,6 +66,7 @@ const TYPES: TypeItem[] = [
     ],
   },
   {
+    id: 'creme',
     type: 'Crème de Visage',
     poids: '100 ml',
     symbol: '◇',
@@ -74,6 +80,7 @@ const TYPES: TypeItem[] = [
     ],
   },
   {
+    id: 'lait',
     type: 'Lait Corps',
     poids: '500 ml',
     symbol: '○',
@@ -133,13 +140,23 @@ function TypeRow({ item, reverse }: { item: TypeItem; reverse: boolean }) {
   const t = useT(EN)
   const GAMMES = getGammes(lang)
   const [slide, setSlide] = useState(0)
+  const [reduced, setReduced] = useState(false)
 
   useEffect(() => {
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const sync = () => setReduced(query.matches)
+    sync()
+    query.addEventListener('change', sync)
+    return () => query.removeEventListener('change', sync)
+  }, [])
+
+  useEffect(() => {
+    if (reduced) return
     const id = setInterval(() => {
       setSlide(s => (s + 1) % item.slides.length)
-    }, 3000)
+    }, 4500)
     return () => clearInterval(id)
-  }, [item.slides.length])
+  }, [item.slides.length, reduced])
 
   const current = item.slides[slide]
 
@@ -147,20 +164,20 @@ function TypeRow({ item, reverse }: { item: TypeItem; reverse: boolean }) {
     <div className={`grid md:grid-cols-2 gap-12 items-center ${reverse ? 'md:grid-flow-col-dense' : ''}`}>
       <div className={reverse ? 'md:order-2' : ''}>
         <div className="flex items-center gap-4 mb-5">
-          <span className="text-3xl text-[#C97B1A]">{item.symbol}</span>
+          <span className="text-3xl text-[#A85E0F]">{item.symbol}</span>
           <div>
-            <h2 className="text-3xl text-[#3B1705]" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
+            <h2 className="text-3xl text-[#2A1006]" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
               {t(item.type)}{' '}
-              <span className="text-[#C97B1A]">| {t(current.label)}</span>
+              <span className="text-[#A85E0F]">| {t(current.label)}</span>
             </h2>
-            <span className="text-[9px] tracking-[0.25em] uppercase text-[#C97B1A]">{item.poids} {t('par flacon')}</span>
+            <span className="text-[9px] tracking-[0.25em] uppercase text-[#A85E0F]">{item.poids} {t('par flacon')}</span>
           </div>
         </div>
         <p className="text-[#2A1006]/75 leading-relaxed text-[15px] mb-6">{t(item.description)}</p>
         <div className="grid grid-cols-2 gap-2">
           {item.benefices.map(b => (
             <div key={b} className="flex items-start gap-2 text-[12px] text-[#2A1006]/65">
-              <span className="text-[#C97B1A] mt-0.5 flex-shrink-0">✓</span>
+              <span className="text-[#A85E0F] mt-0.5 flex-shrink-0">✓</span>
               {t(b)}
             </div>
           ))}
@@ -190,7 +207,8 @@ function TypeRow({ item, reverse }: { item: TypeItem; reverse: boolean }) {
                   <img
                     src={s.img}
                     alt={`${t(item.type)} — ${t(s.label)}`}
-                    className="max-h-full max-w-full object-contain"
+                    loading="lazy"
+                    className="max-h-full max-w-full object-contain mix-blend-multiply"
                   />
                 </div>
               ))}
@@ -204,7 +222,7 @@ function TypeRow({ item, reverse }: { item: TypeItem; reverse: boolean }) {
                 onClick={() => setSlide(i)}
                 aria-label={t(s.label)}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === slide ? 'w-7 bg-[#C97B1A]' : 'w-1.5 bg-[#3B1705]/20 hover:bg-[#3B1705]/40'
+                  i === slide ? 'w-7 bg-[#A85E0F]' : 'w-1.5 bg-[#2A1006]/20 hover:bg-[#2A1006]/40'
                 }`}
               />
             ))}
@@ -219,25 +237,55 @@ export default function TypesProduitsPage() {
   const t = useT(EN)
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
-      <div className="bg-[#3B1705] py-16 md:py-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <p className="text-[#C97B1A] tracking-[0.35em] text-[10px] uppercase mb-4 flex items-center gap-3">
-            <span className="w-8 h-px bg-[#C97B1A]" />
+      <section className="relative overflow-hidden bg-[#2A1006] text-[#FAF6EF]">
+        <div className="absolute inset-0 md:hidden">
+          <img src={ingredientsSm} alt="" className="h-full w-full object-cover opacity-25" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#2A1006] via-[#2A1006]/70 to-[#2A1006]/40" />
+        </div>
+        <div className="absolute inset-y-0 right-0 hidden w-[46%] md:block">
+          <img
+            src={ingredientsImg}
+            srcSet={`${ingredientsSm} 900w, ${ingredientsImg} 1536w`}
+            sizes="46vw"
+            alt=""
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#2A1006] via-[#2A1006]/40 to-transparent" />
+        </div>
+        <div className="relative mx-auto max-w-[1440px] px-6 py-16 md:px-10 md:py-24 lg:px-16">
+          <p className="flex items-center gap-3 text-[9px] uppercase tracking-[0.3em] text-[#C9971A] md:text-[10px]">
+            <span className="h-px w-8 bg-[#C9971A]" />
             {t("Nos Produits · Teint d'Afrique Cosmétiques")}
           </p>
-          <h1 className="text-[#FAF6EF] leading-tight mb-4" style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}>
+          <h1
+            className="mt-4 max-w-2xl text-[clamp(2.8rem,6vw,5rem)] leading-[0.95]"
+            style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
+          >
             {t('Types de Produits')}
           </h1>
-          <p className="text-[#FAF6EF]/60 max-w-lg">
+          <p className="mt-5 max-w-xl text-[14px] leading-relaxed text-[#FAF6EF]/60 md:text-[15px]">
             {t('4 types de produits, déclinés dans chacune de nos 4 gammes — soit 16 références formulées pour les peaux noires, métissées et albinos.')}
           </p>
+          <div className="mt-8 flex flex-wrap gap-2">
+            {TYPES.map(tp => (
+              <a
+                key={tp.id}
+                href={`#${tp.id}`}
+                className="border border-[#FAF6EF]/25 px-4 py-2 text-[9px] uppercase tracking-[0.18em] text-[#FAF6EF]/75 transition-colors hover:border-[#C9971A] hover:bg-[#C9971A] hover:text-[#2A1006]"
+              >
+                {t(tp.type)}
+              </a>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
       <section className="py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-6 space-y-16">
+        <div className="mx-auto max-w-[1440px] space-y-16 px-6 md:px-10 lg:px-16">
           {TYPES.map((tp, i) => (
-            <TypeRow key={tp.type} item={tp} reverse={i % 2 === 1} />
+            <div key={tp.type} id={tp.id} className="scroll-mt-28">
+              <TypeRow item={tp} reverse={i % 2 === 1} />
+            </div>
           ))}
         </div>
       </section>

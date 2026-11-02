@@ -18,8 +18,8 @@ export default function BlackSkinsBanner() {
   const t = useT(EN)
   return (
     <div
-      className="relative overflow-hidden"
-      style={{ background: '#C97B1A' }}
+      className="relative overflow-hidden border-t border-[#C9971A]/25"
+      style={{ background: '#2A1006' }}
     >
       {/* Decorative background text */}
       <div
@@ -27,7 +27,7 @@ export default function BlackSkinsBanner() {
         aria-hidden="true"
       >
         <span
-          className="text-white/8 font-bold leading-none whitespace-nowrap"
+          className="font-bold leading-none whitespace-nowrap text-[#FAF6EF]/[0.04]"
           style={{
             fontFamily: "'DM Serif Display', Georgia, serif",
             fontSize: 'clamp(6rem, 18vw, 18rem)',
@@ -42,11 +42,11 @@ export default function BlackSkinsBanner() {
 
           {/* Badge */}
           <div className="flex-shrink-0">
-            <div className="w-36 h-36 md:w-44 md:h-44 rounded-full bg-white/15 flex items-center justify-center p-4">
+            <div className="flex h-36 w-36 items-center justify-center rounded-full bg-[#FAF6EF] p-3 shadow-[0_18px_50px_-24px_rgba(0,0,0,0.8)] md:h-44 md:w-44 md:p-4">
               <img
                 src={paBadge}
                 alt="Black Skins = Beautiful Skins"
-                className="w-full h-full object-contain mix-blend-multiply"
+                className="h-full w-full object-contain"
               />
             </div>
           </div>
@@ -54,13 +54,13 @@ export default function BlackSkinsBanner() {
           {/* Text */}
           <div className="text-center md:text-left">
             <p
-              className="text-white/70 text-[10px] tracking-[0.4em] uppercase mb-4"
+              className="text-[#C9971A] text-[10px] tracking-[0.4em] uppercase mb-4"
               style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}
             >
               {t('Notre engagement')}
             </p>
             <h2
-              className="text-white leading-tight mb-5 whitespace-nowrap"
+              className="text-[#FAF6EF] leading-tight mb-5 whitespace-nowrap"
               style={{
                 fontFamily: "'DM Serif Display', Georgia, serif",
                 fontSize: 'clamp(1.2rem, 4.5vw, 3.5rem)',
@@ -69,23 +69,23 @@ export default function BlackSkinsBanner() {
               Black Skins = Beautiful Skins
             </h2>
             <p
-              className="text-white/80 leading-relaxed max-w-2xl mb-8"
+              className="text-[#FAF6EF]/65 leading-relaxed max-w-2xl mb-8"
               style={{ fontFamily: 'Outfit, system-ui, sans-serif', fontSize: '15px' }}
             >
               {t("Nous croyons que chaque teint est une beauté à part entière. Teint d'Afrique Cosmétiques s'engage à formuler des soins qui révèlent, nourrissent et célèbrent la peau noire — sans jamais chercher à l'altérer. Parce que ")}
-              <strong className="text-white">#VOTRE_PEAU_VAUT_DE_LOR</strong>.
+              <strong className="text-[#FAF6EF]">#VOTRE_PEAU_VAUT_DE_LOR</strong>.
             </p>
             <div className="flex flex-wrap gap-4 justify-center md:justify-start">
               <Link
                 to="/boutique"
-                className="bg-[#3B1705] text-[#FAF6EF] px-7 py-3.5 text-[11px] tracking-[0.2em] uppercase hover:bg-[#2A1006] transition-colors"
+                className="bg-[#C9971A] text-[#2A1006] px-7 py-3.5 text-[11px] tracking-[0.2em] uppercase hover:bg-[#FAF6EF] transition-colors"
                 style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}
               >
                 {t('Voir nos soins →')}
               </Link>
               <Link
                 to="/histoire"
-                className="border border-white/50 text-white px-7 py-3.5 text-[11px] tracking-[0.2em] uppercase hover:bg-white/15 transition-colors"
+                className="border border-[#FAF6EF]/35 text-[#FAF6EF] px-7 py-3.5 text-[11px] tracking-[0.2em] uppercase hover:bg-[#FAF6EF]/10 transition-colors"
                 style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}
               >
                 {t('Notre histoire')}
@@ -100,15 +100,15 @@ export default function BlackSkinsBanner() {
               { n: '16', label: 'Produits naturels' },
               { n: '100%', label: 'Ingrédients naturels' },
             ].map(s => (
-              <div key={s.label} className="text-center bg-white/15 px-6 py-4">
+              <div key={s.label} className="text-center bg-[#FAF6EF]/[0.06] px-6 py-4">
                 <div
-                  className="text-white text-3xl leading-none"
+                  className="text-[#FAF6EF] text-3xl leading-none"
                   style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
                 >
                   {s.n}
                 </div>
                 <div
-                  className="text-white/70 text-[10px] tracking-[0.15em] uppercase mt-1"
+                  className="text-[#FAF6EF]/50 text-[10px] tracking-[0.15em] uppercase mt-1"
                   style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}
                 >
                   {t(s.label)}

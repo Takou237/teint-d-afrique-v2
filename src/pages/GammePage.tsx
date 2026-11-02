@@ -4,127 +4,191 @@ import { getGammes, type Gamme, type Product } from '@/data'
 import { useLang, useT } from '@/context/LanguageContext'
 import ProductModal from '@/components/ProductModal'
 import WhatsAppOrderButton from '@/components/WhatsAppOrderButton'
+import Reveal from '@/components/home/Reveal'
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ArrowUpRightIcon,
+  DropIcon,
+  LeafIcon,
+} from '@/components/BrandIcons'
+import { rangeUrl } from '@/lib/whatsapp'
 
 const EN: Record<string, string> = {
-  'Actifs clés': 'Key Actives',
-  'Voir plus →': 'See more →',
+  'Actifs clés': 'Key actives',
+  'Voir plus': 'See more',
   "Boutique · Teint d'Afrique Cosmétiques": "Shop · Teint d'Afrique Cosmétiques",
   '← Toutes les gammes': '← All ranges',
-  'Actifs Clés': 'Key Actives',
+  'Toutes les gammes': 'All ranges',
+  'Actifs Clés': 'Key actives',
   'Actifs botaniques': 'Botanical actives',
   Gamme: 'Range',
-  'Les 4 Produits': 'The 4 Products',
+  'La gamme': 'The range',
+  'Les 4 soins': 'The 4 products',
+  'Quatre soins,': 'Four products,',
+  'un seul rituel.': 'one ritual.',
+  'Du nettoyage à la nutrition, chaque soin prépare le suivant.':
+    'From cleansing to nutrition, each product prepares the next.',
+  'Les 4 produits': 'The 4 products',
+  'Les 4 gestes': 'The 4 steps',
+  'Le rituel': 'The ritual',
+  'Commander la gamme': 'Order the range',
+  'Découvrir les 4 soins': 'Discover the 4 products',
+  '4 soins': '4 products',
+  '4 produits': '4 products',
+  'Savon · Lotion · Crème · Lait': 'Soap · Lotion · Cream · Milk',
+  'Compléter le rituel': 'Complete the ritual',
   "Explorer d'autres gammes": 'Explore other ranges',
   'Gamme introuvable': 'Range not found',
   '← Retour à la boutique': '← Back to the shop',
   "← Retour à l'accueil": '← Back to home',
+  'Retour aux gammes': 'Back to ranges',
+  'Voir les détails de': 'See details for',
+  'Découvrir la gamme': 'Discover the range',
+  'Boutique': 'Shop',
+  'Accueil': 'Home',
+  'Éclat Naturel': 'Natural Radiance',
+  'Réparation': 'Repair',
+  'Hydratation': 'Hydration',
+  'Nutrition': 'Nutrition',
+  'Nettoyer': 'Cleanse',
+  'Tonifier': 'Tone',
+  'Unifier': 'Even out',
+  'Nourrir': 'Nourish',
 }
+
+const STEPS = [
+  { label: 'Nettoyer' },
+  { label: 'Tonifier' },
+  { label: 'Unifier' },
+  { label: 'Nourrir' },
+]
 
 function ProductCard({
   product,
   gamme,
+  step,
   onOpen,
 }: {
   product: Product
   gamme: Gamme
+  step: number
   onOpen: () => void
 }) {
   const t = useT(EN)
   const details = product.details
   const openable = Boolean(details)
+  const title = details?.nom ?? product.type
 
   return (
-    <div
-      className={`bg-white overflow-hidden hover:shadow-lg transition-shadow group flex flex-col ${openable ? 'cursor-pointer' : ''}`}
-      style={{ borderTop: `3px solid ${gamme.color}` }}
+    <article
+      className={`group flex h-full flex-col bg-[#FAF6EF] transition-all duration-300 hover:shadow-[0_26px_60px_-36px_rgba(42,16,6,0.45)] ${
+        openable ? 'cursor-pointer' : ''
+      }`}
+      style={{ borderTop: `2px solid ${gamme.color}` }}
       onClick={openable ? onOpen : undefined}
-      onKeyDown={openable ? e => {
-        if (e.target !== e.currentTarget) return
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onOpen()
-        }
-      } : undefined}
+      onKeyDown={
+        openable
+          ? event => {
+              if (event.target !== event.currentTarget) return
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                onOpen()
+              }
+            }
+          : undefined
+      }
       role={openable ? 'button' : undefined}
       tabIndex={openable ? 0 : undefined}
+      aria-label={openable ? `${t('Voir les détails de')} ${title}` : undefined}
     >
-      {/* Product shot */}
-      <div
-        className="relative h-52 overflow-hidden"
-        style={{ background: gamme.colorLight }}
-      >
+      <div className="relative h-48 overflow-hidden sm:h-56" style={{ background: gamme.colorLight }}>
+        <span
+          className="absolute left-4 top-3 z-10 text-[26px] leading-none opacity-25"
+          style={{ fontFamily: "'DM Serif Display', Georgia, serif", color: gamme.colorDark }}
+        >
+          0{step + 1}
+        </span>
         <img
           src={product.image}
-          alt={`${gamme.nom} — ${details ? details.nom : product.type}`}
-          className="w-full h-full object-contain p-6 group-hover:scale-105 transition-transform duration-500"
+          alt={`${title} — ${gamme.nom}`}
+          loading="lazy"
+          className="h-full w-full object-contain p-6 mix-blend-multiply transition-transform duration-700 ease-out group-hover:scale-[1.06]"
         />
-        <div className="absolute bottom-0 left-0 right-0 h-10 pointer-events-none"
-          style={{ background: `linear-gradient(to top, ${gamme.colorLight}, transparent)` }} />
+        <span
+          className="absolute bottom-3 left-4 bg-[#FAF6EF]/90 px-2.5 py-1 text-[8px] uppercase tracking-[0.18em] backdrop-blur-sm"
+          style={{ color: gamme.colorDark }}
+        >
+          {t(STEPS[step]?.label ?? 'Le rituel')}
+        </span>
       </div>
 
-      {/* Card body */}
-      <div className="p-6 flex flex-col flex-1">
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <div>
-            <h3
-              className="text-xl mb-0.5"
-              style={{
-                fontFamily: "'DM Serif Display', Georgia, serif",
-                color: gamme.colorDark,
-              }}
-            >
-              {details ? details.nom : product.type}
-            </h3>
-            <span
-              className="text-[9px] tracking-[0.25em] uppercase"
-              style={{ color: gamme.color }}
-            >
-              {details ? `${product.type} · ${product.poids}` : product.poids}
-            </span>
-          </div>
-          <span className="text-3xl mt-1 flex-shrink-0" style={{ color: gamme.color }}>
-            {product.symbol}
-          </span>
-        </div>
+      <div className="flex flex-1 flex-col p-5">
+        <p className="text-[8px] uppercase tracking-[0.22em]" style={{ color: gamme.colorDark }}>
+          {gamme.nom}
+        </p>
+        <h3
+          className="mt-2 text-[21px] leading-tight text-[#2A1006]"
+          style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
+        >
+          {title}
+        </h3>
+        <p className="mt-1.5 text-[10px] uppercase tracking-[0.14em] text-[#2A1006]/40">
+          {product.type} · {product.poids}
+        </p>
 
         {details ? (
           <>
-            <ul className="space-y-2 mb-5">
-              {details.promesses.map(p => (
-                <li key={p} className="flex items-start gap-2 text-[12px] text-[#2A1006]/65">
-                  <span className="text-[#C97B1A] mt-0.5 flex-shrink-0">✓</span>
-                  {p}
+            <ul className="mt-4 space-y-1.5">
+              {details.promesses.map(promise => (
+                <li key={promise} className="flex items-start gap-2 text-[11px] leading-snug text-[#2A1006]/60">
+                  <LeafIcon size={11} className="mt-0.5 flex-shrink-0" style={{ color: gamme.color }} />
+                  {promise}
                 </li>
               ))}
             </ul>
             <div
-              className="p-4 border-l-4 mb-5"
-              style={{ borderColor: gamme.color, background: `${gamme.color}15` }}
+              className="mt-4 border-l-2 p-3.5"
+              style={{ borderColor: gamme.color, background: `${gamme.color}12` }}
             >
-              <p className="text-[9px] tracking-[0.3em] uppercase mb-1" style={{ color: gamme.colorDark }}>
+              <p className="text-[8px] uppercase tracking-[0.2em] text-[#2A1006]/40">
                 {t('Actifs clés')}
               </p>
-              <p className="text-[12px] leading-relaxed" style={{ color: gamme.colorDark }}>
+              <p className="mt-1.5 text-[11px] leading-relaxed" style={{ color: gamme.colorDark }}>
                 {details.actifs}
               </p>
             </div>
             <div className="flex-1" />
             <div
-              className="flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase font-medium group-hover:gap-3 transition-all"
-              style={{ color: gamme.color }}
+              className="mt-4 flex items-center gap-2 text-[9px] uppercase tracking-[0.2em] font-medium transition-all group-hover:gap-3"
+              style={{ color: gamme.colorDark }}
             >
-              {t('Voir plus →')}
+              {t('Voir plus')}
+              <ArrowRightIcon size={12} />
             </div>
           </>
         ) : (
-          <p className="text-[13px] text-[#2A1006]/65 leading-relaxed flex-1">{product.description}</p>
+          <>
+            <p className="mt-4 flex-1 text-[12px] leading-relaxed text-[#2A1006]/60">
+              {product.description}
+            </p>
+          </>
         )}
-
-        <div onClick={e => e.stopPropagation()}>
-          <WhatsAppOrderButton product={product} gamme={gamme} />
-        </div>
       </div>
-    </div>
+
+      <div className="px-5 pb-5" onClick={event => event.stopPropagation()}>
+        <WhatsAppOrderButton product={product} gamme={gamme} className="mt-0" />
+      </div>
+    </article>
+  )
+}
+
+function SectionLabel({ children, color = '#A85E0F' }: { children: React.ReactNode; color?: string }) {
+  return (
+    <p className="flex items-center gap-3 text-[9px] uppercase tracking-[0.3em] md:text-[10px]" style={{ color }}>
+      <span className="h-px w-7" style={{ background: color }} />
+      {children}
+    </p>
   )
 }
 
@@ -138,13 +202,15 @@ export default function GammePage() {
 
   if (!gamme) {
     return (
-      <div className="min-h-[50vh] flex items-center justify-center">
+      <div className="flex min-h-[50vh] items-center justify-center">
         <div className="text-center">
-          <p className="text-[#3B1705] text-2xl mb-4"
-            style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
+          <p
+            className="mb-4 text-2xl text-[#3B1705]"
+            style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
+          >
             {t('Gamme introuvable')}
           </p>
-          <Link to="/boutique" className="text-[#C97B1A] text-sm underline">
+          <Link to="/nos-produits/les-gammes" className="text-sm text-[#A85E0F] underline">
             {t('← Retour à la boutique')}
           </Link>
         </div>
@@ -152,178 +218,336 @@ export default function GammePage() {
     )
   }
 
+  const index = GAMMES.findIndex(g => g.id === gamme.id)
   const otherGammes = GAMMES.filter(g => g.id !== gamme.id)
+  const heroCard = gamme.products[2]?.image ?? gamme.mainImage
 
   return (
-    <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
-      {/* ── GAMME HERO ── */}
-      <div
-        className="py-16 md:py-20"
-        style={{ background: gamme.color }}
-      >
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-          <div>
-            <p className="text-white/60 text-[9px] tracking-[0.35em] uppercase mb-3">
-              {t("Boutique · Teint d'Afrique Cosmétiques")}
+    <div>
+      {/* ── Gamme hero ── */}
+      <section className="relative min-h-[560px] overflow-hidden bg-[#2A1006] md:min-h-[660px]">
+        <img
+          src={gamme.heroImage}
+          srcSet={`${gamme.heroImageSmall} 900w, ${gamme.heroImage} 1536w`}
+          sizes="100vw"
+          alt={gamme.heroAlt}
+          fetchPriority="high"
+          className="absolute inset-0 h-full w-full object-cover object-[66%_30%]"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(90deg, #2A1006 0%, rgba(42,16,6,0.96) 28%, rgba(42,16,6,0.72) 50%, rgba(42,16,6,0.24) 72%, rgba(42,16,6,0) 92%)',
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background: `radial-gradient(75% 90% at 78% 28%, ${gamme.color}22 0%, ${gamme.color}00 60%)`,
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#2A1006]/95 via-[#2A1006]/55 to-transparent md:hidden" />
+
+        <div className="relative z-10 mx-auto flex min-h-[560px] max-w-[1440px] flex-col justify-end px-6 pb-14 pt-24 md:min-h-[660px] md:justify-center md:px-10 md:pb-20 md:pt-24 lg:px-16">
+          <nav className="mb-8 flex items-center gap-2 text-[9px] uppercase tracking-[0.18em] text-[#FAF6EF]/55 md:mb-10 md:text-[10px]">
+            <Link to="/" className="transition-colors hover:text-[#FAF6EF]">
+              {t('Accueil')}
+            </Link>
+            <span className="text-[#FAF6EF]/25">/</span>
+            <Link to="/nos-produits/les-gammes" className="transition-colors hover:text-[#FAF6EF]">
+              {t('Boutique')}
+            </Link>
+            <span className="text-[#FAF6EF]/25">/</span>
+            <span className="text-[#FAF6EF]/85">{gamme.nom}</span>
+          </nav>
+
+          <div className="max-w-[42rem]">
+            <p className="flex flex-wrap items-center gap-2.5 text-[8px] uppercase tracking-[0.18em] text-[#FAF6EF]/60 sm:text-[9px] sm:tracking-[0.24em] md:text-[10px]">
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: gamme.color }} />
+              <span className="whitespace-nowrap">
+                {t('Gamme')} {String(index + 1).padStart(2, '0')} / 04
+              </span>
+              <span className="hidden text-[#FAF6EF]/25 sm:inline">·</span>
+              <span className="hidden sm:inline">{gamme.ingredients}</span>
             </p>
+
             <h1
-              className="text-white leading-none mb-3"
-              style={{
-                fontFamily: "'DM Serif Display', Georgia, serif",
-                fontSize: 'clamp(3rem, 8vw, 6rem)',
-              }}
+              className="mt-4 text-[clamp(2.2rem,11vw,4.8rem)] leading-[0.9] text-[#FAF6EF] md:mt-5 md:text-[clamp(4rem,7.5vw,7rem)]"
+              style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
             >
               {gamme.nom}
             </h1>
-            <p className="text-white/80 text-base tracking-wide italic"
-              style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
+
+            <p
+              className="mt-4 text-[17px] leading-snug text-[#FAF6EF]/80 md:mt-6 md:text-[21px]"
+              style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
+            >
               {gamme.tagline}
             </p>
-            <p className="text-white/60 text-[11px] tracking-[0.2em] uppercase mt-3">
-              {gamme.ingredients}
-            </p>
-          </div>
-          <Link
-            to="/boutique"
-            className="self-start md:self-auto flex items-center gap-2 text-white/70 hover:text-white text-[11px] tracking-[0.2em] uppercase transition-colors border border-white/25 px-5 py-2.5 hover:bg-white/10 flex-shrink-0"
-          >
-            {t('← Toutes les gammes')}
-          </Link>
-        </div>
-      </div>
 
-      {/* ── DESCRIPTION + ACTIFS ── */}
-      <section className="py-16 md:py-20" style={{ background: gamme.colorLight }}>
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-14 items-center">
-            <div>
-              <p className="leading-relaxed text-[#2A1006]/80 text-[15px] mb-8">
-                {gamme.description}
-              </p>
-              <div
-                className="p-6 border-l-4"
-                style={{ borderColor: gamme.color, background: `${gamme.color}15` }}
+            <p className="mt-3 max-w-md text-[12px] leading-relaxed text-[#FAF6EF]/55 md:text-[13px]">
+              {gamme.ingredientsDetail.split('.')[0]}.
+            </p>
+
+            <div className="mt-7 flex flex-wrap items-center gap-3 md:mt-9">
+              <a
+                href="#soins"
+                className="group inline-flex items-center gap-3 bg-[#FAF6EF] px-6 py-3.5 text-[10px] uppercase tracking-[0.2em] text-[#2A1006] transition-colors hover:bg-[#C9971A] md:px-7 md:py-4"
               >
+                {t('Découvrir les 4 soins')}
+                <ArrowRightIcon size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
+              </a>
+              <a
+                href={rangeUrl(lang, gamme)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border border-[#FAF6EF]/35 px-5 py-3.5 text-[10px] uppercase tracking-[0.2em] text-[#FAF6EF] transition-colors hover:border-[#FAF6EF] hover:bg-[#FAF6EF]/10 md:px-6 md:py-4"
+              >
+                {t('Commander la gamme')}
+                <ArrowUpRightIcon size={13} />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="absolute bottom-24 right-10 z-20 hidden w-[252px] lg:block xl:right-16">
+          <div className="border border-[#FAF6EF]/15 bg-[#FAF6EF]/95 p-4 shadow-[0_24px_70px_-30px_rgba(0,0,0,0.55)] backdrop-blur">
+            <div className="flex items-center gap-3">
+              <div
+                className="flex h-16 w-16 flex-shrink-0 items-center justify-center"
+                style={{ background: gamme.colorLight }}
+              >
+                <img
+                  src={heroCard}
+                  alt={gamme.nom}
+                  className="h-full w-full object-contain p-1 mix-blend-multiply"
+                />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[8px] uppercase tracking-[0.2em] text-[#2A1006]/45">{t('4 soins')}</p>
                 <p
-                  className="text-[9px] tracking-[0.3em] uppercase mb-3"
-                  style={{ color: gamme.colorDark }}
+                  className="mt-0.5 text-[13px] leading-tight text-[#2A1006]"
+                  style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
                 >
-                  {t('Actifs Clés')}
+                  {gamme.nom}
                 </p>
-                <p className="text-sm leading-relaxed" style={{ color: gamme.colorDark }}>
-                  {gamme.ingredientsDetail}
+                <p className="mt-0.5 text-[8px] uppercase tracking-[0.12em]" style={{ color: gamme.colorDark }}>
+                  {t('Savon · Lotion · Crème · Lait')}
                 </p>
               </div>
             </div>
-            <div className="relative">
-              <img
-                src={gamme.mainImage}
-                alt={`${gamme.nom} — ${gamme.ingredients}`}
-                className="w-full h-72 md:h-80 object-contain p-8"
-              />
-              <div
-                className="absolute bottom-4 right-4 px-4 py-2 text-white text-[9px] tracking-[0.2em] uppercase"
-                style={{ background: gamme.color }}
-              >
-                {gamme.ingredients}
-              </div>
-            </div>
+            <a
+              href="#soins"
+              className="mt-3 flex items-center justify-between border-t border-[#2A1006]/10 pt-3 text-[8px] uppercase tracking-[0.18em] text-[#2A1006] transition-colors hover:text-[#A85E0F]"
+            >
+              {t('Découvrir les 4 soins')}
+              <ArrowRightIcon size={12} />
+            </a>
           </div>
         </div>
       </section>
 
-      {/* ── PRODUCTS ── */}
-      <section className="py-16 md:py-20 bg-[#FAF6EF]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-end justify-between gap-6 mb-10">
-            <div>
-              <p
-                className="text-[9px] tracking-[0.3em] uppercase mb-2"
-                style={{ color: gamme.color }}
-              >
-                {t('Gamme')} {gamme.nom}
-              </p>
+      {/* ── Story + actives ── */}
+      <section className="bg-[#FAF6EF] py-16 md:py-24">
+        <div className="mx-auto max-w-[1440px] px-6 md:px-10 lg:px-16">
+          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+            <div className="lg:col-span-7">
+              <SectionLabel color={gamme.colorDark}>{t('La gamme')}</SectionLabel>
               <h2
-                className="text-3xl md:text-4xl"
-                style={{
-                  fontFamily: "'DM Serif Display', Georgia, serif",
-                  color: gamme.colorDark,
-                }}
+                className="mt-4 text-[clamp(2.2rem,4.2vw,3.4rem)] leading-[0.98] text-[#2A1006]"
+                style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
               >
-                {t('Les 4 Produits')}
+                {gamme.tagline}
               </h2>
-            </div>
-            <div className="flex gap-2 flex-wrap justify-end">
-              {gamme.products.map(p => (
-                <span
-                  key={p.type}
-                  className="text-[10px] tracking-[0.1em] uppercase px-3 py-1 border"
-                  style={{ color: gamme.colorDark, borderColor: gamme.color + '50' }}
-                >
-                  {p.type}
-                </span>
-              ))}
-            </div>
-          </div>
+              <p className="mt-6 max-w-2xl text-[14px] leading-relaxed text-[#2A1006]/70 md:text-[15px]">
+                {gamme.description}
+              </p>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {gamme.products.map(product => (
-              <ProductCard
-                key={product.type}
-                product={product}
-                gamme={gamme}
-                onOpen={() => setSelected(product)}
-              />
+              <div
+                className="mt-8 border-l-2 p-5 md:p-6"
+                style={{ borderColor: gamme.color, background: `${gamme.color}10` }}
+              >
+                <p className="flex items-center gap-2 text-[9px] uppercase tracking-[0.24em] text-[#2A1006]/45">
+                  <LeafIcon size={13} style={{ color: gamme.colorDark }} />
+                  {t('Actifs Clés')}
+                </p>
+                <p className="mt-3 text-[13px] leading-relaxed" style={{ color: gamme.colorDark }}>
+                  {gamme.ingredientsDetail}
+                </p>
+              </div>
+
+              <div className="mt-8 flex flex-wrap gap-2">
+                {gamme.products.map(product => (
+                  <span
+                    key={product.type}
+                    className="border px-3 py-1.5 text-[9px] uppercase tracking-[0.12em]"
+                    style={{ borderColor: `${gamme.color}55`, color: gamme.colorDark }}
+                  >
+                    {product.type} · {product.poids}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <aside className="lg:col-span-5">
+              <div className="relative overflow-hidden p-6 md:p-8" style={{ background: gamme.colorLight }}>
+                <span
+                  className="pointer-events-none absolute -right-2 -top-6 select-none text-[9rem] leading-none opacity-[0.06]"
+                  style={{ fontFamily: "'DM Serif Display', Georgia, serif", color: gamme.colorDark }}
+                >
+                  4
+                </span>
+                <div className="relative mx-auto flex h-56 w-full items-center justify-center md:h-64">
+                  <img
+                    src={gamme.mainImage}
+                    alt={`${gamme.nom} — ${gamme.ingredients}`}
+                    loading="lazy"
+                    className="h-full w-auto object-contain mix-blend-multiply"
+                  />
+                </div>
+
+                <div className="relative mt-5 border-t pt-5" style={{ borderColor: `${gamme.color}35` }}>
+                  <p className="text-[9px] uppercase tracking-[0.22em] text-[#2A1006]/40">{t('Les 4 soins')}</p>
+                  <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
+                    {gamme.products.map(product => (
+                      <div key={product.type} className="flex items-center gap-2">
+                        <span className="h-1.5 w-1.5 rounded-full" style={{ background: gamme.color }} />
+                        <span className="text-[11px] text-[#2A1006]/70">{product.type}</span>
+                        <span className="ml-auto text-[9px] text-[#2A1006]/35">{product.poids}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <a
+                  href={rangeUrl(lang, gamme)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative mt-6 flex items-center justify-between px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-[#FAF6EF] transition-opacity hover:opacity-85"
+                  style={{ background: gamme.colorDark }}
+                >
+                  {t('Commander la gamme')}
+                  <ArrowUpRightIcon size={13} />
+                </a>
+              </div>
+
+              <p className="mt-4 flex items-start gap-2 text-[10px] leading-relaxed text-[#2A1006]/40">
+                <DropIcon size={13} className="mt-0.5 flex-shrink-0" style={{ color: gamme.colorDark }} />
+                {t('Du nettoyage à la nutrition, chaque soin prépare le suivant.')}
+              </p>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Products ── */}
+      <section id="soins" className="scroll-mt-28 bg-[#F3EADC] py-16 md:py-24">
+        <div className="mx-auto max-w-[1440px] px-6 md:px-10 lg:px-16">
+          <Reveal>
+            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+              <div>
+                <SectionLabel color={gamme.colorDark}>{t('Le rituel')}</SectionLabel>
+                <h2
+                  className="mt-4 text-[clamp(2.2rem,4.6vw,3.6rem)] leading-[0.98] text-[#2A1006]"
+                  style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
+                >
+                  {t('Quatre soins,')}
+                  <br />
+                  <em style={{ color: gamme.colorDark }}>{t('un seul rituel.')}</em>
+                </h2>
+              </div>
+              <p className="max-w-sm text-[12px] leading-relaxed text-[#2A1006]/55 md:text-[13px]">
+                {t('Du nettoyage à la nutrition, chaque soin prépare le suivant.')}
+              </p>
+            </div>
+          </Reveal>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 md:mt-12 lg:grid-cols-4">
+            {gamme.products.map((product, i) => (
+              <Reveal key={product.type} delay={i * 60} className="h-full">
+                <ProductCard
+                  product={product}
+                  gamme={gamme}
+                  step={i}
+                  onOpen={() => setSelected(product)}
+                />
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
       {selected && (
-        <ProductModal
-          product={selected}
-          gamme={gamme}
-          onClose={() => setSelected(null)}
-        />
+        <ProductModal product={selected} gamme={gamme} onClose={() => setSelected(null)} />
       )}
 
-      {/* ── OTHER GAMMES ── */}
-      <section className="py-16 md:py-20" style={{ background: gamme.colorLight }}>
-        <div className="max-w-7xl mx-auto px-6">
-          <p
-            className="text-[9px] tracking-[0.3em] uppercase mb-8"
-            style={{ color: gamme.colorDark }}
-          >
-            {t("Explorer d'autres gammes")}
-          </p>
-          <div className="grid sm:grid-cols-3 gap-5">
-            {otherGammes.map(g => (
-              <Link
-                key={g.id}
-                to={`/boutique/${g.id}`}
-                className="group flex items-center gap-4 p-5 bg-white border border-[#3B1705]/8 hover:shadow-md transition-all"
+      {/* ── Other gammes ── */}
+      <section className="bg-[#FAF6EF] py-16 md:py-24">
+        <div className="mx-auto max-w-[1440px] px-6 md:px-10 lg:px-16">
+          <div className="flex items-end justify-between gap-6">
+            <div>
+              <SectionLabel color={gamme.colorDark}>{t("Explorer d'autres gammes")}</SectionLabel>
+              <h2
+                className="mt-4 text-[clamp(2rem,4vw,3rem)] leading-tight text-[#2A1006]"
+                style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
               >
-                <div
-                  className="relative h-16 w-16 overflow-hidden flex-shrink-0"
-                  style={{ background: g.colorLight }}
+                {t('Compléter le rituel')}
+              </h2>
+            </div>
+            <Link
+              to="/nos-produits/les-gammes"
+              className="group hidden items-center gap-2 text-[9px] uppercase tracking-[0.2em] text-[#2A1006] transition-colors hover:text-[#A85E0F] sm:flex"
+            >
+              <ArrowLeftIcon size={13} className="transition-transform duration-300 group-hover:-translate-x-1" />
+              {t('Toutes les gammes')}
+            </Link>
+          </div>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-3 md:mt-10">
+            {otherGammes.map((other, i) => (
+              <Reveal key={other.id} delay={i * 60} className="h-full">
+                <Link
+                  to={`/nos-produits/${other.id}`}
+                  className="group relative block h-60 overflow-hidden md:h-72"
                 >
                   <img
-                    src={g.mainImage}
-                    alt={g.nom}
-                    className="w-full h-full object-contain p-1.5 group-hover:scale-110 transition-transform duration-500"
+                    src={other.heroImage}
+                    srcSet={`${other.heroImageSmall} 900w, ${other.heroImage} 1536w`}
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    alt={other.heroAlt}
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover object-[64%_30%] transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                   />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[9px] tracking-[0.2em] uppercase font-medium" style={{ color: g.colorDark }}>
-                    {g.nom}
-                  </p>
-                  <p className="font-medium text-sm text-[#3B1705] truncate">{g.tagline}</p>
-                  <p className="text-[11px] mt-0.5" style={{ color: g.color }}>{g.ingredients}</p>
-                </div>
-                <span className="ml-auto text-[#3B1705]/30 group-hover:text-[#C97B1A] group-hover:translate-x-1 transition-all flex-shrink-0">
-                  →
-                </span>
-              </Link>
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: `linear-gradient(180deg, ${other.colorDark}10 0%, ${other.colorDark}dd 100%)`,
+                    }}
+                  />
+                  <div className="relative z-10 flex h-full flex-col justify-end p-5 md:p-6">
+                    <p className="text-[8px] uppercase tracking-[0.2em] text-[#FAF6EF]/55">
+                      0{GAMMES.findIndex(g => g.id === other.id) + 1}
+                    </p>
+                    <div className="mt-2 flex items-end justify-between gap-3">
+                      <div>
+                        <p
+                          className="text-[26px] leading-none text-[#FAF6EF] md:text-[30px]"
+                          style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
+                        >
+                          {other.nom}
+                        </p>
+                        <p className="mt-1.5 text-[9px] uppercase tracking-[0.14em] text-[#FAF6EF]/60">
+                          {other.ingredients}
+                        </p>
+                      </div>
+                      <span className="mb-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-[#FAF6EF]/35 text-[#FAF6EF] transition-all duration-300 group-hover:border-[#FAF6EF] group-hover:bg-[#FAF6EF] group-hover:text-[#2A1006]">
+                        <ArrowUpRightIcon size={14} />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </Reveal>
             ))}
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { useT } from '@/context/LanguageContext'
+import { useLang, useT } from '@/context/LanguageContext'
+import { generalUrl } from '@/lib/whatsapp'
 
 const EN: Record<string, string> = {
   Contact: 'Contact',
@@ -48,6 +49,7 @@ const EN: Record<string, string> = {
 export default function ContactPage() {
   const [sent, setSent] = useState(false)
   const t = useT(EN)
+  const { lang } = useLang()
 
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
@@ -91,7 +93,7 @@ export default function ContactPage() {
                 {[
                   { label: 'Adresse', icon: '◈', text: 'Douala, Cameroun', href: undefined },
                   { label: 'Email', icon: '◉', text: 'contact@teintdafrique.com', href: 'mailto:contact@teintdafrique.com' },
-                  { label: 'WhatsApp', icon: '◎', text: 'Nous écrire sur WhatsApp', href: 'https://wa.me/237000000000' },
+                  { label: 'WhatsApp', icon: '◎', text: 'Nous écrire sur WhatsApp', href: generalUrl(lang) },
                 ].map(item => (
                   <div key={item.label} className="flex gap-5 items-start">
                     <div className="w-11 h-11 flex items-center justify-center flex-shrink-0 text-[#C97B1A] text-xl" style={{ background: '#3B170508' }}>
@@ -116,7 +118,7 @@ export default function ContactPage() {
                 <div className="flex gap-3">
                   <a href="#" aria-label="Facebook" className="w-11 h-11 border border-[#3B1705]/20 flex items-center justify-center text-[#3B1705] text-[11px] uppercase tracking-widest hover:bg-[#3B1705] hover:text-white hover:border-[#3B1705] transition-all">fb</a>
                   <a href="#" aria-label="Instagram" className="w-11 h-11 border border-[#3B1705]/20 flex items-center justify-center text-[#3B1705] text-[11px] uppercase tracking-widest hover:bg-[#3B1705] hover:text-white hover:border-[#3B1705] transition-all">ig</a>
-                  <a href="https://wa.me/237000000000" aria-label="WhatsApp" className="w-11 h-11 flex items-center justify-center text-white text-[11px] uppercase tracking-widest hover:opacity-85 transition-opacity" style={{ background: '#25D366' }}>wa</a>
+                  <a href={generalUrl(lang)} aria-label="WhatsApp" className="w-11 h-11 flex items-center justify-center text-white text-[11px] uppercase tracking-widest hover:opacity-85 transition-opacity" style={{ background: '#25D366' }}>wa</a>
                 </div>
               </div>
             </div>

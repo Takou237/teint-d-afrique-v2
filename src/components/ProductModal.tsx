@@ -50,7 +50,7 @@ export default function ProductModal({
       aria-label={details.nom}
     >
       <div
-        className="relative bg-white w-full max-w-4xl max-h-[92vh] overflow-y-auto shadow-2xl"
+        className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto bg-[#FAF6EF] shadow-2xl"
         onClick={e => e.stopPropagation()}
       >
         {/* Close */}
@@ -58,7 +58,7 @@ export default function ProductModal({
           type="button"
           onClick={onClose}
           aria-label={t('Fermer')}
-          className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center bg-white/85 hover:bg-white text-[#3B1705] border border-[#3B1705]/10 transition-colors"
+          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center border border-[#3B1705]/10 bg-[#FAF6EF]/90 text-[#3B1705] transition-colors hover:bg-white"
         >
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
             <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -74,11 +74,11 @@ export default function ProductModal({
             <img
               src={product.image}
               alt={`${gamme.nom} — ${details.nom}`}
-              className="absolute inset-0 w-full h-full object-contain p-8 md:p-12"
+              className="absolute inset-0 w-full h-full object-contain p-8 mix-blend-multiply md:p-12"
             />
           </div>
           <div className="p-7 md:p-10 flex flex-col">
-            <p className="text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: gamme.color }}>
+            <p className="text-[10px] tracking-[0.3em] uppercase mb-2" style={{ color: gamme.colorDark }}>
               {gamme.nom}
             </p>
             <p className="text-[9px] tracking-[0.25em] uppercase text-[#2A1006]/45 mb-4">
@@ -94,7 +94,7 @@ export default function ProductModal({
             <ul className="space-y-2.5 mb-6">
               {details.promesses.map(p => (
                 <li key={p} className="flex items-start gap-3 text-[13px] text-[#2A1006]/75">
-                  <span className="text-[#C97B1A] mt-0.5 flex-shrink-0">✓</span>
+                  <span className="mt-0.5 flex-shrink-0 text-[#A85E0F]">✓</span>
                   {p}
                 </li>
               ))}
@@ -120,13 +120,13 @@ export default function ProductModal({
         <div className="border-t border-[#3B1705]/8 grid md:grid-cols-2">
           <div className="p-7 md:p-10 space-y-8 md:border-r border-[#3B1705]/8">
             <section>
-              <h3 className="text-[10px] tracking-[0.3em] uppercase mb-3" style={{ color: gamme.color }}>
+              <h3 className="text-[10px] tracking-[0.3em] uppercase mb-3" style={{ color: gamme.colorDark }}>
                 {t('Propriétés')}
               </h3>
               <p className="text-[13px] leading-relaxed text-[#2A1006]/70">{details.proprietes}</p>
             </section>
             <section>
-              <h3 className="text-[10px] tracking-[0.3em] uppercase mb-3" style={{ color: gamme.color }}>
+              <h3 className="text-[10px] tracking-[0.3em] uppercase mb-3" style={{ color: gamme.colorDark }}>
                 {t("Mode d'emploi")}
               </h3>
               <p className="text-[13px] leading-relaxed text-[#2A1006]/70">{details.modeEmploi}</p>
@@ -134,18 +134,18 @@ export default function ProductModal({
           </div>
           <div className="p-7 md:p-10 space-y-8">
             <section>
-              <h3 className="text-[10px] tracking-[0.3em] uppercase mb-3" style={{ color: gamme.color }}>
+              <h3 className="text-[10px] tracking-[0.3em] uppercase mb-3" style={{ color: gamme.colorDark }}>
                 {t('Ingrédients')}
               </h3>
               <p className="text-[13px] leading-relaxed text-[#2A1006]/70">{details.ingredients}</p>
             </section>
             <section>
-              <h3 className="text-[10px] tracking-[0.3em] uppercase mb-3" style={{ color: gamme.color }}>
+              <h3 className="text-[10px] tracking-[0.3em] uppercase mb-3" style={{ color: gamme.colorDark }}>
                 {t('Précautions')}
               </h3>
               <p className="text-[12px] leading-relaxed text-[#2A1006]/55">{details.precautions}</p>
             </section>
-            <p className="text-[10px] tracking-[0.2em] uppercase text-[#C97B1A] pt-3 border-t border-[#3B1705]/8">
+            <p className="border-t border-[#3B1705]/8 pt-3 text-[10px] uppercase tracking-[0.2em] text-[#A85E0F]">
               {t('Peaux noires = Belles peaux')}
             </p>
           </div>

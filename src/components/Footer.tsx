@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 import logo from '@/imports/TDA_LogoExe_CMJN.png'
 import { getGammes } from '@/data'
+import { generalUrl } from '@/lib/whatsapp'
 import { useLang, useT } from '@/context/LanguageContext'
 
 const EN = {
@@ -12,8 +13,7 @@ const EN = {
   'Notre Histoire': 'Our Story',
   Boutique: 'Shop',
   Contact: 'Contact',
-  'Nos Gammes': 'Our Ranges',
-  Adresse: 'Address',
+  'Nos Gammes': 'Our Ranges',  Adresse: 'Address',
   'Douala, Cameroun': 'Douala, Cameroon',
   Email: 'Email',
   WhatsApp: 'WhatsApp',
@@ -31,7 +31,7 @@ export default function Footer() {
       className="bg-[#2A1006] pt-16 pb-8"
       style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}
     >
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="mx-auto max-w-[1440px] px-6 md:px-10 lg:px-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-[#FAF6EF]/8">
 
           {/* Brand */}
@@ -61,7 +61,7 @@ export default function Footer() {
                 ig
               </a>
               <a
-                href="https://wa.me/237000000000"
+                href={generalUrl(lang)}
                 aria-label="WhatsApp"
                 className="w-9 h-9 flex items-center justify-center text-white text-[11px] uppercase tracking-widest hover:opacity-80 transition-opacity"
                 style={{ background: '#25D366' }}
@@ -100,7 +100,7 @@ export default function Footer() {
               {GAMMES.map(g => (
                 <Link
                   key={g.id}
-                  to={`/boutique/${g.id}`}
+                  to={`/nos-produits/${g.id}`}
                   className="flex items-center gap-2 text-[#FAF6EF]/50 text-sm hover:text-[#FAF6EF] transition-colors group"
                 >
                   <span
@@ -136,7 +136,7 @@ export default function Footer() {
               <div>
                 <p className="text-[#FAF6EF]/30 text-[10px] tracking-[0.2em] uppercase mb-2">{t('WhatsApp')}</p>
                 <a
-                  href="https://wa.me/237000000000?text=Bonjour%20Teint%20d'Afrique%20Cosmétiques%2C%20je%20souhaite%20avoir%20des%20informations."
+                  href={generalUrl(lang)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2.5 text-white text-[11px] tracking-[0.15em] uppercase hover:opacity-85 transition-opacity"

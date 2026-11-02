@@ -15,6 +15,15 @@ import savonUnifie from '@/assets/products/savon-unifie.webp'
 import savonRepare from '@/assets/products/savon-repare.webp'
 import savonHydrate from '@/assets/products/savon-hydrate.webp'
 import savonNourri from '@/assets/products/savon-nourri.webp'
+// Editorial imagery generated for the brand (AI-assisted, to be validated before launch).
+import heroEclat from '@/assets/hero/eclat.webp'
+import heroEclatSm from '@/assets/hero/eclat-sm.webp'
+import heroReparation from '@/assets/hero/reparation.webp'
+import heroReparationSm from '@/assets/hero/reparation-sm.webp'
+import heroHydratation from '@/assets/hero/hydratation.webp'
+import heroHydratationSm from '@/assets/hero/hydratation-sm.webp'
+import heroNutrition from '@/assets/hero/nutrition.webp'
+import heroNutritionSm from '@/assets/hero/nutrition-sm.webp'
 
 export type GammeId = 'eclat' | 'reparation' | 'hydratation' | 'nutrition'
 
@@ -49,6 +58,12 @@ export interface Gamme {
   ingredientsDetail: string
   image: string
   mainImage: string
+  heroImage: string
+  heroImageSmall: string
+  heroLead: string
+  heroAccent: string
+  heroCopy: string
+  heroAlt: string
   products: Product[]
 }
 
@@ -133,6 +148,12 @@ interface LocalizedGamme {
   ingredientsDetail: Localized
   image: string
   mainImage: string
+  heroImage: string
+  heroImageSmall: string
+  heroLead: Localized
+  heroAccent: Localized
+  heroCopy: Localized
+  heroAlt: Localized
   products: LocalizedProduct[]
 }
 
@@ -155,6 +176,18 @@ const GAMMES_BASE: LocalizedGamme[] = [
     },
     image: 'https://images.unsplash.com/photo-1768729340925-2749ecdc211c?w=800&h=600&fit=crop&auto=format',
     mainImage: savonUnifie,
+    heroImage: heroEclat,
+    heroImageSmall: heroEclatSm,
+    heroLead: { fr: 'Votre peau', en: 'Your skin' },
+    heroAccent: { fr: "vaut de l'or.", en: 'is worth gold.' },
+    heroCopy: {
+      fr: "Des soins naturels, efficaces et respectueux de votre peau, pour révéler toute sa beauté — sans jamais changer sa couleur.",
+      en: 'Natural, effective care that respects your skin, revealing all its beauty — without ever changing its colour.',
+    },
+    heroAlt: {
+      fr: "Portrait d'une femme au teint lumineux dans une lumière dorée, entourée de curcuma et de carotte.",
+      en: 'Portrait of a woman with luminous skin in golden light, surrounded by turmeric and carrot.',
+    },
     products: [
       {
         type: { fr: 'Savon', en: 'Soap' },
@@ -252,6 +285,18 @@ const GAMMES_BASE: LocalizedGamme[] = [
     },
     image: 'https://images.unsplash.com/photo-1646457417431-1257d95a92b8?w=800&h=600&fit=crop&auto=format',
     mainImage: lotionReparee,
+    heroImage: heroReparation,
+    heroImageSmall: heroReparationSm,
+    heroLead: { fr: 'Réparer,', en: 'Repair,' },
+    heroAccent: { fr: 'puis rayonner.', en: 'then glow.' },
+    heroCopy: {
+      fr: "L'huile de marula et le collagène marin restaurent la barrière cutanée et redonnent du rebond aux peaux fragilisées.",
+      en: 'Marula oil and marine collagen restore the skin barrier and bring bounce back to weakened skin.',
+    },
+    heroAlt: {
+      fr: "Portrait d'une femme au foulard vert, les yeux fermés, dans une lumière végétale apaisante.",
+      en: 'Portrait of a woman in a green headwrap, eyes closed, in soothing botanical light.',
+    },
     products: [
       {
         type: { fr: 'Savon', en: 'Soap' },
@@ -349,6 +394,18 @@ const GAMMES_BASE: LocalizedGamme[] = [
     },
     image: 'https://images.unsplash.com/photo-1613143798921-c342c82c32e2?w=800&h=600&fit=crop&auto=format',
     mainImage: cremeHydratee,
+    heroImage: heroHydratation,
+    heroImageSmall: heroHydratationSm,
+    heroLead: { fr: 'Une peau', en: 'Skin that is' },
+    heroAccent: { fr: 'désaltérée.', en: 'deeply quenched.' },
+    heroCopy: {
+      fr: "L'aloe vera et le concombre forment un bouclier d'hydratation qui tient tête à la chaleur tropicale.",
+      en: 'Aloe vera and cucumber form a hydration shield that stands up to tropical heat.',
+    },
+    heroAlt: {
+      fr: "Portrait d'une femme à la peau fraîche et lumineuse, entourée d'aloe vera et de concombre.",
+      en: 'Portrait of a woman with fresh, luminous skin, surrounded by aloe vera and cucumber.',
+    },
     products: [
       {
         type: { fr: 'Savon', en: 'Soap' },
@@ -434,6 +491,18 @@ const GAMMES_BASE: LocalizedGamme[] = [
     },
     image: 'https://images.unsplash.com/photo-1417217601328-d3c66e6f1d48?w=800&h=600&fit=crop&auto=format',
     mainImage: laitNourri,
+    heroImage: heroNutrition,
+    heroImageSmall: heroNutritionSm,
+    heroLead: { fr: 'Nourrir pour', en: 'Nourish to' },
+    heroAccent: { fr: 'mieux briller.', en: 'glow brighter.' },
+    heroCopy: {
+      fr: "Le beurre de mangue et l'huile d'avocat enveloppent les peaux sèches d'une douceur durable.",
+      en: 'Mango butter and avocado oil wrap dry skin in lasting softness.',
+    },
+    heroAlt: {
+      fr: "Portrait d'une femme au teint chaleureux, dans une lumière ambrée, entourée de mangue et d'avocat.",
+      en: 'Portrait of a woman with warm-toned skin in amber light, surrounded by mango and avocado.',
+    },
     products: [
       {
         type: { fr: 'Savon', en: 'Soap' },
@@ -516,6 +585,12 @@ export function getGammes(lang: Lang): Gamme[] {
     ingredientsDetail: g.ingredientsDetail[lang],
     image: g.image,
     mainImage: g.mainImage,
+    heroImage: g.heroImage,
+    heroImageSmall: g.heroImageSmall,
+    heroLead: g.heroLead[lang],
+    heroAccent: g.heroAccent[lang],
+    heroCopy: g.heroCopy[lang],
+    heroAlt: g.heroAlt[lang],
     products: g.products.map(p => ({
       type: p.type[lang],
       poids: p.poids,

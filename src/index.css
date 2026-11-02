@@ -10,25 +10,152 @@ body,
 @theme inline {
   --font-display: 'DM Serif Display', Georgia, serif;
   --font-body: 'Outfit', system-ui, sans-serif;
+
+  --color-cream: #faf6ef;
+  --color-espresso: #2a1006;
+  --color-cocoa: #3b1705;
+  --color-gold: #c9971a;
+  --color-gold-deep: #a85e0f;
+  --color-sand: #f2e8da;
 }
 
 * {
   -webkit-font-smoothing: antialiased;
 }
 
-body {
-  font-family: var(--font-body);
-}
-
-.font-display {
-  font-family: var(--font-display);
-}
-
 html {
   scroll-behavior: smooth;
 }
 
-/* Hide scrollbar, show on hover */
+body {
+  font-family: var(--font-body);
+  background: var(--color-cream);
+  color: var(--color-espresso);
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-cream);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold-deep);
+  outline-offset: 3px;
+}
+
+/* ── Hero choreography ── */
+@keyframes heroProgress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.hero-progress {
+  width: 0;
+  animation: heroProgress 7000ms linear forwards;
+}
+
+@keyframes heroCopy {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-copy {
+  animation: heroCopy 750ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes kenburns {
+  from {
+    transform: scale(1.015);
+  }
+  to {
+    transform: scale(1.085);
+  }
+}
+
+.hero-image-active {
+  animation: kenburns 11000ms ease-out both;
+  transform-origin: 64% 36%;
+}
+
+@keyframes productFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.hero-product-image {
+  animation: productFade 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── Moving brand strip ── */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee 42s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ── Quiet reveal on scroll ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 750ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 750ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .hero-progress,
+  .hero-copy,
+  .hero-image-active,
+  .hero-product-image,
+  .marquee-track {
+    animation: none !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
