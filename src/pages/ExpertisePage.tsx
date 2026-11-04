@@ -1,4 +1,6 @@
-import { useT } from '@/context/LanguageContext'
+import { useLang, useT } from '@/context/LanguageContext'
+import { usePageContent } from '@/hooks/usePageContent'
+import { useContentImage } from '@/hooks/useContentImage'
 
 const EN: Record<string, string> = {
   'Notre Expertise': 'Our Expertise',
@@ -55,7 +57,21 @@ const INGREDIENTS = [
 ]
 
 export default function ExpertisePage() {
+  const { lang } = useLang()
   const t = useT(EN)
+  const c = usePageContent('expertise', lang, {
+    title: { fr: 'Notre Expertise', en: 'Our Expertise' },
+    lead: {
+      fr: 'Experts de la beauté de la peau noire, métissée et albinos.',
+      en: 'Experts in the beauty of black, mixed-race and albino skin.',
+    },
+  })
+  const image = useContentImage(
+    'expertise',
+    lang,
+    'image',
+    'https://images.unsplash.com/photo-1615485500834-bc10199bc727?w=700&h=500&fit=crop&auto=format'
+  )
 
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
@@ -66,10 +82,10 @@ export default function ExpertisePage() {
             Teint d'Afrique Cosmétiques
           </p>
           <h1 className="text-[#FAF6EF] leading-tight" style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}>
-            {t('Notre Expertise')}
+            {c.title}
           </h1>
           <p className="text-[#FAF6EF]/60 mt-4 max-w-xl">
-            {t('Experts de la beauté de la peau noire, métissée et albinos.')}
+            {c.lead}
           </p>
         </div>
       </div>
@@ -98,7 +114,7 @@ export default function ExpertisePage() {
             </div>
             <div>
               <img
-                src="https://images.unsplash.com/photo-1615485500834-bc10199bc727?w=700&h=500&fit=crop&auto=format"
+                src={image}
                 alt={t('Ingrédients botaniques naturels')}
                 className="w-full h-64 object-cover mb-6"
               />

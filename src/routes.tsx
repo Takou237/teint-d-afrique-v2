@@ -39,6 +39,13 @@ function NotFound() {
 
 export const router = createBrowserRouter([
   {
+    path: '/admin',
+    lazy: async () => {
+      const { default: AdminApp } = await import('@/admin/AdminApp')
+      return { Component: AdminApp }
+    },
+  },
+  {
     path: '/',
     Component: Layout,
     children: [

@@ -1,5 +1,7 @@
 import { Link } from 'react-router'
-import { getGammes } from '@/data'
+import { useGammes } from '@/hooks/useGammes'
+import { usePageContent } from '@/hooks/usePageContent'
+import { useContentImage } from '@/hooks/useContentImage'
 import { useLang, useT } from '@/context/LanguageContext'
 import Reveal from '@/components/home/Reveal'
 import { ArrowRightIcon, ArrowUpRightIcon, LeafIcon, ShieldIcon, SunIcon } from '@/components/BrandIcons'
@@ -49,7 +51,43 @@ const EN: Record<string, string> = {
 export default function NosProduitsPage() {
   const { lang } = useLang()
   const t = useT(EN)
-  const GAMMES = getGammes(lang)
+  const GAMMES = useGammes(lang)
+  const c = usePageContent('nos-produits', lang, {
+    title: { fr: 'Quatre univers, seize soins', en: 'Four universes, sixteen products' },
+    lead: {
+      fr: 'Chaque gamme possède son univers, ses actifs botaniques et ses formules exclusives. 4 produits par gamme, pensés pour les peaux noires et métissées.',
+      en: 'Each range has its own universe, botanical actives and exclusive formulas. 4 products per range, designed for black and mixed-race skin.',
+    },
+    intro: {
+      fr: 'Choisissez votre gamme, puis composez votre rituel en quatre gestes : nettoyer, tonifier, unifier, nourrir.',
+      en: 'Choose your range, then build your ritual in four steps: cleanse, tone, even out, nourish.',
+    },
+    shop_label: { fr: 'La boutique', en: 'The shop' },
+    view_gammes: { fr: 'Voir les gammes', en: 'See the ranges' },
+    stat_chip_gammes: { fr: '4 Gammes', en: '4 Ranges' },
+    stat_chip_produits: { fr: '16 Produits', en: '16 Products' },
+    rituels_title_1: { fr: 'Des rituels complets,', en: 'Complete rituals,' },
+    rituels_title_2: { fr: 'pour chaque peau.', en: 'for every skin.' },
+    card_cta: { fr: 'Découvrir la gamme', en: 'Discover the range' },
+    promise_label: { fr: 'Notre engagement produit', en: 'Our product commitment' },
+    promise_title_1: { fr: '100% naturel, formules uniques,', en: '100% natural, unique formulas,' },
+    promise_title_2: { fr: 'adaptées à votre peau.', en: 'adapted to your skin.' },
+    promise_text: {
+      fr: 'Pour chaque produit, nous relevons le défi de créer des formules uniques et innovantes en utilisant exclusivement des options naturelles. Chaque gamme comprend un savon (180 g), une lotion (100 ml), une crème de visage (100 ml) et un lait corps (500 ml).',
+      en: 'For each product, we take on the challenge of creating unique and innovative formulas using exclusively natural options. Each range includes a soap (180 g), a lotion (100 ml), a face cream (100 ml) and a body milk (500 ml).',
+    },
+    stats_1_label: { fr: 'Gammes', en: 'Ranges' },
+    stats_1_desc: {
+      fr: 'Éclat Naturel · Réparation · Hydratation · Nutrition',
+      en: 'Natural Radiance · Repair · Hydration · Nutrition',
+    },
+    stats_2_label: { fr: 'Produits', en: 'Products' },
+    stats_2_desc: { fr: '4 produits par gamme, formulés exclusivement', en: '4 products per range, exclusively formulated' },
+    stats_3_label: { fr: 'Naturel', en: 'Natural' },
+    stats_3_desc: { fr: 'Ingrédients botaniques de la plus haute qualité', en: 'Botanical ingredients of the highest quality' },
+    quality_badge: { fr: 'Qualité garantie', en: 'Guaranteed quality' },
+  })
+  const heroImage = useContentImage('nos-produits', lang, 'image', ingredientsImg)
 
   return (
     <div>
@@ -61,7 +99,7 @@ export default function NosProduitsPage() {
         </div>
         <div className="absolute inset-y-0 right-0 hidden w-[46%] md:block">
           <img
-            src={ingredientsImg}
+            src={heroImage}
             srcSet={`${ingredientsSm} 900w, ${ingredientsImg} 1536w`}
             sizes="46vw"
             alt=""
@@ -73,33 +111,31 @@ export default function NosProduitsPage() {
         <div className="relative mx-auto max-w-[1440px] px-6 py-16 md:px-10 md:py-24 lg:px-16">
           <p className="flex items-center gap-3 text-[9px] uppercase tracking-[0.3em] text-[#C9971A] md:text-[10px]">
             <span className="h-px w-8 bg-[#C9971A]" />
-            {t('La boutique')}
+            {c.shop_label}
           </p>
           <h1
             className="mt-4 max-w-2xl text-[clamp(2.8rem,6vw,5rem)] leading-[0.95]"
             style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
           >
-            {t('Quatre univers, seize soins')}
+            {c.title}
           </h1>
           <p className="mt-5 max-w-xl text-[14px] leading-relaxed text-[#FAF6EF]/60 md:text-[15px]">
-            {t(
-              'Chaque gamme possède son univers, ses actifs botaniques et ses formules exclusives. 4 produits par gamme, pensés pour les peaux noires et métissées.'
-            )}
+            {c.lead}
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
               href="#gammes"
               className="group inline-flex items-center gap-3 bg-[#FAF6EF] px-6 py-3.5 text-[10px] uppercase tracking-[0.2em] text-[#2A1006] transition-colors hover:bg-[#C9971A]"
             >
-              {t('Voir les gammes')}
+              {c.view_gammes}
               <ArrowRightIcon size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
             </a>
             <div className="flex items-center gap-4 text-[9px] uppercase tracking-[0.16em] text-[#FAF6EF]/45">
               <span className="flex items-center gap-1.5">
-                <SunIcon size={13} className="text-[#C9971A]" /> {t('4 Gammes')}
+                <SunIcon size={13} className="text-[#C9971A]" /> {c.stat_chip_gammes}
               </span>
               <span className="h-3 w-px bg-[#FAF6EF]/15" />
-              <span>{t('16 Produits')}</span>
+              <span>{c.stat_chip_produits}</span>
             </div>
           </div>
         </div>
@@ -113,21 +149,19 @@ export default function NosProduitsPage() {
               <div>
                 <p className="flex items-center gap-3 text-[9px] uppercase tracking-[0.3em] text-[#A85E0F] md:text-[10px]">
                   <span className="h-px w-7 bg-[#A85E0F]" />
-                  {t('La boutique')}
+                  {c.shop_label}
                 </p>
                 <h2
                   className="mt-4 text-[clamp(2.3rem,4.8vw,3.8rem)] leading-[0.98] text-[#2A1006]"
                   style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
                 >
-                  {t('Des rituels complets,')}
+                  {c.rituels_title_1}
                   <br />
-                  <em className="text-[#A85E0F]">{t('pour chaque peau.')}</em>
+                  <em className="text-[#A85E0F]">{c.rituels_title_2}</em>
                 </h2>
               </div>
               <p className="max-w-sm text-[12px] leading-relaxed text-[#2A1006]/55 md:text-[13px]">
-                {t(
-                  'Choisissez votre gamme, puis composez votre rituel en quatre gestes : nettoyer, tonifier, unifier, nourrir.'
-                )}
+                {c.intro}
               </p>
             </div>
           </Reveal>
@@ -202,7 +236,7 @@ export default function NosProduitsPage() {
                       className="mt-5 flex items-center gap-2 text-[9px] uppercase tracking-[0.2em] font-medium transition-all group-hover:gap-3 md:text-[10px]"
                       style={{ color: gamme.colorDark }}
                     >
-                      {t('Découvrir la gamme')}
+                      {c.card_cta}
                       <ArrowRightIcon size={13} />
                     </div>
                   </div>
@@ -220,27 +254,25 @@ export default function NosProduitsPage() {
             <div className="md:col-span-7">
               <p className="flex items-center gap-3 text-[9px] uppercase tracking-[0.3em] text-[#C9971A]">
                 <LeafIcon size={14} />
-                {t('Notre engagement produit')}
+                {c.promise_label}
               </p>
               <h2
                 className="mt-4 text-[clamp(1.9rem,3.4vw,2.9rem)] leading-[1]"
                 style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
               >
-                {t('100% naturel, formules uniques,')}
+                {c.promise_title_1}
                 <br />
-                <em className="text-[#C9971A]">{t('adaptées à votre peau.')}</em>
+                <em className="text-[#C9971A]">{c.promise_title_2}</em>
               </h2>
               <p className="mt-5 max-w-xl text-[13px] leading-relaxed text-[#FAF6EF]/60">
-                {t(
-                  'Pour chaque produit, nous relevons le défi de créer des formules uniques et innovantes en utilisant exclusivement des options naturelles. Chaque gamme comprend un savon (180 g), une lotion (100 ml), une crème de visage (100 ml) et un lait corps (500 ml).'
-                )}
+                {c.promise_text}
               </p>
             </div>
             <div className="flex flex-col justify-center gap-5 md:col-span-5">
-              {[
-                { n: '4', label: 'Gammes', desc: 'Éclat Naturel · Réparation · Hydratation · Nutrition' },
-                { n: '16', label: 'Produits', desc: '4 produits par gamme, formulés exclusivement' },
-                { n: '100%', label: 'Naturel', desc: 'Ingrédients botaniques de la plus haute qualité' },
+              {              [
+                { n: '4', label: c.stats_1_label, desc: c.stats_1_desc },
+                { n: '16', label: c.stats_2_label, desc: c.stats_2_desc },
+                { n: '100%', label: c.stats_3_label, desc: c.stats_3_desc },
               ].map(stat => (
                 <div key={stat.label} className="flex items-start gap-5 border-l border-[#C9971A]/50 pl-5">
                   <span
@@ -251,13 +283,13 @@ export default function NosProduitsPage() {
                   </span>
                   <div>
                     <p className="text-[10px] uppercase tracking-[0.18em] text-[#FAF6EF]">{stat.label}</p>
-                    <p className="mt-1 text-[10px] leading-snug text-[#FAF6EF]/45">{t(stat.desc)}</p>
+                    <p className="mt-1 text-[10px] leading-snug text-[#FAF6EF]/45">{stat.desc}</p>
                   </div>
                 </div>
               ))}
               <div className="mt-2 flex items-center gap-2 text-[9px] uppercase tracking-[0.18em] text-[#C9971A]">
                 <ShieldIcon size={13} />
-                {t('Qualité garantie')}
+                {c.quality_badge}
               </div>
             </div>
           </div>

@@ -1,6 +1,8 @@
 import { Link } from 'react-router'
 import logo from '@/imports/TDA_LogoExe_CMJN.png'
-import { getGammes } from '@/data'
+import { useGammes } from '@/hooks/useGammes'
+import { useContentImage } from '@/hooks/useContentImage'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { generalUrl } from '@/lib/whatsapp'
 import { useLang, useT } from '@/context/LanguageContext'
 
@@ -25,7 +27,15 @@ const EN = {
 export default function Footer() {
   const { lang } = useLang()
   const t = useT(EN)
-  const GAMMES = getGammes(lang)
+  const GAMMES = useGammes(lang)
+  const settings = useSiteSettings()
+  const logoUrl = useContentImage('global', lang, 'logo', logo)
+  const socialLinks = [
+    { label: 'Facebook', abbr: 'fb', href: settings.facebook_url },
+    { label: 'Instagram', abbr: 'ig', href: settings.instagram_url },
+    { label: 'TikTok', abbr: 'tk', href: settings.tiktok_url },
+    { label: 'YouTube', abbr: 'yt', href: settings.youtube_url },
+  ].filter(link => link.href)
   return (
     <footer
       className="bg-[#2A1006] pt-16 pb-8"
@@ -37,7 +47,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <img
-              src={logo}
+              src={logoUrl}
               alt="Teint d'Afrique Cosmétiques"
               className="h-8 object-contain mb-5"
               style={{ filter: 'brightness(0) invert(1)' }}
@@ -46,22 +56,20 @@ export default function Footer() {
               {t('Marque camerounaise de cosmétiques naturels, pensée pour célébrer et sublimer la beauté naturelle de la peau noire et métissée.')}
             </p>
             <div className="flex gap-3">
+              {socialLinks.map(link => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={link.label}
+                  className="w-9 h-9 border border-[#FAF6EF]/15 flex items-center justify-center text-[#FAF6EF]/50 text-[11px] uppercase tracking-widest hover:bg-[#FAF6EF]/10 hover:text-[#FAF6EF] transition-all"
+                >
+                  {link.abbr}
+                </a>
+              ))}
               <a
-                href="#"
-                aria-label="Facebook"
-                className="w-9 h-9 border border-[#FAF6EF]/15 flex items-center justify-center text-[#FAF6EF]/50 text-[11px] uppercase tracking-widest hover:bg-[#FAF6EF]/10 hover:text-[#FAF6EF] transition-all"
-              >
-                fb
-              </a>
-              <a
-                href="#"
-                aria-label="Instagram"
-                className="w-9 h-9 border border-[#FAF6EF]/15 flex items-center justify-center text-[#FAF6EF]/50 text-[11px] uppercase tracking-widest hover:bg-[#FAF6EF]/10 hover:text-[#FAF6EF] transition-all"
-              >
-                ig
-              </a>
-              <a
-                href={generalUrl(lang)}
+                href={generalUrl(lang, settings.whatsapp_number)}
                 aria-label="WhatsApp"
                 className="w-9 h-9 flex items-center justify-center text-white text-[11px] uppercase tracking-widest hover:opacity-80 transition-opacity"
                 style={{ background: '#25D366' }}
@@ -122,21 +130,23 @@ export default function Footer() {
             <div className="flex flex-col gap-4">
               <div>
                 <p className="text-[#FAF6EF]/30 text-[10px] tracking-[0.2em] uppercase mb-1">{t('Adresse')}</p>
-                <p className="text-[#FAF6EF]/65 text-sm">{t('Douala, Cameroun')}</p>
+                <p className="text-[#FAF6EF]/65 text-sm">
+                  {lang === 'en' ? settings.address_en : settings.address_fr}
+                </p>
               </div>
               <div>
                 <p className="text-[#FAF6EF]/30 text-[10px] tracking-[0.2em] uppercase mb-1">{t('Email')}</p>
                 <a
-                  href="mailto:contact@teintdafrique.com"
+                  href={`mailto:${settings.email}`}
                   className="text-[#FAF6EF]/65 text-sm hover:text-[#C97B1A] transition-colors break-all"
                 >
-                  contact@teintdafrique.com
+                  {settings.email}
                 </a>
               </div>
               <div>
                 <p className="text-[#FAF6EF]/30 text-[10px] tracking-[0.2em] uppercase mb-2">{t('WhatsApp')}</p>
                 <a
-                  href={generalUrl(lang)}
+                  href={generalUrl(lang, settings.whatsapp_number)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2.5 text-white text-[11px] tracking-[0.15em] uppercase hover:opacity-85 transition-opacity"

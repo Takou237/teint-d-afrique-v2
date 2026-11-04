@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import ingredientsImg from '@/assets/hero/ingredients.webp'
 import ingredientsSm from '@/assets/hero/ingredients-sm.webp'
-import { getGammes } from '@/data'
+import { useGammes } from '@/hooks/useGammes'
+import { usePageContent } from '@/hooks/usePageContent'
+import { useContentImage } from '@/hooks/useContentImage'
 import { useLang, useT } from '@/context/LanguageContext'
 import lotionUnifiee from '@/assets/products/lotion-unifiee.webp'
 import lotionReparee from '@/assets/products/lotion-reparee.webp'
@@ -138,7 +140,7 @@ const EN: Record<string, string> = {
 function TypeRow({ item, reverse }: { item: TypeItem; reverse: boolean }) {
   const { lang } = useLang()
   const t = useT(EN)
-  const GAMMES = getGammes(lang)
+  const GAMMES = useGammes(lang)
   const [slide, setSlide] = useState(0)
   const [reduced, setReduced] = useState(false)
 
@@ -234,7 +236,16 @@ function TypeRow({ item, reverse }: { item: TypeItem; reverse: boolean }) {
 }
 
 export default function TypesProduitsPage() {
+  const { lang } = useLang()
   const t = useT(EN)
+  const c = usePageContent('types', lang, {
+    title: { fr: 'Types de Produits', en: 'Product Types' },
+    lead: {
+      fr: '4 types de produits, déclinés dans chacune de nos 4 gammes — soit 16 références formulées pour les peaux noires, métissées et albinos.',
+      en: '4 product types, available in each of our 4 ranges — 16 references formulated for black, mixed-race and albino skin.',
+    },
+  })
+  const heroImage = useContentImage('types', lang, 'image', ingredientsImg)
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
       <section className="relative overflow-hidden bg-[#2A1006] text-[#FAF6EF]">
@@ -244,7 +255,7 @@ export default function TypesProduitsPage() {
         </div>
         <div className="absolute inset-y-0 right-0 hidden w-[46%] md:block">
           <img
-            src={ingredientsImg}
+            src={heroImage}
             srcSet={`${ingredientsSm} 900w, ${ingredientsImg} 1536w`}
             sizes="46vw"
             alt=""
@@ -261,10 +272,10 @@ export default function TypesProduitsPage() {
             className="mt-4 max-w-2xl text-[clamp(2.8rem,6vw,5rem)] leading-[0.95]"
             style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
           >
-            {t('Types de Produits')}
+            {c.title}
           </h1>
           <p className="mt-5 max-w-xl text-[14px] leading-relaxed text-[#FAF6EF]/60 md:text-[15px]">
-            {t('4 types de produits, déclinés dans chacune de nos 4 gammes — soit 16 références formulées pour les peaux noires, métissées et albinos.')}
+            {c.lead}
           </p>
           <div className="mt-8 flex flex-wrap gap-2">
             {TYPES.map(tp => (

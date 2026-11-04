@@ -1,4 +1,7 @@
 import { useLang, useT } from '@/context/LanguageContext'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
+import { usePageContent } from '@/hooks/usePageContent'
+import { useContentImage } from '@/hooks/useContentImage'
 import { generalUrl } from '@/lib/whatsapp'
 
 const EN: Record<string, string> = {
@@ -8,6 +11,7 @@ const EN: Record<string, string> = {
   Ville: 'City',
   Pays: 'Country',
   Continent: 'Continent',
+  Adresse: 'Address',
   Cameroun: 'Cameroon',
   'Afrique Centrale': 'Central Africa',
   'Nous contacter': 'Contact us',
@@ -18,6 +22,21 @@ const EN: Record<string, string> = {
 export default function LocalisationPage() {
   const t = useT(EN)
   const { lang } = useLang()
+  const settings = useSiteSettings()
+  const c = usePageContent('localisation', lang, {
+    title: { fr: 'Localisation', en: 'Location' },
+    lead: {
+      fr: "Teint d'Afrique Cosmétiques est à Douala.",
+      en: "Teint d'Afrique Cosmétiques is in Douala.",
+    },
+  })
+  const image = useContentImage(
+    'localisation',
+    lang,
+    'image',
+    'https://images.unsplash.com/photo-1527203561188-dae1bc1a417f?w=700&h=300&fit=crop&auto=format'
+  )
+  const address = lang === 'en' ? settings.address_en : settings.address_fr
 
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
@@ -28,7 +47,7 @@ export default function LocalisationPage() {
             Contact · Teint d'Afrique Cosmétiques
           </p>
           <h1 className="text-[#FAF6EF] leading-tight" style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}>
-            {t('Localisation')}
+            {c.title}
           </h1>
         </div>
       </div>
@@ -42,14 +61,13 @@ export default function LocalisationPage() {
                 {t('Où nous trouver')}
               </p>
               <h2 className="text-[#3B1705] text-3xl md:text-4xl mb-8" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
-                Teint d'Afrique Cosmétiques<br />{t('est à Douala.')}
+                {c.lead}
               </h2>
               <div className="space-y-6 text-[15px]">
                 {[
-                  { label: 'Ville', value: 'Douala' },
-                  { label: 'Pays', value: 'Cameroun' },
+                  { label: 'Adresse', value: address },
                   { label: 'Continent', value: 'Afrique Centrale' },
-                  { label: 'Email', value: 'contact@teintdafrique.com', href: 'mailto:contact@teintdafrique.com' },
+                  { label: 'Email', value: settings.email, href: `mailto:${settings.email}` },
                 ].map(item => (
                   <div key={item.label} className="flex gap-4 items-start">
                     <div className="w-24 flex-shrink-0 text-[9px] tracking-[0.25em] uppercase text-[#C97B1A] pt-0.5">{t(item.label)}</div>
@@ -67,7 +85,7 @@ export default function LocalisationPage() {
                   {t("Pour toute demande d'information ou de commande, contactez-nous directement par email ou via WhatsApp.")}
                 </p>
                 <a
-                  href={generalUrl(lang)}
+                  href={generalUrl(lang, settings.whatsapp_number)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-3 text-white text-[11px] tracking-[0.15em] uppercase hover:opacity-85 transition-opacity"
@@ -90,7 +108,7 @@ export default function LocalisationPage() {
                 </div>
               </div>
               <img
-                src="https://images.unsplash.com/photo-1527203561188-dae1bc1a417f?w=700&h=300&fit=crop&auto=format"
+                src={image}
                 alt="Teint d'Afrique Cosmétiques"
                 className="w-full h-40 object-cover mt-4"
               />

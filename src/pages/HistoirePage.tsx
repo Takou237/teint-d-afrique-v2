@@ -1,4 +1,6 @@
-import { useT } from '@/context/LanguageContext'
+import { useLang, useT } from '@/context/LanguageContext'
+import { usePageContent } from '@/hooks/usePageContent'
+import { useContentImage } from '@/hooks/useContentImage'
 
 const EN: Record<string, string> = {
   'Notre Histoire': 'Our Story',
@@ -44,7 +46,25 @@ const EN: Record<string, string> = {
 }
 
 export default function HistoirePage() {
+  const { lang } = useLang()
   const t = useT(EN)
+  const c = usePageContent('histoire', lang, {
+    title: { fr: 'Notre Histoire', en: 'Our Story' },
+    lead: {
+      fr: "Créée dans un Cameroun et une Afrique envahis par les produits décapants, Teint d'Afrique Cosmétiques s'est donnée pour mission de réapprendre aux personnes aux peaux noires, métissées et albinos à s'aimer et à aimer leurs peaux.",
+      en: "Created in a Cameroon and an Africa overrun by lightening products, Teint d'Afrique Cosmétiques set itself the mission of teaching people with black, mixed-race and albino skin to love themselves and to love their skin.",
+    },
+    intro: {
+      fr: 'Une cosmétique pensée pour les peaux noires et métissées. Qui les soigne, les nourrit, les révèle — sans jamais chercher à changer leur couleur.',
+      en: 'Cosmetics designed for black and mixed-race skin. That cares for it, nourishes it, reveals it — without ever seeking to change its colour.',
+    },
+  })
+  const image = useContentImage(
+    'histoire',
+    lang,
+    'image',
+    'https://images.unsplash.com/photo-1527203561188-dae1bc1a417f?w=700&h=500&fit=crop&auto=format'
+  )
 
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
@@ -62,7 +82,7 @@ export default function HistoirePage() {
               fontSize: 'clamp(2.5rem, 6vw, 5rem)',
             }}
           >
-            {t('Notre Histoire')}
+            {c.title}
           </h1>
         </div>
       </div>
@@ -76,14 +96,14 @@ export default function HistoirePage() {
             <div className="space-y-6 text-[#2A1006]/80 leading-relaxed text-[15px] md:text-base">
               <p className="text-[#3B1705] font-medium text-lg leading-relaxed"
                 style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
-                {t("Créée dans un Cameroun et une Afrique envahis par les produits décapants, Teint d'Afrique Cosmétiques s'est donnée pour mission de réapprendre aux personnes aux peaux noires, métissées et albinos à s'aimer et à aimer leurs peaux.")}
+                {c.lead}
               </p>
               <p>
                 {t("Tout est parti d'un constat que nous ne pouvions plus ignorer. Trop de femmes abîment leur peau avec des produits éclaircissants, dans l'espoir d'un teint plus uniforme, plus lumineux — pour répondre à une idée de la beauté qui n'est pas la nôtre. Nous avons décidé d'ouvrir une autre voie.")}
               </p>
 
               <p>
-                {t('Une cosmétique pensée pour les peaux noires et métissées. Qui les soigne, les nourrit, les révèle — sans jamais chercher à changer leur couleur.')}
+                {c.intro}
               </p>
 
               <p>
@@ -121,7 +141,7 @@ export default function HistoirePage() {
             <div className="space-y-8">
               <div className="relative">
                 <img
-                  src="https://images.unsplash.com/photo-1527203561188-dae1bc1a417f?w=700&h=500&fit=crop&auto=format"
+                  src={image}
                   alt={t('Femme africaine aux cheveux tressés, naturellement belle')}
                   className="w-full h-72 object-cover"
                 />

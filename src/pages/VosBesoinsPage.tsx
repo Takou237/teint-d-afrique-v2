@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
-import { getGammes } from '@/data'
+import { useGammes } from '@/hooks/useGammes'
+import { usePageContent } from '@/hooks/usePageContent'
 import { useLang, useT } from '@/context/LanguageContext'
 
 const BESOINS = [
@@ -73,7 +74,14 @@ const EN: Record<string, string> = {
 export default function VosBesoinsPage() {
   const { lang } = useLang()
   const t = useT(EN)
-  const GAMMES = getGammes(lang)
+  const GAMMES = useGammes(lang)
+  const c = usePageContent('vos-besoins', lang, {
+    title: { fr: 'Vos Besoins', en: 'Your Needs' },
+    lead: {
+      fr: 'Identifiez le besoin de votre peau et découvrez la gamme faite pour vous.',
+      en: "Identify your skin's needs and discover the range made for you.",
+    },
+  })
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
       <div className="bg-[#3B1705] py-16 md:py-20">
@@ -83,10 +91,10 @@ export default function VosBesoinsPage() {
             {t("Nos Produits · Teint d'Afrique Cosmétiques")}
           </p>
           <h1 className="text-[#FAF6EF] leading-tight mb-4" style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}>
-            {t('Vos Besoins')}
+            {c.title}
           </h1>
           <p className="text-[#FAF6EF]/60 max-w-lg">
-            {t('Identifiez le besoin de votre peau et découvrez la gamme faite pour vous.')}
+            {c.lead}
           </p>
         </div>
       </div>

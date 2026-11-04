@@ -1,4 +1,6 @@
-import { useT } from '@/context/LanguageContext'
+import { useLang, useT } from '@/context/LanguageContext'
+import { usePageContent } from '@/hooks/usePageContent'
+import { useContentImage } from '@/hooks/useContentImage'
 
 const EN: Record<string, string> = {
   "La marque · Teint d'Afrique Cosmétiques": "The brand · Teint d'Afrique Cosmétiques",
@@ -31,7 +33,24 @@ const EN: Record<string, string> = {
 }
 
 export default function VisionBeautePage() {
+  const { lang } = useLang()
   const t = useT(EN)
+  const c = usePageContent('vision', lang, {
+    title: {
+      fr: 'Notre Vision de la Beauté Africaine',
+      en: 'Our Vision of African Beauty',
+    },
+    lead: {
+      fr: "La femme africaine est magnifique, et il est temps qu'elle le sache.",
+      en: "The African woman is magnificent, and it's time she knew it.",
+    },
+  })
+  const image = useContentImage(
+    'vision',
+    lang,
+    'image',
+    'https://images.unsplash.com/photo-1543366749-4dad497ea0a0?w=700&h=500&fit=crop&auto=format'
+  )
 
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
@@ -42,7 +61,7 @@ export default function VisionBeautePage() {
             {t("La marque · Teint d'Afrique Cosmétiques")}
           </p>
           <h1 className="text-[#FAF6EF] leading-tight" style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
-            {t('Notre Vision de la Beauté Africaine')}
+            {c.title}
           </h1>
         </div>
       </div>
@@ -52,7 +71,7 @@ export default function VisionBeautePage() {
           <div className="grid md:grid-cols-2 gap-16 items-start">
             <div className="space-y-6 text-[#2A1006]/80 leading-relaxed text-[15px]">
               <p className="text-[#3B1705] text-xl leading-relaxed" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
-                {t("La femme africaine est magnifique, et il est temps qu'elle le sache.")}
+                {c.lead}
               </p>
               <p>
                 {t('Pendant trop longtemps, les standards de beauté imposés ont conduit des milliers de femmes africaines à douter de leur propre image — à vouloir effacer ce qui les rend uniques. Chez Teint d\'Afrique Cosmétiques, nous refusons cette réalité.')}
@@ -75,7 +94,7 @@ export default function VisionBeautePage() {
 
             <div className="space-y-6">
               <img
-                src="https://images.unsplash.com/photo-1543366749-4dad497ea0a0?w=700&h=500&fit=crop&auto=format"
+                src={image}
                 alt={t('Beauté africaine naturelle')}
                 className="w-full h-72 object-cover"
               />

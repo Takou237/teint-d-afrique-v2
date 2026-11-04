@@ -1,4 +1,6 @@
-import { useT } from '@/context/LanguageContext'
+import { useLang, useT } from '@/context/LanguageContext'
+import { usePageContent } from '@/hooks/usePageContent'
+import { useContentImage } from '@/hooks/useContentImage'
 
 const EN: Record<string, string> = {
   "La marque · Teint d'Afrique Cosmétiques": "The brand · Teint d'Afrique Cosmétiques",
@@ -32,7 +34,21 @@ const EN: Record<string, string> = {
 }
 
 export default function EngagementsPage() {
+  const { lang } = useLang()
   const t = useT(EN)
+  const c = usePageContent('engagements', lang, {
+    title: { fr: 'Nos Engagements', en: 'Our Commitments' },
+    lead: {
+      fr: "Notre peau n'a pas besoin de changer de couleur pour être belle. Elle mérite d'être comprise, respectée et sublimée.",
+      en: 'Our skin does not need to change colour to be beautiful. It deserves to be understood, respected and enhanced.',
+    },
+  })
+  const image = useContentImage(
+    'engagements',
+    lang,
+    'image',
+    'https://images.unsplash.com/photo-1646457417431-1257d95a92b8?w=700&h=500&fit=crop&auto=format'
+  )
 
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
@@ -43,7 +59,7 @@ export default function EngagementsPage() {
             {t("La marque · Teint d'Afrique Cosmétiques")}
           </p>
           <h1 className="text-[#FAF6EF] leading-tight" style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}>
-            {t('Nos Engagements')}
+            {c.title}
           </h1>
         </div>
       </div>
@@ -53,7 +69,7 @@ export default function EngagementsPage() {
           <div className="grid md:grid-cols-2 gap-16 items-start">
             <div className="space-y-6 text-[#2A1006]/80 leading-relaxed text-[15px]">
               <p className="text-[#3B1705] text-xl leading-relaxed" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
-                {t("Notre peau n'a pas besoin de changer de couleur pour être belle. Elle mérite d'être comprise, respectée et sublimée.")}
+                {c.lead}
               </p>
               <p>
                 {t("C'est pourquoi nous œuvrons pour que chaque femme puisse aimer sa peau, quelle que soit sa carnation, et qu'elle puisse disposer des meilleurs produits pour la chouchouter tout en se libérant des dictats de la mode.")}
@@ -99,7 +115,7 @@ export default function EngagementsPage() {
 
             <div className="space-y-6">
               <img
-                src="https://images.unsplash.com/photo-1646457417431-1257d95a92b8?w=700&h=500&fit=crop&auto=format"
+                src={image}
                 alt={t('Nos engagements')}
                 className="w-full h-64 object-cover"
               />

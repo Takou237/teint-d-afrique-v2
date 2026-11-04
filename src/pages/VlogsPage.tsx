@@ -1,4 +1,6 @@
 import { useLang, useT } from '@/context/LanguageContext'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
+import { usePageContent } from '@/hooks/usePageContent'
 import { generalUrl } from '@/lib/whatsapp'
 
 const EN: Record<string, string> = {
@@ -11,6 +13,21 @@ const EN: Record<string, string> = {
 export default function VlogsPage() {
   const t = useT(EN)
   const { lang } = useLang()
+  const settings = useSiteSettings()
+  const c = usePageContent('vlogs', lang, {
+    title: { fr: 'Vlogs', en: 'Vlogs' },
+    coming_soon: { fr: 'Nos Vlogs arrivent bientôt', en: 'Our Vlogs are coming soon' },
+    lead: {
+      fr: 'Conseils beauté, routines de soin, tutoriels et coulisses de la marque — nos vlogs seront bientôt disponibles. Restez connectées et suivez-nous sur les réseaux sociaux pour ne rien manquer.',
+      en: "Beauty tips, skincare routines, tutorials and behind the scenes of the brand — our vlogs will soon be available. Stay connected and follow us on social media so you don't miss a thing.",
+    },
+  })
+  const socialLinks = [
+    { label: 'Facebook', abbr: 'fb', href: settings.facebook_url },
+    { label: 'Instagram', abbr: 'ig', href: settings.instagram_url },
+    { label: 'TikTok', abbr: 'tk', href: settings.tiktok_url },
+    { label: 'YouTube', abbr: 'yt', href: settings.youtube_url },
+  ].filter(link => link.href)
 
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
@@ -21,7 +38,7 @@ export default function VlogsPage() {
             Teint d'Afrique Cosmétiques
           </p>
           <h1 className="text-[#FAF6EF] leading-tight" style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}>
-            {t('Vlogs')}
+            {c.title}
           </h1>
         </div>
       </div>
@@ -32,19 +49,18 @@ export default function VlogsPage() {
             <span className="text-[#C97B1A] text-4xl" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>▶</span>
           </div>
           <h2 className="text-[#3B1705] text-3xl md:text-4xl mb-5" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
-            {t('Nos Vlogs arrivent bientôt')}
+            {c.coming_soon}
           </h2>
           <p className="text-[#2A1006]/55 max-w-lg mx-auto leading-relaxed">
-            {t('Conseils beauté, routines de soin, tutoriels et coulisses de la marque — nos vlogs seront bientôt disponibles. Restez connectées et suivez-nous sur les réseaux sociaux pour ne rien manquer.')}
+            {c.lead}
           </p>
           <div className="flex justify-center gap-4 mt-10">
-            {[
-              { label: 'Facebook', abbr: 'fb', href: '#' },
-              { label: 'Instagram', abbr: 'ig', href: '#' },
-            ].map(s => (
+            {socialLinks.map(s => (
               <a
                 key={s.label}
                 href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={s.label}
                 className="w-12 h-12 border border-[#3B1705]/20 flex items-center justify-center text-[#3B1705] text-[11px] tracking-widest uppercase hover:bg-[#3B1705] hover:text-white transition-all"
               >
@@ -52,7 +68,7 @@ export default function VlogsPage() {
               </a>
             ))}
             <a
-              href={generalUrl(lang)}
+              href={generalUrl(lang, settings.whatsapp_number)}
               className="w-12 h-12 flex items-center justify-center text-white text-[11px] tracking-widest uppercase"
               style={{ background: '#25D366' }}
             >

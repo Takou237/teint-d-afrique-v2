@@ -1,5 +1,8 @@
 import { Link } from 'react-router'
-import { getGammes } from '@/data'
+import { useGammes } from '@/hooks/useGammes'
+import { usePageContent } from '@/hooks/usePageContent'
+import { useContentImage } from '@/hooks/useContentImage'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { useLang, useT } from '@/context/LanguageContext'
 import HeroSlider from '@/components/home/HeroSlider'
 import Reveal from '@/components/home/Reveal'
@@ -232,7 +235,116 @@ function DisplayHeading({
 export default function AccueilPage() {
   const { lang } = useLang()
   const t = useT(EN)
-  const GAMMES = getGammes(lang)
+  const GAMMES = useGammes(lang)
+  const settings = useSiteSettings()
+  const c = usePageContent('accueil', lang, {
+    categories_lead: {
+      fr: 'Quatre gestes, quatre textures, une même exigence : révéler votre peau sans jamais la transformer.',
+      en: 'Four gestures, four textures, one standard: reveal your skin without ever transforming it.',
+    },
+    brand_lead: {
+      fr: "Nous croyons que chaque carnation est une beauté à part entière. Nos soins révèlent, nourrissent et célèbrent la peau noire — sans jamais chercher à l'altérer.",
+      en: 'We believe every complexion is beauty in its own right. Our care reveals, nourishes and celebrates black skin — without ever seeking to alter it.',
+    },
+    ingredients_lead: {
+      fr: 'Aloe vera, karité, curcuma, miel, mangue… des actifs botaniques sourcés en Afrique, choisis pour leur efficacité et leur douceur.',
+      en: 'Aloe vera, shea, turmeric, honey, mango… botanical actives sourced in Africa, chosen for their efficacy and gentleness.',
+    },
+    signature_lead: {
+      fr: 'Quatre formules, quatre gammes, une même promesse : des soins naturels qui révèlent votre peau.',
+      en: 'Four formulas, four ranges, one promise: natural care that reveals your skin.',
+    },
+    ritual_lead: {
+      fr: 'Chaque gamme décline ce rituel en quatre soins complémentaires, du nettoyage à la nutrition.',
+      en: 'Each range translates this ritual into four complementary products, from cleansing to nutrition.',
+    },
+    promise_lead: {
+      fr: 'Nous célébrons chaque carnation dans sa beauté naturelle et singulière.',
+      en: 'We celebrate every complexion in its natural, singular beauty.',
+    },
+    cta_lead: {
+      fr: 'Prenez soin de vous, avec des soins pensés pour votre peau et votre climat.',
+      en: 'Take care of yourself, with care designed for your skin and your climate.',
+    },
+    marquee_1: { fr: '#AUTHENTIQUE', en: '#AUTHENTIC' },
+    marquee_2: { fr: '100% NATUREL', en: '100% NATURAL' },
+    marquee_3: { fr: '#PLURIELLE', en: '#PLURAL' },
+    marquee_4: { fr: 'FORMULÉ EN AFRIQUE', en: 'FORMULATED IN AFRICA' },
+    marquee_5: { fr: '#INCLUSIVE', en: '#INCLUSIVE' },
+    marquee_6: { fr: 'SANS ÉCLAIRCISSEMENT', en: 'NO LIGHTENING' },
+    marquee_7: { fr: '#NATURELLE', en: '#NATURAL' },
+    marquee_8: { fr: 'DOUALA · CAMEROUN', en: 'DOUALA · CAMEROON' },
+    trust_1_title: { fr: '100% Naturel', en: '100% Natural' },
+    trust_1_copy: {
+      fr: "Des formules d'origine naturelle, sans compromis.",
+      en: 'Naturally derived formulas, with no compromise.',
+    },
+    trust_2_title: { fr: '100% Camerounais', en: '100% Cameroonian' },
+    trust_2_copy: { fr: 'Imaginée et formulée à Douala.', en: 'Imagined and formulated in Douala.' },
+    trust_3_title: { fr: 'Pour toutes les peaux', en: 'For every skin' },
+    trust_3_copy: { fr: 'Noires, métissées et albinos.', en: 'Black, mixed-race and albino.' },
+    trust_4_title: { fr: 'Qualité garantie', en: 'Guaranteed quality' },
+    trust_4_copy: { fr: 'Des soins doux, testés et sûrs.', en: 'Gentle, tested and safe care.' },
+    categories_label: { fr: 'Nos catégories', en: 'Our categories' },
+    categories_title_1: { fr: 'Des soins pour', en: 'Care for' },
+    categories_title_2: { fr: 'chaque besoin.', en: 'every need.' },
+    categories_cta: { fr: 'Voir toutes les gammes', en: 'See all ranges' },
+    categories_count: { fr: '4 gammes', en: '4 ranges' },
+    brand_label: { fr: 'La marque', en: 'The brand' },
+    brand_title_1: { fr: 'La beauté', en: 'Beauty' },
+    brand_title_2: { fr: 'au naturel.', en: 'au naturel.' },
+    brand_cta: { fr: 'Notre histoire', en: 'Our story' },
+    founder_name: { fr: 'Minette Kamdem-Jambong', en: 'Minette Kamdem-Jambong' },
+    founder_role: { fr: 'Fondatrice & Créatrice', en: 'Founder & Creator' },
+    founder_alt: {
+      fr: 'Minette Kamdem-Jambong, fondatrice de Teint d’Afrique Cosmétiques',
+      en: 'Minette Kamdem-Jambong, founder of Teint d’Afrique Cosmétiques',
+    },
+    ingredients_label: { fr: 'Les ingrédients', en: 'The ingredients' },
+    ingredients_title_1: { fr: 'Le meilleur', en: 'The best' },
+    ingredients_title_2: { fr: 'de la nature.', en: 'of nature.' },
+    ingredients_cta: { fr: 'Notre expertise', en: 'Our expertise' },
+    ingredients_alt: {
+      fr: 'Ingrédients botaniques Teint d’Afrique : karité, curcuma, mangue, aloe vera et avocat',
+      en: 'Botanical ingredients from Teint d’Afrique: shea, turmeric, mango, aloe vera and avocado',
+    },
+    signature_label: { fr: 'Les incontournables', en: 'The essentials' },
+    signature_title: { fr: 'Nos soins signature', en: 'Our signature care' },
+    signature_cta: { fr: 'Tous les soins', en: 'All our care' },
+    order_cta: { fr: 'Commander', en: 'Order' },
+    ritual_label: { fr: 'Le rituel', en: 'The ritual' },
+    ritual_title_1: { fr: 'Quatre gestes,', en: 'Four gestures,' },
+    ritual_title_2: { fr: 'une peau lumineuse.', en: 'luminous skin.' },
+    ritual_note: {
+      fr: '4 gammes · 4 soins · Savon · Lotion · Crème · Lait',
+      en: '4 ranges · 4 products · Soap · Lotion · Cream · Milk',
+    },
+    ritual_cta: { fr: 'Trouver mon rituel', en: 'Find my ritual' },
+    promise_label: { fr: 'Notre promesse', en: 'Our promise' },
+    promise_title_1: { fr: 'Une beauté qui ne se change pas.', en: 'Beauty that is not changed.' },
+    promise_title_2: { fr: 'Elle se révèle.', en: 'It is revealed.' },
+    promise_1_title: { fr: 'Sans éclaircissement', en: 'No lightening' },
+    promise_1_copy: {
+      fr: "Aucun actif n'altère la couleur naturelle de votre peau. Jamais.",
+      en: 'No active alters the natural colour of your skin. Ever.',
+    },
+    promise_2_title: { fr: 'Formulé en Afrique', en: 'Formulated in Africa' },
+    promise_2_copy: {
+      fr: 'Des actifs botaniques sourcés localement, pensés pour nos climats.',
+      en: 'Botanical actives sourced locally, designed for our climates.',
+    },
+    promise_3_title: { fr: 'Pour toutes les carnations', en: 'For every complexion' },
+    promise_3_copy: {
+      fr: 'Peaux noires, métissées et albinos, célébrées à parts égales.',
+      en: 'Black, mixed-race and albino skin, celebrated equally.',
+    },
+    cta_label: { fr: 'Le rituel continue', en: 'The ritual continues' },
+    cta_title_1: { fr: 'Votre peau', en: 'Your skin' },
+    cta_title_2: { fr: "vaut de l'or.", en: 'is worth gold.' },
+    cta_primary: { fr: 'Commander sur WhatsApp', en: 'Order on WhatsApp' },
+    cta_secondary: { fr: 'Découvrir les gammes', en: 'Discover the ranges' },
+  })
+  const fondatriceUrl = useContentImage('accueil', lang, 'fondatrice_image', fondatriceImg)
 
   const spotlight = [
     { gamme: GAMMES[0], product: GAMMES[0].products[2] },
@@ -242,55 +354,27 @@ export default function AccueilPage() {
   ]
 
   const trustItems = [
-    {
-      icon: LeafIcon,
-      title: '100% Naturel',
-      copy: "Des formules d'origine naturelle, sans compromis.",
-    },
-    {
-      icon: PinIcon,
-      title: '100% Camerounais',
-      copy: 'Imaginée et formulée à Douala.',
-    },
-    {
-      icon: HeartIcon,
-      title: 'Pour toutes les peaux',
-      copy: 'Noires, métissées et albinos.',
-    },
-    {
-      icon: ShieldIcon,
-      title: 'Qualité garantie',
-      copy: 'Des soins doux, testés et sûrs.',
-    },
+    { icon: LeafIcon, title: c.trust_1_title, copy: c.trust_1_copy },
+    { icon: PinIcon, title: c.trust_2_title, copy: c.trust_2_copy },
+    { icon: HeartIcon, title: c.trust_3_title, copy: c.trust_3_copy },
+    { icon: ShieldIcon, title: c.trust_4_title, copy: c.trust_4_copy },
   ]
 
   const marqueeItems = [
-    '#AUTHENTIQUE',
-    '100% NATUREL',
-    '#PLURIELLE',
-    'FORMULÉ EN AFRIQUE',
-    '#INCLUSIVE',
-    'SANS ÉCLAIRCISSEMENT',
-    '#NATURELLE',
-    'DOUALA · CAMEROUN',
+    c.marquee_1,
+    c.marquee_2,
+    c.marquee_3,
+    c.marquee_4,
+    c.marquee_5,
+    c.marquee_6,
+    c.marquee_7,
+    c.marquee_8,
   ]
 
   const promises = [
-    {
-      icon: ShieldIcon,
-      title: 'Sans éclaircissement',
-      copy: "Aucun actif n'altère la couleur naturelle de votre peau. Jamais.",
-    },
-    {
-      icon: LeafIcon,
-      title: 'Formulé en Afrique',
-      copy: 'Des actifs botaniques sourcés localement, pensés pour nos climats.',
-    },
-    {
-      icon: HeartIcon,
-      title: 'Pour toutes les carnations',
-      copy: 'Peaux noires, métissées et albinos, célébrées à parts égales.',
-    },
+    { icon: ShieldIcon, title: c.promise_1_title, copy: c.promise_1_copy },
+    { icon: LeafIcon, title: c.promise_2_title, copy: c.promise_2_copy },
+    { icon: HeartIcon, title: c.promise_3_title, copy: c.promise_3_copy },
   ]
 
   return (
@@ -317,10 +401,10 @@ export default function AccueilPage() {
                     className="break-words text-[14px] leading-tight text-[#2A1006] sm:text-[17px]"
                     style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
                   >
-                    {t(item.title)}
+                    {item.title}
                   </p>
                   <p className="mt-1.5 text-[11px] leading-snug text-[#2A1006]/55 sm:text-[12px]">
-                    {t(item.copy)}
+                    {item.copy}
                   </p>
                 </div>
               </div>
@@ -332,7 +416,7 @@ export default function AccueilPage() {
       {/* ── Moving brand strip ── */}
       <div className="marquee overflow-hidden border-b border-[#2A1006]/10 bg-[#2A1006] py-3 text-[#FAF6EF]">
         <p className="sr-only">
-          {t('#AUTHENTIQUE')} · {t('100% NATUREL')} · {t('#PLURIELLE')} · {t('FORMULÉ EN AFRIQUE')}
+          {marqueeItems.join(' · ')}
         </p>
         <div className="marquee-track flex w-max items-center" aria-hidden="true">
           {[0, 1].map(group => (
@@ -340,7 +424,7 @@ export default function AccueilPage() {
               {marqueeItems.map(item => (
                 <span key={`${group}-${item}`} className="flex items-center">
                   <span className="px-5 text-[9px] uppercase tracking-[0.3em] text-[#FAF6EF]/70 md:px-8 md:text-[10px]">
-                    {t(item)}
+                    {item}
                   </span>
                   <SparkleIcon size={10} className="text-[#C9971A]" />
                 </span>
@@ -356,23 +440,21 @@ export default function AccueilPage() {
           <Reveal>
             <div className="flex flex-col gap-7 md:flex-row md:items-end md:justify-between">
               <div>
-                <SectionLabel>{t('Nos catégories')}</SectionLabel>
+                <SectionLabel>{c.categories_label}</SectionLabel>
                 <DisplayHeading className="mt-4 text-[clamp(2.4rem,5vw,4rem)]">
-                  {t('Des soins pour')}
+                  {c.categories_title_1}
                   <br />
-                  <em className="text-[#A85E0F]">{t('chaque besoin.')}</em>
+                  <em className="text-[#A85E0F]">{c.categories_title_2}</em>
                 </DisplayHeading>
                 <p className="mt-5 max-w-lg text-[14px] leading-relaxed text-[#2A1006]/60 md:text-[15px]">
-                  {t(
-                    'Quatre gestes, quatre textures, une même exigence : révéler votre peau sans jamais la transformer.'
-                  )}
+                  {c.categories_lead}
                 </p>
               </div>
               <Link
                 to="/nos-produits/les-gammes"
                 className="group inline-flex items-center gap-3 self-start border border-[#2A1006]/25 px-5 py-3 text-[10px] uppercase tracking-[0.2em] text-[#2A1006] transition-colors hover:border-[#2A1006] hover:bg-[#2A1006] hover:text-[#FAF6EF] md:self-auto"
               >
-                {t('Voir toutes les gammes')}
+                {c.categories_cta}
                 <ArrowUpRightIcon size={14} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
             </div>
@@ -390,7 +472,7 @@ export default function AccueilPage() {
                       0{i + 1}
                     </span>
                     <span className="rounded-full border border-[#2A1006]/15 px-2 py-0.5 text-[8px] uppercase tracking-[0.14em] text-[#2A1006]/55">
-                      {t('4 gammes')}
+                      {c.categories_count}
                     </span>
                   </div>
 
@@ -431,30 +513,28 @@ export default function AccueilPage() {
         <article className="relative overflow-hidden bg-[#2A1006]">
           <div className="grid md:grid-cols-[1.05fr_0.95fr]">
             <div className="order-2 flex flex-col justify-center p-7 md:order-1 md:p-10 lg:p-12">
-              <SectionLabel light>{t('La marque')}</SectionLabel>
+              <SectionLabel light>{c.brand_label}</SectionLabel>
               <DisplayHeading light className="mt-4 text-[clamp(2.4rem,4.5vw,3.8rem)]">
-                {t('La beauté')}
+                {c.brand_title_1}
                 <br />
-                <em className="text-[#C9971A]">{t('au naturel.')}</em>
+                <em className="text-[#C9971A]">{c.brand_title_2}</em>
               </DisplayHeading>
               <p className="mt-5 max-w-sm text-[13px] leading-relaxed text-[#FAF6EF]/70 md:text-[14px]">
-                {t(
-                  "Nous croyons que chaque carnation est une beauté à part entière. Nos soins révèlent, nourrissent et célèbrent la peau noire — sans jamais chercher à l'altérer."
-                )}
+                {c.brand_lead}
               </p>
               <Link
                 to="/la-marque/histoire"
                 className="group mt-7 inline-flex w-fit items-center gap-3 border border-[#FAF6EF]/35 px-5 py-3 text-[9px] uppercase tracking-[0.2em] text-[#FAF6EF] transition-colors hover:border-[#C9971A] hover:bg-[#C9971A] hover:text-[#2A1006] md:text-[10px]"
               >
-                {t('Notre histoire')}
+                {c.brand_cta}
                 <ArrowRightIcon size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </div>
 
             <div className="relative order-1 h-72 md:order-2 md:h-auto md:min-h-[520px]">
               <img
-                src={fondatriceImg}
-                alt={t('Minette Kamdem-Jambong, fondatrice de Teint d’Afrique Cosmétiques')}
+                src={fondatriceUrl}
+                alt={c.founder_alt}
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover object-[58%_30%] md:object-[58%_18%]"
               />
@@ -464,10 +544,10 @@ export default function AccueilPage() {
                   className="text-[17px] leading-tight text-[#FAF6EF] md:text-[19px]"
                   style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
                 >
-                  Minette Kamdem-Jambong
+                  {c.founder_name}
                 </p>
                 <p className="mt-1 text-[8px] uppercase tracking-[0.22em] text-[#C9971A] md:text-[9px]">
-                  {t('Fondatrice & Créatrice')}
+                  {c.founder_role}
                 </p>
               </div>
             </div>
@@ -479,28 +559,26 @@ export default function AccueilPage() {
             src={ingredientsImg}
             srcSet={`${ingredientsSm} 900w, ${ingredientsImg} 1536w`}
             sizes="(min-width: 1024px) 50vw, 100vw"
-            alt={t('Ingrédients botaniques Teint d’Afrique : karité, curcuma, mangue, aloe vera et avocat')}
+            alt={c.ingredients_alt}
             loading="lazy"
             className="absolute inset-0 h-full w-full object-cover object-[62%_center] transition-transform duration-[1400ms] ease-out hover:scale-[1.02]"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#FAF6EF] via-[#FAF6EF]/95 to-[#FAF6EF]/70 lg:via-[#FAF6EF]/85 lg:to-transparent" />
           <div className="relative z-10 flex min-h-[440px] flex-col justify-end p-7 md:min-h-[520px] md:p-12 lg:justify-center">
-            <SectionLabel>{t('Les ingrédients')}</SectionLabel>
+            <SectionLabel>{c.ingredients_label}</SectionLabel>
             <DisplayHeading className="mt-4 text-[clamp(2.4rem,4.5vw,3.8rem)]">
-              {t('Le meilleur')}
+              {c.ingredients_title_1}
               <br />
-              <em className="text-[#A85E0F]">{t('de la nature.')}</em>
+              <em className="text-[#A85E0F]">{c.ingredients_title_2}</em>
             </DisplayHeading>
             <p className="mt-5 max-w-sm text-[13px] leading-relaxed text-[#2A1006]/65 md:text-[14px]">
-              {t(
-                'Aloe vera, karité, curcuma, miel, mangue… des actifs botaniques sourcés en Afrique, choisis pour leur efficacité et leur douceur.'
-              )}
+              {c.ingredients_lead}
             </p>
             <Link
               to="/notre-expertise"
               className="group mt-7 inline-flex w-fit items-center gap-3 border border-[#2A1006]/30 px-5 py-3 text-[9px] uppercase tracking-[0.2em] text-[#2A1006] transition-colors hover:border-[#2A1006] hover:bg-[#2A1006] hover:text-[#FAF6EF] md:text-[10px]"
             >
-              {t('Notre expertise')}
+              {c.ingredients_cta}
               <ArrowRightIcon size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>
@@ -520,21 +598,19 @@ export default function AccueilPage() {
           <Reveal>
             <div className="flex flex-col gap-7 md:flex-row md:items-end md:justify-between">
               <div>
-                <SectionLabel light>{t('Les incontournables')}</SectionLabel>
+                <SectionLabel light>{c.signature_label}</SectionLabel>
                 <DisplayHeading light className="mt-4 text-[clamp(2.4rem,5vw,4rem)]">
-                  {t('Nos soins signature')}
+                  {c.signature_title}
                 </DisplayHeading>
                 <p className="mt-5 max-w-xl text-[14px] leading-relaxed text-[#FAF6EF]/55 md:text-[15px]">
-                  {t(
-                    'Quatre formules, quatre gammes, une même promesse : des soins naturels qui révèlent votre peau.'
-                  )}
+                  {c.signature_lead}
                 </p>
               </div>
               <Link
                 to="/nos-produits/les-gammes"
                 className="group inline-flex items-center gap-3 self-start border border-[#FAF6EF]/25 px-5 py-3 text-[10px] uppercase tracking-[0.2em] text-[#FAF6EF] transition-colors hover:border-[#C9971A] hover:bg-[#C9971A] hover:text-[#2A1006] md:self-auto"
               >
-                {t('Tous les soins')}
+                {c.signature_cta}
                 <ArrowUpRightIcon size={14} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
             </div>
@@ -585,12 +661,12 @@ export default function AccueilPage() {
 
                   <div className="flex-1" />
                   <a
-                    href={orderUrl(lang, { type: product.type, poids: product.poids }, gamme)}
+                    href={orderUrl(lang, { type: product.type, poids: product.poids }, gamme, settings.whatsapp_number)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-5 flex items-center justify-between border border-[#2A1006]/20 px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-[#2A1006] transition-colors hover:border-[#2A1006] hover:bg-[#2A1006] hover:text-[#FAF6EF]"
                   >
-                    {t('Commander')}
+                    {c.order_cta}
                     <span className="flex items-center gap-1 text-[8px] tracking-[0.08em] text-[#2A1006]/40">
                       WhatsApp
                       <ArrowUpRightIcon size={12} />
@@ -609,17 +685,15 @@ export default function AccueilPage() {
           <Reveal>
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
               <div>
-                <SectionLabel>{t('Le rituel')}</SectionLabel>
+                <SectionLabel>{c.ritual_label}</SectionLabel>
                 <DisplayHeading className="mt-4 text-[clamp(2.4rem,5vw,4rem)]">
-                  {t('Quatre gestes,')}
+                  {c.ritual_title_1}
                   <br />
-                  <em className="text-[#A85E0F]">{t('une peau lumineuse.')}</em>
+                  <em className="text-[#A85E0F]">{c.ritual_title_2}</em>
                 </DisplayHeading>
               </div>
               <p className="max-w-sm text-[13px] leading-relaxed text-[#2A1006]/60 md:text-[14px]">
-                {t(
-                  'Chaque gamme décline ce rituel en quatre soins complémentaires, du nettoyage à la nutrition.'
-                )}
+                {c.ritual_lead}
               </p>
             </div>
           </Reveal>
@@ -671,13 +745,13 @@ export default function AccueilPage() {
             <div className="mt-10 flex flex-col items-start gap-4 border-t border-[#2A1006]/10 pt-7 sm:flex-row sm:items-center sm:justify-between md:mt-14">
               <p className="flex items-center gap-2.5 text-[11px] text-[#2A1006]/50">
                 <DropIcon size={15} className="text-[#A85E0F]" />
-                {t('4 gammes')} · {t('4 soins')} · {t('Savon · Lotion · Crème · Lait')}
+                {c.ritual_note}
               </p>
               <Link
                 to="/nos-produits/vos-besoins"
                 className="group inline-flex items-center gap-3 bg-[#2A1006] px-5 py-3 text-[10px] uppercase tracking-[0.2em] text-[#FAF6EF] transition-colors hover:bg-[#A85E0F]"
               >
-                {t('Trouver mon rituel')}
+                {c.ritual_cta}
                 <ArrowRightIcon size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </div>
@@ -697,14 +771,14 @@ export default function AccueilPage() {
         <div className="relative mx-auto max-w-[1440px] px-6 md:px-10 lg:px-16">
           <Reveal>
             <div className="max-w-2xl">
-              <SectionLabel light>{t('Notre promesse')}</SectionLabel>
+              <SectionLabel light>{c.promise_label}</SectionLabel>
               <DisplayHeading light className="mt-4 text-[clamp(2.4rem,5vw,4rem)]">
-                {t('Une beauté qui ne se change pas.')}
+                {c.promise_title_1}
                 <br />
-                <em className="text-[#C9971A]">{t('Elle se révèle.')}</em>
+                <em className="text-[#C9971A]">{c.promise_title_2}</em>
               </DisplayHeading>
               <p className="mt-5 text-[14px] leading-relaxed text-[#FAF6EF]/55">
-                « {t('Nous célébrons chaque carnation dans sa beauté naturelle et singulière.')} »
+                « {c.promise_lead} »
               </p>
             </div>
           </Reveal>
@@ -723,9 +797,9 @@ export default function AccueilPage() {
                       className="mt-7 text-[21px] leading-tight text-[#FAF6EF] md:text-[23px]"
                       style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
                     >
-                      {t(item.title)}
+                      {item.title}
                     </h3>
-                    <p className="mt-3 text-[12px] leading-relaxed text-[#FAF6EF]/60">{t(item.copy)}</p>
+                    <p className="mt-3 text-[12px] leading-relaxed text-[#FAF6EF]/60">{item.copy}</p>
                   </div>
                 </Reveal>
               )
@@ -749,34 +823,34 @@ export default function AccueilPage() {
         <div className="relative z-10 mx-auto flex min-h-[440px] max-w-3xl flex-col items-center justify-center px-6 py-20 text-center md:min-h-[540px]">
           <p className="flex items-center gap-3 text-[9px] uppercase tracking-[0.3em] text-[#E7C783] md:text-[10px]">
             <SunIcon size={14} />
-            {t('Le rituel continue')}
+            {c.cta_label}
           </p>
           <h2
             className="mt-5 text-[clamp(2.5rem,7vw,5.6rem)] leading-[0.92] text-[#FAF6EF]"
             style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
           >
-            {t('Votre peau')}
+            {c.cta_title_1}
             <br />
-            <em className="text-[#E7C783]">{t("vaut de l'or.")}</em>
+            <em className="text-[#E7C783]">{c.cta_title_2}</em>
           </h2>
           <p className="mt-5 max-w-md text-[13px] leading-relaxed text-[#FAF6EF]/70 md:text-[15px]">
-            {t('Prenez soin de vous, avec des soins pensés pour votre peau et votre climat.')}
+            {c.cta_lead}
           </p>
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
             <a
-              href={generalUrl(lang)}
+              href={generalUrl(lang, settings.whatsapp_number)}
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex items-center gap-3 bg-[#FAF6EF] px-6 py-3.5 text-[10px] uppercase tracking-[0.2em] text-[#2A1006] transition-colors hover:bg-[#C9971A] md:px-7 md:py-4"
             >
-              {t('Commander sur WhatsApp')}
+              {c.cta_primary}
               <ArrowUpRightIcon size={14} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </a>
             <Link
               to="/nos-produits/les-gammes"
               className="inline-flex items-center gap-2 border border-[#FAF6EF]/35 px-5 py-3.5 text-[10px] uppercase tracking-[0.2em] text-[#FAF6EF] transition-colors hover:border-[#FAF6EF] hover:bg-[#FAF6EF]/10 md:px-6 md:py-4"
             >
-              {t('Découvrir les gammes')}
+              {c.cta_secondary}
             </Link>
           </div>
         </div>

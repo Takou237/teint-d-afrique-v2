@@ -1,4 +1,6 @@
-import { useT } from '@/context/LanguageContext'
+import { useLang, useT } from '@/context/LanguageContext'
+import { usePageContent } from '@/hooks/usePageContent'
+import { useContentImage } from '@/hooks/useContentImage'
 import fondatriceImg from '@/assets/fondatrice.webp'
 
 const EN: Record<string, string> = {
@@ -46,7 +48,16 @@ const EN: Record<string, string> = {
 }
 
 export default function PresentationPage() {
+  const { lang } = useLang()
   const t = useT(EN)
+  const c = usePageContent('fondatrice', lang, {
+    title: { fr: 'Notre Fondatrice', en: 'Our Founder' },
+    role: {
+      fr: 'Fondatrice & Créatrice - #TeintdAfriqueCosmetiques',
+      en: 'Founder & Creator - #TeintdAfriqueCosmetiques',
+    },
+  })
+  const image = useContentImage('fondatrice', lang, 'image', fondatriceImg)
 
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
@@ -64,7 +75,7 @@ export default function PresentationPage() {
               fontSize: 'clamp(2.5rem, 6vw, 5rem)',
             }}
           >
-            {t('Notre Fondatrice')}
+            {c.title}
           </h1>
         </div>
       </div>
@@ -78,7 +89,7 @@ export default function PresentationPage() {
             <div className="relative order-2 md:order-1 md:sticky md:top-28">
               <div className="absolute -top-5 -left-5 w-28 h-28 border border-[#C97B1A]/25 pointer-events-none z-10" />
               <img
-                src={fondatriceImg}
+                src={image}
                 alt={t("Minette Kamdem-Jambong, fondatrice de Teint d'Afrique Cosmétiques")}
                 className="w-full h-[500px] md:h-[640px] object-cover object-top"
               />
@@ -90,7 +101,7 @@ export default function PresentationPage() {
                   Minette Kamdem-Jambong
                 </p>
                 <p className="text-[#C97B1A] text-[9px] tracking-[0.3em] uppercase mt-1">
-                  {t('Fondatrice & Créatrice — #TeintdAfriqueCosmetiques')}
+                  {c.role}
                 </p>
               </div>
             </div>

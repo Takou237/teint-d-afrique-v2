@@ -1,6 +1,7 @@
 import type { Gamme, Product } from '@/data'
 import { orderUrl } from '@/lib/whatsapp'
 import { useLang, useT } from '@/context/LanguageContext'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
 
 const EN: Record<string, string> = {
   Commander: 'Order',
@@ -17,10 +18,11 @@ export default function WhatsAppOrderButton({
 }) {
   const { lang } = useLang()
   const t = useT(EN)
+  const settings = useSiteSettings()
 
   return (
     <a
-      href={orderUrl(lang, product, gamme)}
+      href={orderUrl(lang, product, gamme, settings.whatsapp_number)}
       target="_blank"
       rel="noopener noreferrer"
       className={`flex items-center justify-center gap-2 w-full py-3 text-white text-[11px] tracking-[0.15em] uppercase font-medium hover:opacity-85 active:scale-[0.98] transition-all ${className}`}

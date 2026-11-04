@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { getGammes, type Gamme, type Product } from '@/data'
+import type { Gamme, Product } from '@/data'
+import { useGammes } from '@/hooks/useGammes'
+import { usePageContent } from '@/hooks/usePageContent'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { useLang, useT } from '@/context/LanguageContext'
 import ProductModal from '@/components/ProductModal'
 import WhatsAppOrderButton from '@/components/WhatsAppOrderButton'
@@ -196,8 +199,30 @@ export default function GammePage() {
   const { gammeId } = useParams<{ gammeId: string }>()
   const { lang } = useLang()
   const t = useT(EN)
-  const GAMMES = getGammes(lang)
+  const GAMMES = useGammes(lang)
+  const settings = useSiteSettings()
   const [selected, setSelected] = useState<Product | null>(null)
+  const c = usePageContent('gamme', lang, {
+    discover_four: { fr: 'Découvrir les 4 soins', en: 'Discover the 4 products' },
+    order_range: { fr: 'Commander la gamme', en: 'Order the range' },
+    four_products: { fr: '4 soins', en: '4 products' },
+    product_types: { fr: 'Savon · Lotion · Crème · Lait', en: 'Soap · Lotion · Cream · Milk' },
+    range_label: { fr: 'La gamme', en: 'The range' },
+    key_actives: { fr: 'Actifs Clés', en: 'Key actives' },
+    four_products_label: { fr: 'Les 4 soins', en: 'The 4 products' },
+    ritual_note: {
+      fr: 'Du nettoyage à la nutrition, chaque soin prépare le suivant.',
+      en: 'From cleansing to nutrition, each product prepares the next.',
+    },
+    ritual_label: { fr: 'Le rituel', en: 'The ritual' },
+    ritual_title_1: { fr: 'Quatre soins,', en: 'Four products,' },
+    ritual_title_2: { fr: 'un seul rituel.', en: 'one ritual.' },
+    other_label: { fr: "Explorer d'autres gammes", en: 'Explore other ranges' },
+    other_title: { fr: 'Compléter le rituel', en: 'Complete the ritual' },
+    all_ranges: { fr: 'Toutes les gammes', en: 'All ranges' },
+    not_found: { fr: 'Gamme introuvable', en: 'Range not found' },
+    back_shop: { fr: '← Retour à la boutique', en: '← Back to the shop' },
+  })
   const gamme = GAMMES.find(g => g.id === gammeId)
 
   if (!gamme) {
@@ -208,10 +233,10 @@ export default function GammePage() {
             className="mb-4 text-2xl text-[#3B1705]"
             style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
           >
-            {t('Gamme introuvable')}
+            {c.not_found}
           </p>
           <Link to="/nos-produits/les-gammes" className="text-sm text-[#A85E0F] underline">
-            {t('← Retour à la boutique')}
+            {c.back_shop}
           </Link>
         </div>
       </div>
@@ -295,16 +320,16 @@ export default function GammePage() {
                 href="#soins"
                 className="group inline-flex items-center gap-3 bg-[#FAF6EF] px-6 py-3.5 text-[10px] uppercase tracking-[0.2em] text-[#2A1006] transition-colors hover:bg-[#C9971A] md:px-7 md:py-4"
               >
-                {t('Découvrir les 4 soins')}
+                {c.discover_four}
                 <ArrowRightIcon size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
               </a>
               <a
-                href={rangeUrl(lang, gamme)}
+                href={rangeUrl(lang, gamme, settings.whatsapp_number)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 border border-[#FAF6EF]/35 px-5 py-3.5 text-[10px] uppercase tracking-[0.2em] text-[#FAF6EF] transition-colors hover:border-[#FAF6EF] hover:bg-[#FAF6EF]/10 md:px-6 md:py-4"
               >
-                {t('Commander la gamme')}
+                  {c.order_range}
                 <ArrowUpRightIcon size={13} />
               </a>
             </div>
@@ -325,7 +350,7 @@ export default function GammePage() {
                 />
               </div>
               <div className="min-w-0">
-                <p className="text-[8px] uppercase tracking-[0.2em] text-[#2A1006]/45">{t('4 soins')}</p>
+                <p className="text-[8px] uppercase tracking-[0.2em] text-[#2A1006]/45">{c.four_products}</p>
                 <p
                   className="mt-0.5 text-[13px] leading-tight text-[#2A1006]"
                   style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
@@ -333,7 +358,7 @@ export default function GammePage() {
                   {gamme.nom}
                 </p>
                 <p className="mt-0.5 text-[8px] uppercase tracking-[0.12em]" style={{ color: gamme.colorDark }}>
-                  {t('Savon · Lotion · Crème · Lait')}
+                  {c.product_types}
                 </p>
               </div>
             </div>
@@ -341,7 +366,7 @@ export default function GammePage() {
               href="#soins"
               className="mt-3 flex items-center justify-between border-t border-[#2A1006]/10 pt-3 text-[8px] uppercase tracking-[0.18em] text-[#2A1006] transition-colors hover:text-[#A85E0F]"
             >
-              {t('Découvrir les 4 soins')}
+              {c.discover_four}
               <ArrowRightIcon size={12} />
             </a>
           </div>
@@ -353,7 +378,7 @@ export default function GammePage() {
         <div className="mx-auto max-w-[1440px] px-6 md:px-10 lg:px-16">
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
             <div className="lg:col-span-7">
-              <SectionLabel color={gamme.colorDark}>{t('La gamme')}</SectionLabel>
+              <SectionLabel color={gamme.colorDark}>{c.range_label}</SectionLabel>
               <h2
                 className="mt-4 text-[clamp(2.2rem,4.2vw,3.4rem)] leading-[0.98] text-[#2A1006]"
                 style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
@@ -370,7 +395,7 @@ export default function GammePage() {
               >
                 <p className="flex items-center gap-2 text-[9px] uppercase tracking-[0.24em] text-[#2A1006]/45">
                   <LeafIcon size={13} style={{ color: gamme.colorDark }} />
-                  {t('Actifs Clés')}
+                  {c.key_actives}
                 </p>
                 <p className="mt-3 text-[13px] leading-relaxed" style={{ color: gamme.colorDark }}>
                   {gamme.ingredientsDetail}
@@ -408,7 +433,7 @@ export default function GammePage() {
                 </div>
 
                 <div className="relative mt-5 border-t pt-5" style={{ borderColor: `${gamme.color}35` }}>
-                  <p className="text-[9px] uppercase tracking-[0.22em] text-[#2A1006]/40">{t('Les 4 soins')}</p>
+                  <p className="text-[9px] uppercase tracking-[0.22em] text-[#2A1006]/40">{c.four_products_label}</p>
                   <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
                     {gamme.products.map(product => (
                       <div key={product.type} className="flex items-center gap-2">
@@ -421,20 +446,20 @@ export default function GammePage() {
                 </div>
 
                 <a
-                  href={rangeUrl(lang, gamme)}
+                  href={rangeUrl(lang, gamme, settings.whatsapp_number)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="relative mt-6 flex items-center justify-between px-4 py-3 text-[9px] uppercase tracking-[0.18em] text-[#FAF6EF] transition-opacity hover:opacity-85"
                   style={{ background: gamme.colorDark }}
                 >
-                  {t('Commander la gamme')}
+                {c.order_range}
                   <ArrowUpRightIcon size={13} />
                 </a>
               </div>
 
               <p className="mt-4 flex items-start gap-2 text-[10px] leading-relaxed text-[#2A1006]/40">
                 <DropIcon size={13} className="mt-0.5 flex-shrink-0" style={{ color: gamme.colorDark }} />
-                {t('Du nettoyage à la nutrition, chaque soin prépare le suivant.')}
+                {c.ritual_note}
               </p>
             </aside>
           </div>
@@ -447,18 +472,18 @@ export default function GammePage() {
           <Reveal>
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
               <div>
-                <SectionLabel color={gamme.colorDark}>{t('Le rituel')}</SectionLabel>
+                <SectionLabel color={gamme.colorDark}>{c.ritual_label}</SectionLabel>
                 <h2
                   className="mt-4 text-[clamp(2.2rem,4.6vw,3.6rem)] leading-[0.98] text-[#2A1006]"
                   style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
                 >
-                  {t('Quatre soins,')}
+                  {c.ritual_title_1}
                   <br />
-                  <em style={{ color: gamme.colorDark }}>{t('un seul rituel.')}</em>
+                  <em style={{ color: gamme.colorDark }}>{c.ritual_title_2}</em>
                 </h2>
               </div>
               <p className="max-w-sm text-[12px] leading-relaxed text-[#2A1006]/55 md:text-[13px]">
-                {t('Du nettoyage à la nutrition, chaque soin prépare le suivant.')}
+                {c.ritual_note}
               </p>
             </div>
           </Reveal>
@@ -487,12 +512,12 @@ export default function GammePage() {
         <div className="mx-auto max-w-[1440px] px-6 md:px-10 lg:px-16">
           <div className="flex items-end justify-between gap-6">
             <div>
-              <SectionLabel color={gamme.colorDark}>{t("Explorer d'autres gammes")}</SectionLabel>
+              <SectionLabel color={gamme.colorDark}>{c.other_label}</SectionLabel>
               <h2
                 className="mt-4 text-[clamp(2rem,4vw,3rem)] leading-tight text-[#2A1006]"
                 style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
               >
-                {t('Compléter le rituel')}
+                {c.other_title}
               </h2>
             </div>
             <Link
@@ -500,7 +525,7 @@ export default function GammePage() {
               className="group hidden items-center gap-2 text-[9px] uppercase tracking-[0.2em] text-[#2A1006] transition-colors hover:text-[#A85E0F] sm:flex"
             >
               <ArrowLeftIcon size={13} className="transition-transform duration-300 group-hover:-translate-x-1" />
-              {t('Toutes les gammes')}
+              {c.all_ranges}
             </Link>
           </div>
 

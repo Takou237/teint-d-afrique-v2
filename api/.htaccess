@@ -1,0 +1,26 @@
+# Teint d'Afrique Cosmétiques — API PHP (hébergement Apache).
+# Durcissement : protège la config, les scripts internes et le dossier uploads.
+
+Options -Indexes
+
+# config.php contient les identifiants MySQL : jamais accessible via le web
+<Files "config.php">
+    Require all denied
+</Files>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Scripts d'installation/maintenance : non exécutables via le web
+  RewriteRule ^scripts/ - [F,L]
+
+  # Bibliothèques internes (mailer, helpers) : jamais appelées directement
+  RewriteRule ^lib/ - [F,L]
+
+  # Aucune exécution PHP sous uploads/ (les fichiers y sont réencodés en images pures côté serveur)
+  RewriteRule ^uploads/.*\.(php|phtml|php[0-9])$ - [F,L]
+
+  # Front hébergé ailleurs (Vercel) : le front appelle /api/<route>.php alors que ce dossier
+  # api/ EST la racine web (ex. Railway). On retire le préfixe /api.
+  RewriteRule ^api/(.*)$ /$1 [L]
+</IfModule>

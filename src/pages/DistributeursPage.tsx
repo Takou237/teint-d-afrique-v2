@@ -1,4 +1,6 @@
-import { useT } from '@/context/LanguageContext'
+import { useLang, useT } from '@/context/LanguageContext'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
+import { usePageContent } from '@/hooks/usePageContent'
 
 const EN: Record<string, string> = {
   'Nos Distributeurs': 'Our Distributors',
@@ -10,7 +12,21 @@ const EN: Record<string, string> = {
 }
 
 export default function DistributeursPage() {
+  const { lang } = useLang()
   const t = useT(EN)
+  const settings = useSiteSettings()
+  const c = usePageContent('distributeurs', lang, {
+    title: { fr: 'Nos Distributeurs', en: 'Our Distributors' },
+    lead: {
+      fr: 'Réseau de distribution en cours de déploiement',
+      en: 'Distribution network currently being rolled out',
+    },
+    intro: {
+      fr: "Nos produits sont actuellement disponibles à Douala. Notre réseau de distributeurs s'étendra progressivement au Cameroun et dans la sous-région. Contactez-nous pour en savoir plus ou pour devenir distributeur.",
+      en: 'Our products are currently available in Douala. Our distributor network will gradually expand across Cameroon and the sub-region. Contact us to learn more or to become a distributor.',
+    },
+    become_distributor: { fr: 'Devenir distributeur ↗', en: 'Become a distributor ↗' },
+  })
 
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
@@ -21,7 +37,7 @@ export default function DistributeursPage() {
             Contact · Teint d'Afrique Cosmétiques
           </p>
           <h1 className="text-[#FAF6EF] leading-tight" style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}>
-            {t('Nos Distributeurs')}
+            {c.title}
           </h1>
         </div>
       </div>
@@ -32,16 +48,16 @@ export default function DistributeursPage() {
             <span className="text-[#C97B1A] text-3xl">◈</span>
           </div>
           <h2 className="text-[#3B1705] text-3xl md:text-4xl mb-5" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
-            {t('Réseau de distribution en cours de déploiement')}
+            {c.lead}
           </h2>
           <p className="text-[#2A1006]/55 max-w-lg mx-auto leading-relaxed mb-10">
-            {t("Nos produits sont actuellement disponibles à Douala. Notre réseau de distributeurs s'étendra progressivement au Cameroun et dans la sous-région. Contactez-nous pour en savoir plus ou pour devenir distributeur.")}
+            {c.intro}
           </p>
           <a
-            href="mailto:contact@teintdafrique.com"
+            href={`mailto:${settings.email}`}
             className="inline-flex items-center gap-2 bg-[#3B1705] text-[#FAF6EF] px-8 py-4 text-[11px] tracking-[0.25em] uppercase hover:bg-[#C97B1A] transition-colors"
           >
-            {t('Devenir distributeur →')}
+            {c.become_distributor}
           </a>
         </div>
       </section>

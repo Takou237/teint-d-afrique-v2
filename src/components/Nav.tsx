@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router'
 import logo from '@/imports/TDA_LogoExe_CMJN.png'
-import { getGammes } from '@/data'
+import { useGammes } from '@/hooks/useGammes'
+import { useContentImage } from '@/hooks/useContentImage'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { generalUrl } from '@/lib/whatsapp'
 import { useLang, useT } from '@/context/LanguageContext'
 
@@ -83,7 +85,7 @@ const NAV: NavGroup[] = [
 function Dropdown({ items, onClose }: { items: DropdownItem[]; onClose: () => void }) {
   const { lang } = useLang()
   const t = useT(EN)
-  const GAMMES = getGammes(lang)
+  const GAMMES = useGammes(lang)
   return (
     <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 max-h-[calc(100svh-9rem)] overflow-y-auto bg-white shadow-xl border border-[#3B1705]/8 py-2 min-w-[240px] z-50">
       {items.map((item, i) => {
@@ -133,7 +135,9 @@ export default function Nav() {
   const navRef = useRef<HTMLDivElement>(null)
   const { lang, setLang } = useLang()
   const t = useT(EN)
-  const GAMMES = getGammes(lang)
+  const GAMMES = useGammes(lang)
+  const settings = useSiteSettings()
+  const logoUrl = useContentImage('global', lang, 'logo', logo)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
@@ -209,7 +213,7 @@ export default function Nav() {
             {t("Formulé en Afrique, pour l'Afrique")}
           </p>
           <a
-            href={generalUrl(lang)}
+            href={generalUrl(lang, settings.whatsapp_number)}
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-center gap-1.5 whitespace-nowrap text-[8px] uppercase tracking-[0.14em] text-[#E7C783] transition-colors hover:text-[#FAF6EF] md:text-[9px] md:tracking-[0.18em]"
@@ -225,7 +229,7 @@ export default function Nav() {
         {/* Logo */}
         <Link to="/" className="flex-shrink-0">
           <img
-            src={logo}
+            src={logoUrl}
             alt="Teint d'Afrique Cosmétiques"
             className="h-7 object-contain mix-blend-multiply md:h-9"
           />
@@ -401,7 +405,7 @@ export default function Nav() {
               ))}
             </div>
             <a
-              href={generalUrl(lang)}
+              href={generalUrl(lang, settings.whatsapp_number)}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-2 flex items-center justify-between bg-[#25D366] px-4 py-3.5 text-[10px] uppercase tracking-[0.18em] text-white"

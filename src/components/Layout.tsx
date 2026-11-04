@@ -4,6 +4,7 @@ import Nav from './Nav'
 import Footer from './Footer'
 import BlackSkinsBanner from './BlackSkinsBanner'
 import { useLang, useT } from '@/context/LanguageContext'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { generalUrl } from '@/lib/whatsapp'
 
 const EN = {
@@ -37,9 +38,10 @@ function ScrollToHash() {
 function WhatsAppFAB() {
   const { lang } = useLang()
   const t = useT(EN)
+  const settings = useSiteSettings()
   return (
     <a
-      href={generalUrl(lang)}
+      href={generalUrl(lang, settings.whatsapp_number)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={t('Nous contacter sur WhatsApp')}

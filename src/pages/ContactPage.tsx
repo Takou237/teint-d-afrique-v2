@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useLang, useT } from '@/context/LanguageContext'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
+import { usePageContent } from '@/hooks/usePageContent'
 import { generalUrl } from '@/lib/whatsapp'
+import { submitContactMessage } from '@/lib/api'
 
 const EN: Record<string, string> = {
   Contact: 'Contact',
@@ -37,6 +40,7 @@ const EN: Record<string, string> = {
   "Nos produits sont actuellement disponibles à Douala. Notre réseau de distributeurs s'étendra progressivement au Cameroun et dans la sous-région. Contactez-nous pour en savoir plus ou pour devenir distributeur.":
     'Our products are currently available in Douala. Our distributor network will gradually expand across Cameroon and the sub-region. Contact us to learn more or to become a distributor.',
   'Devenir distributeur →': 'Become a distributor →',
+
   'Nos partenaires': 'Our partners',
   'Beauté naturelle': 'Natural beauty',
   'Distribution Cameroun': 'Distribution Cameroon',
@@ -46,10 +50,97 @@ const EN: Record<string, string> = {
   'Contactez-nous': 'Contact us',
 }
 
+const FORM_ERRORS: Record<string, string> = {
+  invalid_name: 'Veuillez indiquer votre nom.',
+  invalid_email: 'Veuillez indiquer une adresse email valide.',
+  invalid_message: 'Votre message est trop court.',
+  rate_limited: 'Trop de messages envoyés. Réessayez dans quelques minutes.',
+  api_error: "L'envoi a échoué. Réessayez ou contactez-nous sur WhatsApp.",
+}
+
 export default function ContactPage() {
   const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
+  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
   const t = useT(EN)
   const { lang } = useLang()
+  const settings = useSiteSettings()
+  const c = usePageContent('contact', lang, {
+    title: { fr: 'Contact', en: 'Contact' },
+    lead: {
+      fr: 'Nous sommes à votre écoute. Écrivez-nous, retrouvez-nous sur les réseaux sociaux, ou venez nous rendre visite à Douala.',
+      en: "We're here to listen. Write to us, find us on social media, or come and visit us in Douala.",
+    },
+    intro: {
+      fr: 'Parlons de votre beauté.',
+      en: "Let's talk about your beauty.",
+    },
+    contact_section_label: { fr: '01 — Nous Contacter', en: '01 — Contact Us' },
+    address_label: { fr: 'Adresse', en: 'Address' },
+    email_label: { fr: 'Email', en: 'Email' },
+    whatsapp_label: { fr: 'WhatsApp', en: 'WhatsApp' },
+    whatsapp_cta: { fr: 'Nous écrire sur WhatsApp', en: 'Write to us on WhatsApp' },
+    social_label: { fr: 'Réseaux Sociaux', en: 'Social Media' },
+    sent_title: { fr: 'Message envoyé !', en: 'Message sent!' },
+    sent_text: {
+      fr: 'Merci de nous avoir contactés. Nous vous répondrons dans les plus brefs délais.',
+      en: 'Thank you for contacting us. We will get back to you as soon as possible.',
+    },
+    new_message: { fr: 'Nouveau message', en: 'New message' },
+    form_title: { fr: 'Envoyez-nous un message', en: 'Send us a message' },
+    name_label: { fr: 'Nom complet', en: 'Full name' },
+    name_placeholder: { fr: 'Votre nom', en: 'Your name' },
+    phone_label: { fr: 'Téléphone', en: 'Phone' },
+    message_label: { fr: 'Message', en: 'Message' },
+    message_placeholder: { fr: 'Votre message, votre demande...', en: 'Your message, your request...' },
+    submit: { fr: 'Envoyer le Message', en: 'Send Message' },
+    location_section_label: { fr: '02 — Localisation', en: '02 — Location' },
+    location_title: { fr: 'Où nous trouver.', en: 'Where to find us.' },
+    city_label: { fr: 'Ville', en: 'City' },
+    country_label: { fr: 'Pays', en: 'Country' },
+    city_value: { fr: 'Douala', en: 'Douala' },
+    country_value: { fr: 'Cameroun', en: 'Cameroon' },
+    map_title: {
+      fr: "Teint d'Afrique Cosmétiques — Douala, Cameroun",
+      en: "Teint d'Afrique Cosmétiques — Douala, Cameroon",
+    },
+    fullscreen: { fr: 'Voir en plein écran ↗', en: 'View full screen ↗' },
+    distributors_section_label: { fr: '03 — Nos Distributeurs', en: '03 — Our Distributors' },
+    distributors_title: { fr: 'Réseau de distribution.', en: 'Distribution network.' },
+    about_label: { fr: 'À propos', en: 'About' },
+    distributors_text: {
+      fr: "Nos produits sont actuellement disponibles à Douala. Notre réseau de distributeurs s'étendra progressivement au Cameroun et dans la sous-région. Contactez-nous pour en savoir plus ou pour devenir distributeur.",
+      en: 'Our products are currently available in Douala. Our distributor network will gradually expand across Cameroon and the sub-region. Contact us to learn more or to become a distributor.',
+    },
+    become_distributor: { fr: 'Devenir distributeur ↗', en: 'Become a distributor ↗' },
+    partners_label: { fr: 'Nos partenaires', en: 'Our partners' },
+    contact_prompt: { fr: 'Vous souhaitez distribuer nos produits ?', en: 'Would you like to distribute our products?' },
+    contact_link: { fr: 'Contactez-nous', en: 'Contact us' },
+  })
+  const address = lang === 'en' ? settings.address_en : settings.address_fr
+  const socialLinks = [
+    { label: 'Facebook', abbr: 'fb', href: settings.facebook_url },
+    { label: 'Instagram', abbr: 'ig', href: settings.instagram_url },
+    { label: 'TikTok', abbr: 'tk', href: settings.tiktok_url },
+    { label: 'YouTube', abbr: 'yt', href: settings.youtube_url },
+  ].filter(link => link.href)
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setSending(true)
+    setFormError(null)
+    try {
+      await submitContactMessage(form)
+      setSent(true)
+      setForm({ name: '', email: '', phone: '', message: '' })
+    } catch (err) {
+      const code = err instanceof Error ? err.message : 'api_error'
+      setFormError(FORM_ERRORS[code] ?? FORM_ERRORS.api_error)
+    } finally {
+      setSending(false)
+    }
+  }
 
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
@@ -64,10 +155,10 @@ export default function ContactPage() {
             className="text-[#FAF6EF] leading-tight mb-4"
             style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
           >
-            {t('Contact')}
+            {c.title}
           </h1>
           <p className="text-[#FAF6EF]/60 max-w-md">
-            {t('Nous sommes à votre écoute. Écrivez-nous, retrouvez-nous sur les réseaux sociaux, ou venez nous rendre visite à Douala.')}
+            {c.lead}
           </p>
         </div>
       </div>
@@ -77,13 +168,13 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto px-6">
           <p className="text-[#C97B1A] tracking-[0.35em] text-[10px] uppercase mb-3 flex items-center gap-3">
             <span className="w-8 h-px bg-[#C97B1A]" />
-            {t('01 — Nous Contacter')}
+            {c.contact_section_label}
           </p>
           <h2
             className="text-[#3B1705] mb-14"
             style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2rem, 4vw, 3rem)' }}
           >
-            {t('Parlons de votre beauté.')}
+            {c.intro}
           </h2>
 
           <div className="grid md:grid-cols-2 gap-16">
@@ -91,22 +182,27 @@ export default function ContactPage() {
             <div>
               <div className="space-y-8 mb-12">
                 {[
-                  { label: 'Adresse', icon: '◈', text: 'Douala, Cameroun', href: undefined },
-                  { label: 'Email', icon: '◉', text: 'contact@teintdafrique.com', href: 'mailto:contact@teintdafrique.com' },
-                  { label: 'WhatsApp', icon: '◎', text: 'Nous écrire sur WhatsApp', href: generalUrl(lang) },
+                  { label: c.address_label, icon: '◈', text: address, href: undefined },
+                  { label: c.email_label, icon: '◉', text: settings.email, href: `mailto:${settings.email}` },
+                  {
+                    label: c.whatsapp_label,
+                    icon: '✆',
+                    text: c.whatsapp_cta,
+                    href: generalUrl(lang, settings.whatsapp_number),
+                  },
                 ].map(item => (
                   <div key={item.label} className="flex gap-5 items-start">
                     <div className="w-11 h-11 flex items-center justify-center flex-shrink-0 text-[#C97B1A] text-xl" style={{ background: '#3B170508' }}>
                       {item.icon}
                     </div>
                     <div>
-                      <p className="text-[9px] tracking-[0.3em] uppercase text-[#C97B1A] mb-1">{t(item.label)}</p>
+                      <p className="text-[9px] tracking-[0.3em] uppercase text-[#C97B1A] mb-1">{item.label}</p>
                       {item.href ? (
                         <a href={item.href} target={item.href.startsWith('https') ? '_blank' : undefined} rel="noopener noreferrer" className="text-[#3B1705] font-medium hover:text-[#C97B1A] transition-colors">
-                          {t(item.text)}
+                          {item.text}
                         </a>
                       ) : (
-                        <p className="text-[#3B1705] font-medium">{t(item.text)}</p>
+                        <p className="text-[#3B1705] font-medium">{item.text}</p>
                       )}
                     </div>
                   </div>
@@ -114,11 +210,30 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <p className="text-[9px] tracking-[0.3em] uppercase text-[#C97B1A] mb-5">{t('Réseaux Sociaux')}</p>
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#C97B1A] mb-5">{c.social_label}</p>
                 <div className="flex gap-3">
-                  <a href="#" aria-label="Facebook" className="w-11 h-11 border border-[#3B1705]/20 flex items-center justify-center text-[#3B1705] text-[11px] uppercase tracking-widest hover:bg-[#3B1705] hover:text-white hover:border-[#3B1705] transition-all">fb</a>
-                  <a href="#" aria-label="Instagram" className="w-11 h-11 border border-[#3B1705]/20 flex items-center justify-center text-[#3B1705] text-[11px] uppercase tracking-widest hover:bg-[#3B1705] hover:text-white hover:border-[#3B1705] transition-all">ig</a>
-                  <a href={generalUrl(lang)} aria-label="WhatsApp" className="w-11 h-11 flex items-center justify-center text-white text-[11px] uppercase tracking-widest hover:opacity-85 transition-opacity" style={{ background: '#25D366' }}>wa</a>
+                  {socialLinks.map(link => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={link.label}
+                      className="w-11 h-11 border border-[#3B1705]/20 flex items-center justify-center text-[#3B1705] text-[11px] uppercase tracking-widest hover:bg-[#3B1705] hover:text-white hover:border-[#3B1705] transition-all"
+                    >
+                      {link.abbr}
+                    </a>
+                  ))}
+                  <a
+                    href={generalUrl(lang, settings.whatsapp_number)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="WhatsApp"
+                    className="w-11 h-11 flex items-center justify-center text-white text-[11px] uppercase tracking-widest hover:opacity-85 transition-opacity"
+                    style={{ background: '#25D366' }}
+                  >
+                    wa
+                  </a>
                 </div>
               </div>
             </div>
@@ -128,31 +243,53 @@ export default function ContactPage() {
               {sent ? (
                 <div className="h-full flex flex-col items-center justify-center text-center gap-6 py-16">
                   <div className="text-[#C97B1A] text-5xl" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>✓</div>
-                  <h3 className="text-[#FAF6EF] text-2xl" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>{t('Message envoyé !')}</h3>
-                  <p className="text-[#FAF6EF]/60 text-sm leading-relaxed max-w-xs">{t('Merci de nous avoir contactés. Nous vous répondrons dans les plus brefs délais.')}</p>
-                  <button onClick={() => setSent(false)} className="mt-4 border border-[#FAF6EF]/20 text-[#FAF6EF]/70 px-6 py-2.5 text-[11px] tracking-[0.2em] uppercase hover:bg-[#FAF6EF]/10 transition-colors">{t('Nouveau message')}</button>
+                  <h3 className="text-[#FAF6EF] text-2xl" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>{c.sent_title}</h3>
+                  <p className="text-[#FAF6EF]/60 text-sm leading-relaxed max-w-xs">{c.sent_text}</p>
+                  <button onClick={() => setSent(false)} className="mt-4 border border-[#FAF6EF]/20 text-[#FAF6EF]/70 px-6 py-2.5 text-[11px] tracking-[0.2em] uppercase hover:bg-[#FAF6EF]/10 transition-colors">{c.new_message}</button>
                 </div>
               ) : (
                 <>
-                  <h3 className="text-[#FAF6EF] text-2xl mb-8" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>{t('Envoyez-nous un message')}</h3>
-                  <form className="space-y-5" onSubmit={e => { e.preventDefault(); setSent(true) }}>
+                  <h3 className="text-[#FAF6EF] text-2xl mb-8" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>{c.form_title}</h3>
+                  <form className="space-y-5" onSubmit={handleSubmit}>
                     {[
-                      { label: 'Nom complet', type: 'text', placeholder: 'Votre nom', required: true },
-                      { label: 'Email', type: 'email', placeholder: 'votre@email.com', required: true },
-                      { label: 'Téléphone', type: 'tel', placeholder: '+237 6XX XXX XXX', required: false },
+                      { key: 'name' as const, label: c.name_label, type: 'text', placeholder: c.name_placeholder, required: true, autoComplete: 'name' },
+                      { key: 'email' as const, label: c.email_label, type: 'email', placeholder: 'votre@email.com', required: true, autoComplete: 'email' },
+                      { key: 'phone' as const, label: c.phone_label, type: 'tel', placeholder: '+237 6XX XXX XXX', required: false, autoComplete: 'tel' },
                     ].map(f => (
-                      <div key={f.label}>
+                      <div key={f.key}>
                         <label className="text-[9px] tracking-[0.3em] uppercase text-[#FAF6EF]/55 block mb-2">
-                          {t(f.label)} {f.required && <span className="text-[#C97B1A]">*</span>}
+                          {f.label} {f.required && <span className="text-[#C97B1A]">*</span>}
                         </label>
-                        <input type={f.type} placeholder={t(f.placeholder)} required={f.required} className="w-full bg-[#FAF6EF]/8 border border-[#FAF6EF]/18 text-[#FAF6EF] placeholder:text-[#FAF6EF]/28 px-4 py-3 text-sm focus:outline-none focus:border-[#C97B1A] transition-colors" />
+                        <input
+                          type={f.type}
+                          name={f.key}
+                          value={form[f.key]}
+                          autoComplete={f.autoComplete}
+                          onChange={e => setForm(prev => ({ ...prev, [f.key]: e.target.value }))}
+                          placeholder={f.placeholder}
+                          required={f.required}
+                          maxLength={200}
+                          className="w-full bg-[#FAF6EF]/8 border border-[#FAF6EF]/18 text-[#FAF6EF] placeholder:text-[#FAF6EF]/28 px-4 py-3 text-sm focus:outline-none focus:border-[#C97B1A] transition-colors"
+                        />
                       </div>
                     ))}
                     <div>
-                      <label className="text-[9px] tracking-[0.3em] uppercase text-[#FAF6EF]/55 block mb-2">{t('Message')} <span className="text-[#C97B1A]">*</span></label>
-                      <textarea rows={5} placeholder={t('Votre message, votre demande...')} required className="w-full bg-[#FAF6EF]/8 border border-[#FAF6EF]/18 text-[#FAF6EF] placeholder:text-[#FAF6EF]/28 px-4 py-3 text-sm focus:outline-none focus:border-[#C97B1A] transition-colors resize-none" />
+                      <label className="text-[9px] tracking-[0.3em] uppercase text-[#FAF6EF]/55 block mb-2">{c.message_label} <span className="text-[#C97B1A]">*</span></label>
+                      <textarea
+                        name="message"
+                        rows={5}
+                        value={form.message}
+                        onChange={e => setForm(prev => ({ ...prev, message: e.target.value }))}
+                        placeholder={c.message_placeholder}
+                        required
+                        maxLength={5000}
+                        className="w-full bg-[#FAF6EF]/8 border border-[#FAF6EF]/18 text-[#FAF6EF] placeholder:text-[#FAF6EF]/28 px-4 py-3 text-sm focus:outline-none focus:border-[#C97B1A] transition-colors resize-none"
+                      />
                     </div>
-                    <button type="submit" className="w-full bg-[#C97B1A] text-white py-4 text-[11px] tracking-[0.25em] uppercase hover:bg-[#A85E0F] transition-colors">{t('Envoyer le Message')}</button>
+                    {formError && <p className="text-xs text-red-300">{formError}</p>}
+                    <button type="submit" disabled={sending} className="w-full bg-[#C97B1A] text-white py-4 text-[11px] tracking-[0.25em] uppercase hover:bg-[#A85E0F] transition-colors disabled:opacity-60">
+                      {sending ? '...' : c.submit}
+                    </button>
                   </form>
                 </>
               )}
@@ -171,18 +308,18 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto px-6">
           <p className="text-[#C97B1A] tracking-[0.35em] text-[10px] uppercase mb-3 flex items-center gap-3">
             <span className="w-8 h-px bg-[#C97B1A]" />
-            {t('02 — Localisation')}
+            {c.location_section_label}
           </p>
           <h2
             className="text-[#3B1705] mb-14"
             style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2rem, 4vw, 3rem)' }}
           >
-            {t('Où nous trouver.')}
+            {c.location_title}
           </h2>
 
           <div className="w-full overflow-hidden border border-[#3B1705]/10" style={{ height: '420px' }}>
             <iframe
-              title={t("Teint d'Afrique Cosmétiques — Douala, Cameroun")}
+              title={c.map_title}
               src="https://www.openstreetmap.org/export/embed.html?bbox=9.6%2C4.0%2C9.8%2C4.1&layer=mapnik&marker=4.05%2C9.7"
               width="100%"
               height="100%"
@@ -194,12 +331,12 @@ export default function ContactPage() {
           <div className="mt-4 flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-6">
               {[
-                { label: 'Ville', value: 'Douala' },
-                { label: 'Pays', value: 'Cameroun' },
+                { label: c.city_label, value: c.city_value },
+                { label: c.country_label, value: c.country_value },
               ].map(item => (
                 <div key={item.label} className="flex items-center gap-2">
-                  <span className="text-[9px] tracking-[0.2em] uppercase text-[#C97B1A]">{t(item.label)}</span>
-                  <span className="text-[#3B1705] font-medium text-sm">{t(item.value)}</span>
+                  <span className="text-[9px] tracking-[0.2em] uppercase text-[#C97B1A]">{item.label}</span>
+                  <span className="text-[#3B1705] font-medium text-sm">{item.value}</span>
                 </div>
               ))}
             </div>
@@ -209,7 +346,7 @@ export default function ContactPage() {
               rel="noopener noreferrer"
               className="text-[9px] tracking-[0.2em] uppercase text-[#C97B1A] hover:text-[#3B1705] transition-colors"
             >
-              {t('Voir en plein écran →')}
+              {c.fullscreen}
             </a>
           </div>
         </div>
@@ -225,29 +362,29 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto px-6">
           <p className="text-[#C97B1A] tracking-[0.35em] text-[10px] uppercase mb-3 flex items-center gap-3">
             <span className="w-8 h-px bg-[#C97B1A]" />
-            {t('03 — Nos Distributeurs')}
+            {c.distributors_section_label}
           </p>
           <h2
             className="text-[#3B1705] mb-6"
             style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2rem, 4vw, 3rem)' }}
           >
-            {t('Réseau de distribution.')}
+            {c.distributors_title}
           </h2>
           <div className="grid md:grid-cols-2 gap-16 items-start">
             {/* Left: info + CTA */}
             <div>
               <p className="text-[9px] tracking-[0.3em] uppercase text-[#C97B1A] mb-4 flex items-center gap-2">
                 <span className="w-5 h-px bg-[#C97B1A]" />
-                {t('À propos')}
+                {c.about_label}
               </p>
               <p className="text-[#2A1006]/60 leading-relaxed mb-10">
-                {t("Nos produits sont actuellement disponibles à Douala. Notre réseau de distributeurs s'étendra progressivement au Cameroun et dans la sous-région. Contactez-nous pour en savoir plus ou pour devenir distributeur.")}
+                {c.distributors_text}
               </p>
               <a
-                href="mailto:contact@teintdafrique.com"
+                href={`mailto:${settings.email}`}
                 className="inline-flex items-center gap-2 bg-[#3B1705] text-[#FAF6EF] px-8 py-4 text-[11px] tracking-[0.25em] uppercase hover:bg-[#C97B1A] transition-colors"
               >
-                {t('Devenir distributeur →')}
+                {c.become_distributor}
               </a>
             </div>
 
@@ -255,7 +392,7 @@ export default function ContactPage() {
             <div>
               <p className="text-[9px] tracking-[0.3em] uppercase text-[#C97B1A] mb-4 flex items-center gap-2">
                 <span className="w-5 h-px bg-[#C97B1A]" />
-                {t('Nos partenaires')}
+                {c.partners_label}
               </p>
               <div className="grid grid-cols-2 gap-4">
                 {[
@@ -282,9 +419,9 @@ export default function ContactPage() {
                 ))}
               </div>
               <p className="text-[10px] text-[#2A1006]/35 mt-5 leading-relaxed">
-                {t('Vous souhaitez distribuer nos produits ?')}{' '}
-                <a href="mailto:contact@teintdafrique.com" className="text-[#C97B1A] hover:underline">
-                  {t('Contactez-nous')}
+                {c.contact_prompt}{' '}
+                <a href={`mailto:${settings.email}`} className="text-[#C97B1A] hover:underline">
+                  {c.contact_link}
                 </a>
               </p>
             </div>

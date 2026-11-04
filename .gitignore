@@ -19,6 +19,11 @@ logs/
 /.plugins/
 /.opencode-skills/
 
+# API PHP : configuration locale (identifiants MySQL) et médias uploadés
+api/config.php
+api/uploads/*
+!api/uploads/.gitkeep
+
 # Vercel CLI local state (project link, env pulls)
 .vercel/
 

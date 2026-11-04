@@ -1,4 +1,5 @@
-import { useT } from '@/context/LanguageContext'
+import { useLang, useT } from '@/context/LanguageContext'
+import { usePageContent } from '@/hooks/usePageContent'
 
 const EN: Record<string, string> = {
   "La marque · Teint d'Afrique Cosmétiques": "The brand · Teint d'Afrique Cosmétiques",
@@ -54,7 +55,15 @@ const VALEURS = [
 ]
 
 export default function ValeursPage() {
+  const { lang } = useLang()
   const t = useT(EN)
+  const c = usePageContent('valeurs', lang, {
+    title: { fr: 'Nos Valeurs et Ambitions', en: 'Our Values and Ambitions' },
+    lead: {
+      fr: 'Être soi, sans compromis.',
+      en: 'Be yourself, without compromise.',
+    },
+  })
 
   return (
     <div style={{ fontFamily: 'Outfit, system-ui, sans-serif' }}>
@@ -65,7 +74,7 @@ export default function ValeursPage() {
             {t("La marque · Teint d'Afrique Cosmétiques")}
           </p>
           <h1 className="text-[#FAF6EF] leading-tight" style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}>
-            {t('Nos Valeurs et Ambitions')}
+            {c.title}
           </h1>
         </div>
       </div>
@@ -74,7 +83,7 @@ export default function ValeursPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-16 max-w-3xl">
             <p className="text-[#3B1705] text-xl leading-relaxed mb-6" style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}>
-              {t('Être soi, sans compromis.')}
+              {c.lead}
             </p>
             <p className="text-[#2A1006]/75 leading-relaxed text-[15px]">
               {t("Teint d'Afrique Cosmétiques veut contribuer à changer les standards de beauté qui ont longtemps valorisé une peau plus claire comme idéal. Notre ambition : participer à une évolution des mentalités et à une meilleure acceptation de toutes les carnations.")}
