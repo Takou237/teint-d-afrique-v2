@@ -1,18 +1,16 @@
-.git
+# Ignorer les fichiers d'environnement locaux (voir les variables Railway)
 .env
-.env.*
-config.php
-vendor
-node_modules
-storage/logs/*
-storage/framework/cache/data/*
-storage/framework/sessions/*
-storage/framework/views/*
-storage/framework/testing/*
-bootstrap/cache/*.php
-public/uploads/*
-!public/uploads/.gitkeep
-!public/uploads/.htaccess
-tests
-phpunit.xml
-.phpunit.cache
+.env.local
+.env.backup
+.env.production
+.env.*.local
+
+# Ignorer les fichiers de config locaux
+config/local.php
+
+# Ignorer les fichiers git et de log
+.git
+.gitignore
+*.log
+*.md
+.DS_Store

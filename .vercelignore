@@ -1,0 +1,18 @@
+# Fichiers specifiques a Figma Make
+.figma/
+
+# Dependances et builds
+node_modules/
+dist/
+
+# Fichiers de config
+*.md
+*.pdf
+*.pptx
+*.docx
+.env*
+!.env.example
+config/
+
+# Ignore API backend (deploiement separe sur Railway)
+api/

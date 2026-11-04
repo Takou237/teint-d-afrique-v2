@@ -84,8 +84,8 @@ class ContentSeeder
             }
 
             if (DB::table('admin_users')->count() === 0) {
-                $email = getenv('ADMIN_EMAIL') ?: 'admin@teintdafrique.com';
-                $password = getenv('ADMIN_PASSWORD') ?: 'TeintAdmin2026!';
+                $email = env('ADMIN_EMAIL') ?: (getenv('ADMIN_EMAIL') ?: 'admin@teintdafrique.com');
+                $password = env('ADMIN_PASSWORD') ?: (getenv('ADMIN_PASSWORD') ?: 'TeintAdmin2026!');
                 DB::table('admin_users')->insert([
                     'email' => $email,
                     'password_hash' => password_hash($password, PASSWORD_DEFAULT),

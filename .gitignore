@@ -36,3 +36,4 @@ Thumbs.db
 
 # Do NOT ignore .figma/ — vite.config.ts imports .figma/make/site.json at
 # build time, so it must be committed for Vercel builds to succeed.
+.vercel

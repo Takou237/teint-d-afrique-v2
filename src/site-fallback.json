@@ -1,0 +1,14 @@
+{
+  "title": "Teint d'Afrique Cosmétiques",
+  "description": "Marque camerounaise de cosmétiques naturels pensés pour les peaux noires et métissées. Des soins qui nourrissent, hydratent et révèlent l'éclat naturel de votre peau, sans jamais chercher à la changer.",
+  "robots": {
+    "index": false
+  },
+  "icons": {
+    "icon": "/favicon.png"
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

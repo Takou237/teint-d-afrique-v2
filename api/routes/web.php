@@ -18,6 +18,11 @@ Route::get('/', static fn () => ApiResponse::success([
     'status' => 'ok',
 ]));
 
+Route::get('/index.php', static fn () => ApiResponse::success([
+    'service' => "Teint d'Afrique API",
+    'status' => 'ok',
+]));
+
 Route::prefix('api')->group(function (): void {
     Route::get('auth/session.php', [AuthController::class, 'session']);
     Route::post('auth/login.php', [AuthController::class, 'login']);
