@@ -1,9 +1,10 @@
 <?php
-/**
- * Configuration locale de l'API.
- * Copiez ce fichier en api/config.php et adaptez les valeurs.
- * api/config.php n'est jamais commité (voir .gitignore).
- */
+
+// Copier ce fichier vers config.php pour surcharger la configuration via
+// l'ancien format de l'API PHP. config.php est ignore par git.
+// Les variables d'environnement (.env) restent utilisees pour les valeurs
+// absentes de ce fichier.
+
 return [
     'db' => [
         'host' => '127.0.0.1',
@@ -13,31 +14,26 @@ return [
         'pass' => '',
         'charset' => 'utf8mb4',
     ],
-    // Origines autorisées à appeler l'API depuis un autre domaine (front Vercel, etc.).
-    // En développement, le proxy Vite évite le CORS : cette liste peut rester vide.
-    'cors_origins' => [],
+
+    'app_url' => 'http://localhost:3115',
+
+    // Cookie de session admin conserve pour rester compatible avec le front.
     'session_name' => 'tda_admin_session',
     'session_same_site' => 'Lax',
     'session_secure' => false,
 
-    // Origine publique du site : sert à construire les liens envoyés par email
-    // (réinitialisation du mot de passe). Ex. https://teintdafrique.com
-    'app_url' => '',
+    // Vide = uniquement les requetes same-origin (proxy Vite en local).
+    'cors_origins' => [],
 
-    // Envoi des emails (notification des messages de contact, mot de passe oublié).
-    // transport "smtp" recommande la boîte mail de l'hébergement (cPanel, o2switch...).
-    // Renseignez les identifiants d'un compte de messagerie existant ; l'adresse
-    // "from_email" doit appartenir au domaine du site pour ne pas finir en spam.
     'mail' => [
-        'transport' => 'smtp',       // "smtp" ou "mail" (fonction mail() du serveur)
+        'transport' => 'smtp',
         'host' => 'smtp.votre-hebergeur.com',
-        'port' => 587,               // 587 (STARTTLS), 465 (SSL) ou 25
-        'encryption' => 'tls',       // "tls", "ssl" ou "" (aucune)
-        'user' => 'contact@votre-domaine.com',
-        'pass' => 'mot-de-passe-de-la-boite',
-        'from_email' => 'contact@votre-domaine.com',
+        'port' => 587,
+        'user' => '',
+        'pass' => '',
+        'encryption' => 'tls',
+        'from_email' => 'contact@teintdafrique.com',
         'from_name' => "Teint d'Afrique Cosmétiques",
-        // Destinataire des notifications. Vide = adresse email du site dans Réglages.
-        'notify_to' => '',
+        'notify_to' => 'contact@teintdafrique.com',
     ],
 ];

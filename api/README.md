@@ -1,228 +1,213 @@
-# API — Teint d'Afrique Cosmétiques
+# Teint d'Afrique API
 
-Backend PHP + MySQL du site et du panneau d'administration (API en PHP natif, sans framework ni Composer), pensé pour un hébergement mutualisé sans Node.js ni accès SSH.
+API back-office du site Teint d'Afrique, réécrite en **Laravel 12** à partir de
+l'ancienne API PHP native. Le contrat HTTP est conservé : mêmes URLs, mêmes
+noms de champs JSON, même cookie de session (`tda_admin_session`) et même base
+MySQL (`teint_afrique_cms`).
+
+Le front React (Vite) n'a pas été modifié et continue d'appeler les URLs
+`/api/*.php`.
+
+## Stack
+
+- PHP 8.2+ / Laravel 12
+- MySQL 8 (utf8mb4)
+- Sessions fichier + CSRF par en-tête `X-CSRF-Token`
+- Aucune dépendance JavaScript dans ce dossier
 
 ## Démarrage local
 
-Prérequis : PHP 8+ avec les extensions `pdo_mysql` et `gd`, et un serveur MySQL/MariaDB (le projet a été mis en place avec XAMPP/Laragon).
+```bash
+cd api
+composer install
+cp .env.example .env
+php artisan key:generate
+```
+
+Configurer ensuite la base dans `.env` :
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=teint_afrique_cms
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Créer le schéma puis les données de départ :
 
 ```bash
-# 1. Créer la base et les tables
-mysql -u root < api/scripts/migrate.sql
-
-#    Base déjà installée avant la migration 002 (réinitialisation du mot de passe) :
-mysql -u root teint_afrique_cms < api/scripts/migrate_002_password_resets.sql
-#    puis migration 003 (brouillons de contenu) :
-mysql -u root teint_afrique_cms < api/scripts/migrate_003_content_drafts.sql
-
-# 2. Copier la config et l'adapter si besoin
-cp api/config.php.example api/config.php
-
-# 3. Peupler le contenu initial (gammes, produits, réglages, blocs de contenu)
-#    et créer le premier compte admin s'il n'en existe aucun.
-#    ADMIN_EMAIL / ADMIN_PASSWORD permettent de choisir les identifiants.
-php api/scripts/seed.php            # ajoute ce qui manque
-php api/scripts/seed.php --force    # réécrit les textes des gammes et leurs produits
-
-# 4. Lancer un serveur PHP de développement
-php -S localhost:8000 -t api
+php artisan migrate
+php artisan teint:seed
 ```
 
-`api/config.php` n'est jamais commité (voir `.gitignore`) : chaque environnement a le sien.
+Si aucun administrateur n'existe, le seed crée
+`admin@teintdafrique.com` avec le mot de passe `TeintAdmin2026!`. Définir
+`ADMIN_EMAIL` / `ADMIN_PASSWORD` avant le premier seed en production, puis
+changer ce mot de passe après la première connexion.
 
-## Format des réponses
+Lancer l'API sur le port attendu par le proxy Vite :
 
-```json
-{ "success": true, "data": ... }
-{ "success": false, "error": "code_erreur" }
+```bash
+php artisan serve --host=127.0.0.1 --port=8080
 ```
 
-Codes HTTP : `200` OK, `201` créé, `204` supprimé / préflight CORS, `400` requête invalide, `401` non authentifié, `403` CSRF invalide, `404` introuvable, `405` méthode non autorisée, `409` conflit (média encore utilisé, dernière gamme, compte protégé…), `410` jeton de réinitialisation expiré ou déjà utilisé, `422` validation échouée, `429` trop de tentatives, `500` erreur interne (aucun détail technique renvoyé au client, voir les logs serveur), `503` email non envoyé (`email_failed`).
+Le front tourne séparément (`npm run dev`, port 3115) et proxifie `/api` et
+`/uploads` vers `http://127.0.0.1:8080` (`VITE_API_PROXY`).
 
-## Authentification
+### Ancien fichier `config.php`
 
-- Session PHP côté serveur (cookie `HttpOnly`, `SameSite` configurable), pas de JWT.
-- Après connexion, un jeton CSRF est renvoyé une fois et doit être rejoué dans le header `X-CSRF-Token` sur **toute** requête de modification (`POST`).
-- `GET /api/auth/session.php` vérifie si une session est active et renvoie le jeton CSRF au chargement de l'admin.
-- Quand l'API répond `unauthorized`, le client admin considère la session expirée et réaffiche l'écran de connexion.
+L'ancien format de configuration reste supporté. Copier
+`config.php.example` vers `config.php` (fichier ignoré par git) pour définir la
+base, le cookie de session, le CORS, l'URL publique et le mail. Les valeurs
+absentes de `config.php` sont lues depuis `.env`.
 
-| Méthode | URL | Auth | Body | Réponse |
-|---|---|---|---|---|
-| POST | `/api/auth/login.php` | non | `{email, password}` | `{email, csrfToken}` |
-| POST | `/api/auth/logout.php` | oui | — | `null` |
-| GET | `/api/auth/session.php` | non | — | `{authenticated, email?, csrfToken?}` |
-| POST | `/api/auth/password.php` | admin + CSRF | `{currentPassword, newPassword}` | `{updated: true}` |
-| POST | `/api/auth/request-reset.php` | non | `{email}` | `{sent: true}` |
-| POST | `/api/auth/reset.php` | non (jeton) | `{token, password}` | `{reset: true}` |
+Noms de variables historiques également acceptés : `DB_NAME`, `DB_USER`,
+`DB_PASS`, `SESSION_NAME`, `MAIL_USER`, `MAIL_PASS`, `MAIL_FROM`,
+`MAIL_NOTIFY_TO`.
 
-`newPassword` doit contenir **au moins 12 caractères** et être différent du mot de passe actuel (`weak_password`, `password_unchanged`, `invalid_current_password`). Le changement régénère l'identifiant de session et efface les échecs de connexion mémorisés pour l'e-mail.
+## Commandes utiles
 
-### Mot de passe oublié
-
-1. `request-reset.php` crée un jeton aléatoire de 32 octets (seul son SHA-256 est stocké dans `password_resets`), valable **1 heure**, et l'envoie par email avec le lien `<APP_URL>/admin?reset=<jeton>`.
-2. La réponse est identique (`{sent: true}`) lorsque l'adresse est inconnue : impossible de savoir si un compte existe. Limite : 3 demandes par compte et par quart d'heure.
-3. Si l'adresse correspond à un compte mais que l'email ne part pas, la route répond `503 email_failed` (configuration `mail` à vérifier dans `api/config.php`).
-4. `reset.php` applique le mot de passe, marque le jeton comme utilisé et invalide les autres jetons du compte (`invalid_token`, HTTP 410, si le lien est expiré ou déjà servi).
-
-L'écran `ResetPasswordPage` du panneau lit directement `?reset=` dans l'URL, puis retire le paramètre après usage.
-
-## Comptes administrateurs
-
-| Méthode | URL | Auth | Body | Réponse |
-|---|---|---|---|---|
-| GET | `/api/admins/list.php` | admin | — | `{id, email, createdAt, lastLoginAt, isSelf}[]` |
-| POST | `/api/admins/create.php` | admin + CSRF | `{email, password}` | `{id, email}` (201) |
-| POST | `/api/admins/delete.php` | admin + CSRF | `{id}` | `null` (204) |
-
-- `password` : 12 caractères minimum (`weak_password`), 200 maximum.
-- `create.php` refuse une adresse déjà utilisée (`409 email_already_used`).
-- `delete.php` refuse de supprimer son propre compte (`409 cannot_delete_self`) et le dernier compte restant (`409 last_admin`).
-- Il n'y a pas de rôles : tout compte administrateur a les mêmes droits.
-
-## Gammes (lecture publique, écriture admin)
-
-| Méthode | URL | Auth | Body | Réponse |
-|---|---|---|---|---|
-| GET | `/api/gammes/list.php` | non | — | tableau de gammes avec leurs `products` |
-| GET | `/api/gammes/get.php?id=eclat` | non | — | une gamme |
-| POST | `/api/gammes/update.php` | admin + CSRF | `{id, ...champs}` | la gamme à jour |
-| POST | `/api/gammes/create.php` | admin + CSRF | `{nom, tagline?, ingredients?, description?, ingredientsDetail?, heroLead?, heroAccent?, heroCopy?, heroAlt?}` | la gamme créée (201) |
-| POST | `/api/gammes/delete.php` | admin + CSRF | `{id}` | `null` (204) |
-| POST | `/api/gammes/reorder.php` | admin + CSRF | `{order: [ids...]}` | toutes les gammes réordonnées |
-
-- Les champs localisés sont des objets `{"fr": "...", "en": "..."}` ; `nom` est obligatoire dans les deux langues.
-- Champs modifiables via `update.php` : `nom`, `tagline`, `ingredients`, `description`, `ingredientsDetail`, `heroLead`, `heroAccent`, `heroCopy`, `heroAlt`, `color`, `colorLight`, `colorDark` (format `#RRGGBB`), `imageId`, `mainImageId`, `heroImageId`, `heroImageSmallId` (id d'un média existant, ou `null`).
-- À la création, l'`id` est dérivé du nom français (`slugify`) : `gamme_already_exists` renvoyé si le slug est déjà pris.
-- La suppression est refusée avec `409 last_gamme` s'il ne reste qu'une gamme, et supprime en cascade ses produits.
-
-Forme d'une gamme :
-
-```json
-{
-  "id": "eclat",
-  "nom": { "fr": "ÉCLAT NATUREL", "en": "NATURAL RADIANCE" },
-  "tagline": { "fr": "...", "en": "..." },
-  "ingredients": { "fr": "Curcuma & Carotte", "en": "Turmeric & Carrot" },
-  "description": { "fr": "...", "en": "..." },
-  "ingredientsDetail": { "fr": "...", "en": "..." },
-  "heroLead": { "fr": "...", "en": "..." },
-  "heroAccent": { "fr": "...", "en": "..." },
-  "heroCopy": { "fr": "...", "en": "..." },
-  "heroAlt": { "fr": "...", "en": "..." },
-  "color": "#C9971A",
-  "colorLight": "#FDF4DA",
-  "colorDark": "#7A5600",
-  "imageId": null, "image": null,
-  "mainImageId": null, "mainImage": null,
-  "heroImageId": null, "heroImage": null,
-  "heroImageSmallId": null, "heroImageSmall": null,
-  "position": 0,
-  "products": [
-    { "id": 1, "type": { "fr": "Savon", "en": "Soap" }, "poids": "180 g", "symbol": "◼", "description": { "fr": "...", "en": "..." }, "details": null, "imageId": null, "image": null, "position": 0 }
-  ]
-}
+```bash
+php artisan migrate                 # crée les tables si nécessaire
+php artisan teint:seed             # insère les données si elles sont absentes
+php artisan teint:seed --force     # réinsère les données de seed
+php artisan route:list --path=api  # vérifie les routes
+php artisan test                   # tests de compatibilité (voir ci-dessous)
 ```
 
-Les URL d'images valent `null` tant qu'aucune photo n'est associée. Les produits sont triés par `position` croissante.
+## Tests
 
-## Produits (écriture admin — la lecture passe par les gammes)
+Les tests utilisent une base MySQL dédiée, `teint_afrique_cms_test` :
 
-| Méthode | URL | Auth | Body | Réponse |
-|---|---|---|---|---|
-| POST | `/api/produits/create.php` | admin + CSRF | `{gammeId, type, poids?, symbol?, description, details?, imageId?}` | produit créé (201) |
-| POST | `/api/produits/update.php` | admin + CSRF | `{id, type?, poids?, symbol?, description?, details?, imageId?}` | produit à jour |
-| POST | `/api/produits/delete.php` | admin + CSRF | `{id}` | `null` (204) |
-| POST | `/api/produits/reorder.php` | admin + CSRF | `{gammeId, order: [ids...]}` | la gamme réordonnée |
+```bash
+mysql -uroot -e "CREATE DATABASE IF NOT EXISTS teint_afrique_cms_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+cd api
+php artisan test
+```
 
-`details` reprend la forme `ProductDetails` du front (`nom`, `promesses`, `actifs`, `proprietes`, `ingredients`, `modeEmploi`, `precautions`) ou `null` pour un produit sans fiche détaillée. Le nouveau produit est placé en fin de liste.
+`phpunit.xml` force cette base et `LegacyConfigServiceProvider` est désactivé
+en environnement `testing`, donc les données locales ne sont jamais touchées.
+La suite couvre l'authentification, le CSRF, les erreurs 404/405, les réponses
+`{success,data}`, les CRUD gammes/admins/contenus/contacts et les réglages.
 
-## Contenu de pages (lecture publique, écriture admin)
+## Contrat API
 
-| Méthode | URL | Auth | Body | Réponse |
-|---|---|---|---|---|
-| GET | `/api/content/list.php?page=accueil&lang=fr` | non | — | tableau de blocs **publiés** |
-| GET | `/api/content/drafts.php?page=accueil` | admin | — | tableau de blocs en **brouillon** |
-| POST | `/api/content/update.php` | admin + CSRF | `{page, blockKey, blockType, valueFr, valueEn}` | le brouillon enregistré |
-| POST | `/api/content/publish.php` | admin + CSRF | `{page}` | `{published: n}` |
-| POST | `/api/content/discard.php` | admin + CSRF | `{page, blockKey}` | `null` (204) |
-| POST | `/api/content/delete.php` | admin + CSRF | `{page, blockKey}` | `null` (204) |
+- Succès : `{"success":true,"data":...}`
+- Erreur : `{"success":false,"error":"code"}`
+- Les opérations sans résultat renvoient `200` avec `data: null` (l'ancienne
+  API renvoyait parfois `204`).
+- Codes utilisés : `400` JSON invalide, `401` non authentifié/identifiants,
+  `403` CSRF, `404` introuvable, `405` méthode, `409` conflit, `410` jeton de
+  réinitialisation invalide, `422` validation, `429` trop de tentatives,
+  `500` erreur interne, `503` mail indisponible.
 
-### Brouillon puis publication
+### Authentification
 
-`update.php` n'écrit **plus** dans `page_content` : il enregistre le bloc dans `content_drafts`. Le site public continue donc d'afficher la version en ligne jusqu'à l'appel de `publish.php`, qui recopie tous les brouillons de la page dans `page_content` (transaction) puis les supprime. `nothing_to_publish` (422) si la page n'a rien en attente.
+- `GET  /api/auth/session.php`
+- `POST /api/auth/login.php`
+- `POST /api/auth/logout.php`
+- `POST /api/auth/password.php`
+- `POST /api/auth/request-reset.php`
+- `POST /api/auth/reset.php`
 
-`discard.php` abandonne le brouillon d'un bloc : le contenu publié redevient la référence. `delete.php` supprime le bloc publié **et** son brouillon ; la suppression est immédiate et ne passe pas par un brouillon (un bloc qui n'existe qu'en brouillon est simplement retiré de la file).
+Le login renvoie `email` et `csrfToken`. Les écritures protégées exigent le
+cookie de session et l'en-tête `X-CSRF-Token`.
 
-- Pages acceptées : `accueil`, `boutique`, `histoire`, `fondatrice`, `vision`, `engagements`, `valeurs`, `nos-produits`, `gamme`, `types`, `vos-besoins`, `expertise`, `vlogs`, `contact`, `localisation`, `distributeurs`, `produit`, `global`.
-- `blockKey` doit matcher `^[a-z0-9_-]{1,100}$` (insensible à la casse). `update.php` crée le bloc s'il n'existe pas, sinon il le met à jour (y compris son `blockType`).
-- `blockType` : `text` (texte simple, balises retirées), `richtext` (HTML filtré : `<p> <strong> <em> <br> <ul> <li> <a>` uniquement, liens `http(s)`/`mailto`), `image`.
-- Pour un bloc `image`, `valueFr` / `valueEn` contiennent l'**id d'un média** (ou une chaîne vide). `list.php` renvoie en plus `imageIdFr`, `imageIdEn`, `imageUrlFr`, `imageUrlEn` et la valeur dans la langue demandée.
-- `delete.php` supprime le bloc : le site réaffiche alors son texte ou son image de repli.
-- Une image référencée uniquement par un brouillon est protégée de la suppression (`media_in_use`).
+### Ressources
 
-## Messages de contact
+```text
+GET  /api/admins/list.php
+POST /api/admins/create.php
+POST /api/admins/delete.php
 
-| Méthode | URL | Auth | Body | Réponse |
-|---|---|---|---|---|
-| POST | `/api/contact/submit.php` | **public** | `{name, email, phone?, message}` | `{id}` (201) |
-| GET | `/api/contact/list.php` | admin | `?q=&filter=all\|unread&page=1&perPage=20` | `{items, total, page, perPage, unread}` |
-| POST | `/api/contact/manage.php` | admin + CSRF | `{id, isRead}` ou `{id, delete: true}` | `{id, isRead}` / `null` |
+GET  /api/gammes/list.php
+GET  /api/gammes/get.php?id=...
+POST /api/gammes/create.php
+POST /api/gammes/update.php
+POST /api/gammes/delete.php
+POST /api/gammes/reorder.php
 
-`submit.php` est le seul endpoint public d'écriture : limité à **5 messages par IP et par tranche de 10 minutes** (`429 too_many_messages` au-delà), champs validés et nettoyés.
+POST /api/produits/create.php
+POST /api/produits/update.php
+POST /api/produits/delete.php
+POST /api/produits/reorder.php
 
-Chaque message inséré déclenche une **notification email** au responsable du site (adresse du réglage `email`, ou `MAIL_NOTIFY_TO`). Un échec d'envoi est journalisé mais ne fait pas échouer la requête : le message reste visible dans le panneau.
+GET  /api/content/list.php?page=...&lang=fr|en
+GET  /api/content/drafts.php
+POST /api/content/update.php
+POST /api/content/publish.php
+POST /api/content/discard.php
+POST /api/content/delete.php
 
-`list.php` accepte aussi la recherche (`q` porte sur le nom, l'email, le téléphone et le contenu) et le filtre `unread`. `total` compte les résultats filtrés, `unread` les non-lus de toute la base (badge du panneau), `perPage` est plafonné à 50.
+POST /api/contact/submit.php
+GET  /api/contact/list.php
+POST /api/contact/manage.php
 
-## Réglages — identité, coordonnées, réseaux sociaux
+GET  /api/settings/list.php
+POST /api/settings/update.php
 
-| Méthode | URL | Auth | Body | Réponse |
-|---|---|---|---|---|
-| GET | `/api/settings/list.php` | non | — | carte `{clé: valeur}` de tous les réglages |
-| POST | `/api/settings/update.php` | admin + CSRF | `{key, value}` ou `{clé: valeur, ...}` | tous les réglages à jour |
+GET  /api/media/list.php
+POST /api/media/upload.php
+POST /api/media/update.php
+POST /api/media/delete.php
+```
 
-Clés éditables (toute autre clé est refusée avec `invalid_setting_key`) :
+Les médias sont stockés dans `public/uploads` et servis sous `/uploads/...`.
 
-`site_name`, `tagline_fr`, `tagline_en`, `email`, `phone`, `whatsapp_number`, `address_fr`, `address_en`, `hours_fr`, `hours_en`, `instagram_url`, `facebook_url`, `tiktok_url`, `youtube_url`.
+## Déploiement
 
-Validation : email valide (`invalid_email`), URL absolue `http(s)` pour les réseaux sociaux (`invalid_url`), `whatsapp_number` composé de 6 à 15 chiffres (`invalid_whatsapp_number`), 500 caractères maximum par valeur (`setting_value_too_long`).
+Le dossier contient un `Dockerfile` (Apache + PHP 8.2) et un `railway.toml`.
+Le build doit être lancé avec `api` comme contexte/racine du service.
 
-## Médiathèque (admin uniquement)
+Variables minimales en production :
 
-| Méthode | URL | Auth | Body | Réponse |
-|---|---|---|---|---|
-| GET | `/api/media/list.php` | admin | `?q=&page=1&perPage=24` | `{items, total, page, perPage}` |
-| POST | `/api/media/upload.php` | admin + CSRF | `multipart/form-data` : `file` (≤ 5 Mo, jpeg/png/webp/gif) + `altText` optionnel | `{id, url, ...}` (201) |
-| POST | `/api/media/update.php` | admin + CSRF | `{id, altText}` | `{id, altText}` |
-| POST | `/api/media/delete.php` | admin + CSRF | `{id}` | `null` (204) |
+```dotenv
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=base64:...
+APP_URL=https://api.example.com
+DB_HOST=...
+DB_PORT=3306
+DB_DATABASE=...
+DB_USERNAME=...
+DB_PASSWORD=...
+SESSION_DRIVER=file
+SESSION_SECURE_COOKIE=true
+SESSION_SAME_SITE=none   # si le front et l'API sont sur des domaines differents
+MAIL_MAILER=smtp
+MAIL_HOST=...
+MAIL_PORT=587
+MAIL_USERNAME=...
+MAIL_PASSWORD=...
+MAIL_FROM_ADDRESS=contact@teintdafrique.com
+CORS_ORIGINS=https://teintdafrique.com,https://www.teintdafrique.com
+```
 
-`q` porte sur le nom du fichier et le texte alternatif ; `perPage` est plafonné à 100. `update.php` permet de corriger le texte alternatif d'une image déjà en ligne sans la re-téléverser (255 caractères maximum, `alt_text_too_long`).
+Au démarrage, `docker-entrypoint.sh` écoute sur `$PORT` (80 par défaut),
+exécute `php artisan migrate --force` puis `php artisan teint:seed`, et lance
+Apache. `railway.toml` appelle ce script.
 
-Les images sont réencodées côté serveur (adieu métadonnées EXIF et payloads cachés) et stockées sous un nom aléatoire dans `api/uploads/`.
+Points d'attention :
 
-La suppression est refusée avec `409 media_in_use` tant que l'image est référencée par une gamme (4 emplacements), un produit ou un bloc de page — il faut d'abord la retirer de son emplacement.
+- `public/uploads` doit être un volume persistant, sinon les images sont
+  perdues à chaque redéploiement.
+- Avec plusieurs instances, utiliser un `SESSION_DRIVER` partagé (base/redis)
+  pour que les cookies de session fonctionnent sur toutes les instances.
+- Servir le site en HTTPS et définir `SESSION_SECURE_COOKIE=true` (et
+  `SESSION_SAME_SITE=none` si nécessaire pour le CORS cross-site).
 
-## Emails (notifications et mot de passe oublié)
+## Structure
 
-`api/lib/mailer.php` envoie les emails sans dépendance (pas de Composer, pas de PHPMailer) :
-
-- transport `smtp` (recommandé) : client SMTP natif, STARTTLS (`587`), SSL (`465`) ou sans chiffrement (`25`), AUTH LOGIN ;
-- transport `mail` : fonction `mail()` du serveur, utile quand l'hébergeur la gère correctement.
-
-Configuration dans le bloc `mail` de `api/config.php` (voir `config.php.example`) ou via les variables d'environnement `MAIL_TRANSPORT`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_ENCRYPTION`, `MAIL_USER`, `MAIL_PASS`, `MAIL_FROM`, `MAIL_FROM_NAME`, `MAIL_NOTIFY_TO`. `APP_URL` (ou `app_url` dans la config) doit pointer vers l'origine du site pour que les liens de réinitialisation soient corrects.
-
-L'adresse `MAIL_FROM` doit appartenir au domaine du site, sinon les messages partent en spam. Les deux emails envoyés sont : la notification d'un nouveau message de contact (avec `Reply-To` du visiteur) et le lien de réinitialisation (valable 1 heure).
-
-Échec d'envoi : journalisé dans les logs PHP (`error_log`), jamais renvoyé au visiteur sous forme de trace.
-
-## Sécurité — ce qui est en place
-
-- Requêtes préparées PDO partout (aucune concaténation SQL).
-- Mots de passe admin hashés (`password_hash` / `password_verify`), rehash automatique.
-- Verrou anti brute-force : 5 échecs par e-mail et par tranche de 5 minutes (table `login_attempts`).
-- Jetons de réinitialisation stockés uniquement hachés (SHA-256), usage unique, expiration 1 heure, 3 demandes par quart d'heure.
-- CSRF obligatoire sur toutes les routes de modification.
-- CORS restreint aux origines listées dans la configuration (pas de wildcard avec cookies).
-- Upload : type MIME réel vérifié (pas l'extension), taille limitée, réencodage systématique, nom aléatoire.
-- Nettoyage systématique des entrées (`strip_tags`) et liste blanche de balises pour le `richtext`.
-- Aucune trace d'erreur PHP renvoyée au client (`display_errors` désactivé, journalisation serveur).
+```text
+app/Http/Controllers/Api/   endpoints
+app/Http/Middleware/        authentification et CSRF
+app/Support/                réponses JSON, validation, transformations
+app/Services/Mailer.php     notifications et reset de mot de passe
+routes/web.php              URLs compatibles avec l'ancienne API
+database/migrations/        schéma identique à l'ancienne base
+database/seeders/           données de départ
+public/uploads/             médias
+tests/Feature/              tests de compatibilité HTTP
+```

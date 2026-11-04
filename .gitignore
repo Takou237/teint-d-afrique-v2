@@ -3,6 +3,7 @@ dist/
 build/
 .cache/
 .env*
+!api/.env.example
 .vite/
 vite.config.*.timestamp-*
 *.tsbuildinfo
@@ -19,10 +20,11 @@ logs/
 /.plugins/
 /.opencode-skills/
 
-# API PHP : configuration locale (identifiants MySQL) et médias uploadés
+# API Laravel : configuration locale (identifiants MySQL) et médias uploadés
 api/config.php
-api/uploads/*
-!api/uploads/.gitkeep
+api/public/uploads/*
+!api/public/uploads/.gitkeep
+!api/public/uploads/.htaccess
 
 # Vercel CLI local state (project link, env pulls)
 .vercel/
