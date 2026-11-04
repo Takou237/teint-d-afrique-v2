@@ -43,7 +43,12 @@ return Application::configure(basePath: dirname(__DIR__))
                 return ApiResponse::error('not_found', 404);
             }
 
+            error_log('[API Error] ' . get_class($e) . ': ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
             report($e);
+
+            if (config('app.debug')) {
+                return ApiResponse::error($e->getMessage(), 500);
+            }
 
             return ApiResponse::error('internal_error', 500);
         });

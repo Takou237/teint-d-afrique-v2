@@ -83,9 +83,11 @@ class ContentSeeder
                 $lines[] = "+ {$gamme['id']} : gamme et " . count($gamme['products']) . ' produits enregistres.';
             }
 
-            if (DB::table('admin_users')->count() === 0) {
-                $email = env('ADMIN_EMAIL') ?: (getenv('ADMIN_EMAIL') ?: 'admin@teintdafrique.com');
-                $password = env('ADMIN_PASSWORD') ?: (getenv('ADMIN_PASSWORD') ?: 'TeintAdmin2026!');
+            $email = env('ADMIN_EMAIL') ?: (getenv('ADMIN_EMAIL') ?: 'admin@teintdafrique.com');
+            $password = env('ADMIN_PASSWORD') ?: (getenv('ADMIN_PASSWORD') ?: 'TeintAdmin2026!');
+
+            $existingAdmin = DB::table('admin_users')->where('email', $email)->first();
+            if ($existingAdmin === null) {
                 DB::table('admin_users')->insert([
                     'email' => $email,
                     'password_hash' => password_hash($password, PASSWORD_DEFAULT),
@@ -93,7 +95,10 @@ class ContentSeeder
                 $lines[] = "Compte administrateur cree : {$email} / {$password}";
                 $lines[] = 'Changez ce mot de passe apres la premiere connexion.';
             } else {
-                $lines[] = 'Compte administrateur : deja configure.';
+                DB::table('admin_users')->where('id', $existingAdmin->id)->update([
+                    'password_hash' => password_hash($password, PASSWORD_DEFAULT),
+                ]);
+                $lines[] = "Compte administrateur ({$email}) : mot de passe configure/synchronise avec succes.";
             }
         });
 
